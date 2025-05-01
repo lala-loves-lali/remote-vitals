@@ -1,0 +1,38 @@
+package com.remote_vitals.vitalReport.entities;
+
+// imports
+import com.remote_vitals.user.entities.Patient;
+import com.remote_vitals.vital.entities.VitalRecord;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.List;
+
+// lombok annotations
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+
+// JPA annotations
+@Entity
+public class VitalReport {
+    /******************** Attributes ********************/
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "VitalReportGenerator")
+    @TableGenerator(
+            name = "VitalReportGenerator",
+            table = "id_generator",
+            pkColumnName = "table_of_pk",
+            valueColumnName = "value",
+            pkColumnValue = "vital_report",
+            allocationSize = 10
+    )
+    private Long id;
+    /******************* Relationships *******************/
+    @OneToMany(mappedBy = "vitalReport")
+    List<VitalRecord> vitalRecords;
+    @ManyToOne(cascade = CascadeType.PERSIST,optional = false,fetch = FetchType.EAGER)
+    @JoinColumn(name = "patient_id", nullable = false)
+    private Patient patient;
+}
