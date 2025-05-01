@@ -12,9 +12,11 @@ import java.io.IOException;
 
 public class JavaFXApplication extends Application {
 
+    
+
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(JavaFXApplication.class.getResource("/main-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(JavaFXApplication.class.getResource("/sign-up-page.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 800, 600);
         stage.setTitle("Remote Vitals Monitoring System");
         stage.setScene(scene);
@@ -22,6 +24,7 @@ public class JavaFXApplication extends Application {
     }
 
     public static void main(String[] args) {
+
         launch();
     }
 }
