@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.remote_vitals.MainViewController"
+            prefHeight="600.0" prefWidth="800.0">
+    <top>
+        <MenuBar>
+            <Menu text="File">
+                <MenuItem text="Exit" onAction="#exitApplication"/>
+            </Menu>
+        </MenuBar>
+    </top>
+    <center>
+        <VBox alignment="CENTER" spacing="10">
+            <Label text="Remote Vitals Monitoring System" style="-fx-font-size: 20px;"/>
+            <Button text="Login" onAction="#handleLogin"/>
+        </VBox>
+    </center>
+</BorderPane>
