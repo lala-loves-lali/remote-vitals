@@ -24,6 +24,6 @@ public class Test {
         patient.setEmail("example@email.com");
         patient.setPassword("12345");
         this.patientRepository.save(patient);
-        System.out.println(this.patientRepository.findByEmail("example@email.com").toString());
+       // System.out.println(this.patientRepository.findByEmail("example@email.com").toString());
     }
 }
