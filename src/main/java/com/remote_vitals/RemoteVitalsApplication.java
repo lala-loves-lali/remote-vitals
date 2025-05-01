@@ -10,7 +10,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import com.remote_vitals.reportGenerator.ReportGenerator;
 import java.time.LocalDateTime;
+import com.remote_vitals.mailSender.EmailHandler;
 
 @SpringBootApplication
 public class RemoteVitalsApplication {
@@ -22,7 +24,20 @@ public class RemoteVitalsApplication {
 	private PatientRepository patientRepository;
 
 	public static void main(String[] args) {
-		SpringApplication.run(RemoteVitalsApplication.class, args);
+		EmailHandler.sendPasswordSetMail("muneebahmed115@outlook.com", "12345");
+
+		//SpringApplication.run(RemoteVitalsApplication.class, args);
+
+//		int[] year2017 = {170, 80, 110, 90, 90, 60, 30, 70, 40, 140, 90, 40};
+//		int[] year2018 = {60, 60, 50, 40, 130, 120, 40, 90, 70, 150, 160, 110};
+//		int[][] data = {year2017, year2018};
+//		String[] names = {"Year 2dfs17", "Year 2027"};
+//		ReportGenerator reportGenerator=new ReportGenerator("ali","sdfds","415213","541545","hdfdkjdshfjhsdfkjhdskjfhdfjhdsfjkadshlfjhdsjfhds",data,names);
+//		reportGenerator.createReport();
+
+
+
+
 	}
 
 	@Bean
