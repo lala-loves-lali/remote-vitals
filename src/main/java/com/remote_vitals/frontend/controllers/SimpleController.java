@@ -1,4 +1,4 @@
-package com.remote_vitals;
+package com.remote_vitals.frontend.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

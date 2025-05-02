@@ -3,7 +3,7 @@
  * Purpose : BloodPressureSystolic Class that is a sort of vital record
  */
 // ---------------------- // BEGIN // --------------------- //
-package com.remote_vitals.vital.entities;
+package com.remote_vitals.backend.entities;
 
 // imports
 import jakarta.persistence.*;

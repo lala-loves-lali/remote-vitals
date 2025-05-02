@@ -1,9 +1,9 @@
-package com.remote_vitals.appointment.entities;
+package com.remote_vitals.backend.appointment.entities;
 
-import com.remote_vitals.appointment.enums.AppointmentStatus;
-import com.remote_vitals.chat.entities.ChatRoom;
-import com.remote_vitals.user.entities.Doctor;
-import com.remote_vitals.user.entities.Patient;
+import com.remote_vitals.backend.appointment.enums.AppointmentStatus;
+import com.remote_vitals.backend.chat.entities.ChatRoom;
+import com.remote_vitals.backend.user.entities.Doctor;
+import com.remote_vitals.backend.user.entities.Patient;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

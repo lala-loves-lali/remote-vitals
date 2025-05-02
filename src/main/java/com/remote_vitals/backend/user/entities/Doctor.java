@@ -1,9 +1,9 @@
 // ---------------------- // BEGIN // --------------------- //
-package com.remote_vitals.user.entities;
+package com.remote_vitals.backend.user.entities;
 
 // imports
-import com.remote_vitals.appointment.entities.Appointment;
-import com.remote_vitals.checkup.entities.CheckUp;
+import com.remote_vitals.backend.appointment.entities.Appointment;
+import com.remote_vitals.backend.entities.CheckUp;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

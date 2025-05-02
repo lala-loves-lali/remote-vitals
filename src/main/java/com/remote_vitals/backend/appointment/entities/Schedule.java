@@ -1,4 +1,4 @@
-package com.remote_vitals.appointment.entities;
+package com.remote_vitals.backend.appointment.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

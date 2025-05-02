@@ -1,4 +1,4 @@
-package com.remote_vitals.mailSender;
+package com.remote_vitals.backend.mailSender;
 
 
 

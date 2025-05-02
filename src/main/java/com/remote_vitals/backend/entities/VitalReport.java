@@ -1,8 +1,8 @@
-package com.remote_vitals.vitalReport.entities;
+package com.remote_vitals.backend.entities;
 
 // imports
-import com.remote_vitals.user.entities.Patient;
-import com.remote_vitals.vital.entities.VitalRecord;
+import com.remote_vitals.backend.user.entities.Patient;
+import com.remote_vitals.backend.entities.VitalRecord;
 import jakarta.persistence.*;
 import lombok.*;
 

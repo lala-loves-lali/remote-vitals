@@ -4,10 +4,9 @@
  *           vitals
  */
 // ---------------------- // BEGIN // --------------------- //
-package com.remote_vitals.vital.entities;
+package com.remote_vitals.backend.entities;
 
 // imports
-import com.remote_vitals.vitalReport.entities.VitalReport;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;

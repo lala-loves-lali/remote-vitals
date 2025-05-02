@@ -1,6 +1,6 @@
-package com.remote_vitals.appointment.repositories;
+package com.remote_vitals.backend.appointment.repositories;
 
-import com.remote_vitals.appointment.entities.Appointment;
+import com.remote_vitals.backend.appointment.entities.Appointment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

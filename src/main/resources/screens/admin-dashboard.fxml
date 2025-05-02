@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/24" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.remote_vitals.AdminDashboardController">
+    <top>
+        <VBox spacing="10">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="10" styleClass="header">
+                    <children>
+                        <Label text="Remote Patient Monitoring System" styleClass="header-title">
+                            <font>
+                                <Font name="System Bold" size="18.0" />
+                            </font>
+                        </Label>
+                        <Pane HBox.hgrow="ALWAYS" />
+                        <Button fx:id="logoutButton" onAction="#handleLogout" text="Logout" styleClass="logout-button"/>
+                    </children>
+                    <padding>
+                        <Insets bottom="5.0" left="20.0" right="20.0" top="5.0" />
+                    </padding>
+                </HBox>
+                <Separator />
+            </children>
+        </VBox>
+    </top>
+    
+    <left>
+        <VBox styleClass="sidebar" spacing="10" prefWidth="200">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10" />
+            </padding>
+            <children>
+                <Button fx:id="dashboardButton" onAction="#handleDashboard" text="Dashboard" maxWidth="Infinity" styleClass="menu-button" />
+                <Button fx:id="patientsButton" onAction="#handlePatients" text="Patients" maxWidth="Infinity" styleClass="menu-button" />
+                <Button fx:id="doctorsButton" onAction="#handleDoctors" text="Doctors" maxWidth="Infinity" styleClass="menu-button" />
+                <Button fx:id="reportsButton" onAction="#handleReports" text="Reports" maxWidth="Infinity" styleClass="menu-button" />
+                <Button fx:id="settingsButton" onAction="#handleSettings" text="Settings" maxWidth="Infinity" styleClass="menu-button" />
+            </children>
+        </VBox>
+    </left>
+    
+    <center>
+        <StackPane fx:id="contentArea">
+            <children>
+                <VBox alignment="CENTER" spacing="20">
+                    <children>
+                        <Label text="Welcome to Admin Dashboard" styleClass="welcome-text">
+                            <font>
+                                <Font size="24.0" />
+                            </font>
+                        </Label>
+                        <Label text="Select an option from the sidebar to get started" styleClass="subtitle-text" />
+                    </children>
+                </VBox>
+            </children>
+            <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </padding>
+        </StackPane>
+    </center>
+    
+    <bottom>
+        <HBox alignment="CENTER_RIGHT" styleClass="footer">
+            <children>
+                <Label text="Remote Vitals © 2025" />
+            </children>
+            <padding>
+                <Insets bottom="5.0" left="20.0" right="20.0" top="5.0" />
+            </padding>
+        </HBox>
+    </bottom>
+</BorderPane> 

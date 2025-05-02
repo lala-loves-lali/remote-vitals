@@ -1,11 +1,10 @@
-package com.remote_vitals.user.entities;
+package com.remote_vitals.backend.user.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 @Data
 @NoArgsConstructor

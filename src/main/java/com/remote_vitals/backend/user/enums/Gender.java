@@ -1,4 +1,4 @@
-package com.remote_vitals.user.enums;
+package com.remote_vitals.backend.user.enums;
 
 public enum Gender {
     MALE,

@@ -1,9 +1,8 @@
-package com.remote_vitals.checkup.entities;
+package com.remote_vitals.backend.entities;
 
-import com.remote_vitals.user.entities.Doctor;
-import com.remote_vitals.user.entities.Patient;
+import com.remote_vitals.backend.user.entities.Doctor;
+import com.remote_vitals.backend.user.entities.Patient;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

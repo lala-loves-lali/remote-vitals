@@ -1,6 +1,6 @@
-package com.remote_vitals.user.repositories;
+package com.remote_vitals.backend.user.repositories;
 
-import com.remote_vitals.user.entities.User;
+import com.remote_vitals.backend.user.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Integer> {

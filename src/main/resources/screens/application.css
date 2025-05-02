@@ -1,0 +1,360 @@
+/* Main Application Styles */
+.root {
+    -fx-font-family: 'Arial', 'Segoe UI', sans-serif;
+    -fx-base: #f5f5f5;
+    -fx-background-color: #ffffff;
+}
+
+/* Header Styles */
+.header {
+    -fx-background-color: #2c3e50;
+    -fx-padding: 10px;
+}
+
+.header-title {
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.logout-button {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+}
+
+.logout-button:hover {
+    -fx-background-color: #c0392b;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    -fx-background-color: #34495e;
+    -fx-padding: 10px;
+}
+
+.menu-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-padding: 10px 15px;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.menu-button:hover {
+    -fx-background-color: #4a6c8a;
+}
+
+.menu-button:pressed {
+    -fx-background-color: #2c3e50;
+}
+
+/* Content Area Styles */
+.welcome-text {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.subtitle-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: #7f8c8d;
+}
+
+/* Footer Styles */
+.footer {
+    -fx-background-color: #ecf0f1;
+    -fx-padding: 5px;
+    -fx-border-width: 1px 0 0 0;
+    -fx-border-color: #bdc3c7;
+}
+
+/* Table Styles */
+.table-view {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #f9f9f9;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #3498db;
+}
+
+/* Button Styles */
+.button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #2980b9;
+}
+
+.button:pressed {
+    -fx-background-color: #1a5889;
+}
+
+/* Form Styles */
+.text-field, .password-field, .text-area, .combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 3px;
+}
+
+.text-field:focused, .password-field:focused, .text-area:focused, .combo-box:focused {
+    -fx-border-color: #3498db;
+}
+
+/* Dashboard Styles */
+.page-title {
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+}
+
+.page-subtitle {
+    -fx-text-fill: #666666;
+}
+
+.content-area {
+    -fx-background-color: #f8f8f8;
+}
+
+.icon-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 50%;
+    -fx-min-width: 40px;
+    -fx-min-height: 40px;
+    -fx-max-width: 40px;
+    -fx-max-height: 40px;
+}
+
+.icon-button:hover {
+    -fx-background-color: #f0f0f0;
+}
+
+/* Stats Card Styles */
+.stat-label {
+    -fx-text-fill: #666666;
+}
+
+.stat-value {
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+}
+
+/* Critical Alerts Section */
+.section-title {
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+}
+
+.section-description {
+    -fx-text-fill: #666666;
+}
+
+.status-label {
+    -fx-background-color: #cc0000;
+    -fx-background-radius: 20;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+/* Upload Vitals Data Styles */
+.drop-zone {
+    -fx-background-color: white;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 2;
+    -fx-border-style: dashed;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.drop-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #555555;
+}
+
+.select-file-button {
+    -fx-background-color: white;
+    -fx-text-fill: #0066cc;
+    -fx-border-color: #0066cc;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.select-file-button:hover {
+    -fx-background-color: #f0f7ff;
+}
+
+.format-requirements {
+    -fx-background-color: #f5f5f5;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+}
+
+.code-sample {
+    -fx-background-color: #f0f0f0;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-font-family: monospace;
+}
+
+.primary-button {
+    -fx-background-color: #0066cc;
+    -fx-text-fill: white;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-font-weight: bold;
+}
+
+.primary-button:hover {
+    -fx-background-color: #0055aa;
+}
+
+.secondary-button {
+    -fx-background-color: white;
+    -fx-text-fill: #555555;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #f5f5f5;
+}
+
+/* Admin Dashboard Styles */
+.search-field {
+    -fx-background-color: white;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.search-button {
+    -fx-background-color: #f0f0f0;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+}
+
+.search-button:hover {
+    -fx-background-color: #e0e0e0;
+}
+
+.add-button {
+    -fx-background-color: #0066cc;
+    -fx-text-fill: white;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+}
+
+.add-button:hover {
+    -fx-background-color: #0055aa;
+}
+
+.patient-row {
+    -fx-border-color: transparent transparent #f0f0f0 transparent;
+}
+
+.patient-row:hover {
+    -fx-background-color: #f9f9f9;
+}
+
+.role-badge {
+    -fx-background-color: #f0f0f0;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-font-size: 12;
+}
+
+.action-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 50%;
+    -fx-min-width: 30px;
+    -fx-min-height: 30px;
+    -fx-max-width: 30px;
+    -fx-max-height: 30px;
+}
+
+.action-button:hover {
+    -fx-background-color: #f0f0f0;
+}
+
+/* Form Controls Styles */
+.text-field, .password-field, .choice-box, .date-picker {
+    -fx-background-color: white;
+    -fx-border-color: #dddddd;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 8 12;
+}
+
+.text-field:focused, .password-field:focused, .choice-box:focused, .date-picker:focused {
+    -fx-border-color: #0066cc;
+}
+
+.text-area {
+    -fx-background-color: white;
+    -fx-border-color: #dddddd;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 5;
+}
+
+.text-area:focused {
+    -fx-border-color: #0066cc;
+}
+
+.text-area .content {
+    -fx-background-color: white;
+    -fx-background-radius: 0;
+}
+
+.date-picker > .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.choice-box > .open-button > .arrow {
+    -fx-background-color: #666666;
+}
+
+/* Panic Button Style */
+.panic-button {
+    -fx-background-color: #cc0000;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 4;
+}
+
+.panic-button:hover {
+    -fx-background-color: #aa0000;
+}
+
+/* Card Styles */
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);
+}
+
+/* Login/Signup Form Styles */
+.auth-form {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 4);
+} 
