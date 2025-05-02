@@ -36,26 +36,35 @@
 	<!-- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ -->
 	<dependencies>
 
+
+		<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-controls -->
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-controls</artifactId>
 			<version>24</version>
+			<classifier>win</classifier>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-fxml -->
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-fxml</artifactId>
 			<version>24</version>
+			<classifier>win</classifier>
 		</dependency>
+
 
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-graphics</artifactId>
 			<version>24</version>
+			<classifier>win</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-base</artifactId>
 			<version>24</version>
+			<classifier>win</classifier>
 		</dependency>
 
 
@@ -153,6 +162,9 @@
 				<version>0.0.8</version>
 				<configuration>
 					<mainClass>com.remote_vitals.JavaFXApplication</mainClass>
+					<options>
+						<option>--enable-native-access=ALL-UNNAMED</option>
+					</options>
 				</configuration>
 			</plugin>
 		</plugins>
