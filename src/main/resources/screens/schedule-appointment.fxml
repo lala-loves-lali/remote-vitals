@@ -30,7 +30,7 @@
             </HBox>
             <VBox prefHeight="500.0" prefWidth="300.0" spacing="10.0">
                <children>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button" text="Dashboard">
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button" text="Dashboard" onAction="#handleBack">
                      <padding>
                         <Insets left="20.0" />
                      </padding>
@@ -54,7 +54,7 @@
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button" text="Vitals">
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button" text="Vitals" onAction="#handleUploadVitals">
                      <padding>
                         <Insets left="20.0" />
                      </padding>
@@ -62,7 +62,7 @@
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button" text="Appointments">
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button-active" text="Appointments">
                      <padding>
                         <Insets left="20.0" />
                      </padding>
@@ -77,7 +77,7 @@
             </VBox>
             <VBox alignment="BOTTOM_LEFT" prefHeight="120.0" prefWidth="300.0" VBox.vgrow="ALWAYS">
                <children>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="logout-button" text="Logout">
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="logout-button" text="Logout" onAction="#handleLogout">
                      <padding>
                         <Insets left="20.0" />
                      </padding>
@@ -95,6 +95,11 @@
          <children>
             <HBox alignment="CENTER_LEFT" prefHeight="80.0" prefWidth="900.0" style="-fx-background-color: white;">
                <children>
+                  <Button fx:id="backButton" mnemonicParsing="false" onAction="#handleBack" styleClass="back-button" text="Back">
+                     <HBox.margin>
+                        <Insets right="20.0" />
+                     </HBox.margin>
+                  </Button>
                   <Label styleClass="page-title" text="Schedule Appointment" textFill="#333333">
                      <font>
                         <Font name="System Bold" size="24.0" />
@@ -174,12 +179,12 @@
                               </TextArea>
                               <HBox alignment="CENTER_RIGHT" spacing="15.0">
                                  <children>
-                                    <Button mnemonicParsing="false" styleClass="secondary-button" text="Cancel">
+                                    <Button mnemonicParsing="false" styleClass="secondary-button" text="Cancel" onAction="#handleBack">
                                        <padding>
                                           <Insets bottom="12.0" left="25.0" right="25.0" top="12.0" />
                                        </padding>
                                     </Button>
-                                    <Button mnemonicParsing="false" styleClass="primary-button" text="Schedule Appointment">
+                                    <Button fx:id="scheduleButton" mnemonicParsing="false" styleClass="primary-button" text="Schedule Appointment" onAction="#handleSchedule">
                                        <padding>
                                           <Insets bottom="12.0" left="25.0" right="25.0" top="12.0" />
                                        </padding>

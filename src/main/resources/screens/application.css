@@ -621,7 +621,7 @@
 }
 
 /* Choice Box Specific Styles */
-.choice-box {
+.choice-box, .combo-box {
     -fx-background-color: white;
     -fx-border-color: #dddddd;
     -fx-border-width: 1;
@@ -631,15 +631,15 @@
     -fx-mark-color: #666666;
 }
 
-.choice-box:hover {
+.choice-box:hover, .combo-box:hover {
     -fx-border-color: #bbbbbb;
 }
 
-.choice-box:focused {
+.choice-box:focused, .combo-box:focused {
     -fx-border-color: #0066cc;
 }
 
-.choice-box .context-menu {
+.choice-box .context-menu, .combo-box .context-menu {
     -fx-background-color: white;
     -fx-border-color: #dddddd;
     -fx-border-width: 1;
@@ -648,22 +648,59 @@
     -fx-padding: 2;
 }
 
-.choice-box .menu-item {
+.choice-box .menu-item, .combo-box .menu-item {
     -fx-padding: 8 12;
 }
 
-.choice-box .menu-item:focused, .choice-box .menu-item:hover {
+.choice-box .menu-item:focused, .choice-box .menu-item:hover, 
+.combo-box .menu-item:focused, .combo-box .menu-item:hover {
     -fx-background-color: #f0f7ff;
 }
 
-.choice-box .menu-item > .label {
+.choice-box .menu-item > .label, .combo-box .menu-item > .label {
     -fx-text-fill: #333333;
 }
 
-.choice-box > .label {
+.choice-box > .label, .combo-box > .value-container > .label {
     -fx-text-fill: #333333;
 }
 
-.choice-box > .open-button > .arrow {
+.choice-box > .open-button > .arrow, .combo-box > .arrow-button > .arrow {
     -fx-background-color: #666666;
+}
+
+/* ComboBox specific additional fixes */
+.combo-box {
+    -fx-cursor: hand;
+}
+
+.combo-box .list-cell {
+    -fx-text-fill: #333333;
+    -fx-padding: 3 0 3 7;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: white;
+    -fx-border-color: #dddddd;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0, 0, 2);
+}
+
+.combo-box-popup .list-view .list-cell {
+    -fx-padding: 6 10;
+    -fx-background-color: white;
+}
+
+.combo-box-popup .list-view .list-cell:filled:selected, 
+.combo-box-popup .list-view .list-cell:filled:selected:hover {
+    -fx-background-color: #0066cc;
+    -fx-text-fill: white;
+}
+
+.combo-box-popup .list-view .list-cell:filled:hover {
+    -fx-background-color: #f0f7ff;
+}
+
+.combo-box > .cell {
+    -fx-alignment: center-left;
 } 

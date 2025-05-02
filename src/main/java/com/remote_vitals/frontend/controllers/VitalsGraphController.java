@@ -12,11 +12,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.application.Platform;
 
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 /**
@@ -54,9 +53,26 @@ public class VitalsGraphController extends BaseController {
     
     @FXML
     private Label patientIdLabel;
+
+    // Arrays to store vital types and their normal ranges
+    private final String[] vitalTypes = {
+        "Heart Rate (BPM)",
+        "Blood Pressure - Systolic (mmHg)",
+        "Blood Pressure - Diastolic (mmHg)",
+        "Temperature (°C)",
+        "Respiratory Rate (breaths/min)",
+        "Oxygen Saturation (%)"
+    };
     
-    // Map to store different vital types and their normal ranges
-    private Map<String, double[]> vitalRanges = new HashMap<>();
+    // Parallel array for normal ranges [min, max]
+    private final double[][] vitalRanges = {
+        {60, 100},              // Heart Rate
+        {90, 120},              // Blood Pressure - Systolic
+        {60, 80},               // Blood Pressure - Diastolic
+        {36.1, 37.2},           // Temperature
+        {12, 20},               // Respiratory Rate
+        {95, 100}               // Oxygen Saturation
+    };
     
     private String currentPatientId = "P12345"; // For demo purposes
     private String currentPatientName = "John Doe"; // For demo purposes
@@ -71,17 +87,66 @@ public class VitalsGraphController extends BaseController {
         patientNameLabel.setText(currentPatientName);
         patientIdLabel.setText("ID: " + currentPatientId);
         
-        // Initialize vital types and their normal ranges [min, max]
-        vitalRanges.put("Heart Rate (BPM)", new double[]{60, 100});
-        vitalRanges.put("Blood Pressure - Systolic (mmHg)", new double[]{90, 120});
-        vitalRanges.put("Blood Pressure - Diastolic (mmHg)", new double[]{60, 80});
-        vitalRanges.put("Temperature (°C)", new double[]{36.1, 37.2});
-        vitalRanges.put("Respiratory Rate (breaths/min)", new double[]{12, 20});
-        vitalRanges.put("Oxygen Saturation (%)", new double[]{95, 100});
+        // Print vital types for debugging
+        System.out.println("Vital types in array format:");
+        for (int i = 0; i < vitalTypes.length; i++) {
+            System.out.println(i + ": " + vitalTypes[i] + ", Range: " + Arrays.toString(vitalRanges[i]));
+        }
         
-        // Initialize vital type dropdown
-        vitalTypeComboBox.setItems(FXCollections.observableArrayList(vitalRanges.keySet()));
-        vitalTypeComboBox.setValue("Heart Rate (BPM)");
+        // Create observable list directly from array
+        final ObservableList<String> vitalTypesList = FXCollections.observableArrayList(vitalTypes);
+        System.out.println("Observable list created with " + vitalTypesList.size() + " items");
+        
+        try {
+            // Set items directly on the ComboBox
+            vitalTypeComboBox.getItems().clear();
+            vitalTypeComboBox.getItems().addAll(vitalTypesList);
+            System.out.println("Direct items add completed. ComboBox has " + vitalTypeComboBox.getItems().size() + " items");
+            
+            // Force a default selection
+            if (!vitalTypesList.isEmpty()) {
+                vitalTypeComboBox.setValue(vitalTypesList.get(0));
+                System.out.println("Default value set to: " + vitalTypeComboBox.getValue());
+            }
+        } catch (Exception e) {
+            System.err.println("Error setting ComboBox items: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        // Also use Platform.runLater as a backup approach
+        Platform.runLater(() -> {
+            try {
+                // Double-check if items were already set
+                if (vitalTypeComboBox.getItems().isEmpty()) {
+                    vitalTypeComboBox.setItems(vitalTypesList);
+                }
+                
+                // Force selection again if needed
+                if (vitalTypeComboBox.getValue() == null) {
+                    vitalTypeComboBox.getSelectionModel().selectFirst();
+                }
+                
+                System.out.println("Platform.runLater completed. ComboBox has " + 
+                    vitalTypeComboBox.getItems().size() + " items, selected: " + 
+                    vitalTypeComboBox.getValue());
+            } catch (Exception e) {
+                System.err.println("Error in Platform.runLater: " + e.getMessage());
+                e.printStackTrace();
+            }
+        });
+        
+        // Add listener for debugging dropdown issues
+        vitalTypeComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("Vital type changed from: " + oldValue + " to: " + newValue);
+            if (newValue != null) {
+                updateYAxisForVitalType(newValue);
+                updateChart();
+            }
+        });
+        
+        // Ensure ComboBox is properly configured
+        vitalTypeComboBox.setVisible(true);
+        vitalTypeComboBox.setDisable(false);
         
         // Initialize date pickers
         LocalDate now = LocalDate.now();
@@ -93,6 +158,35 @@ public class VitalsGraphController extends BaseController {
         
         // Initial data load
         updateChart();
+    }
+    
+    /**
+     * Gets the index of a vital type in the array
+     * 
+     * @param vitalType The vital type to find
+     * @return The index in the array, or -1 if not found
+     */
+    private int getVitalTypeIndex(String vitalType) {
+        for (int i = 0; i < vitalTypes.length; i++) {
+            if (vitalTypes[i].equals(vitalType)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    
+    /**
+     * Gets the normal range for a vital type
+     * 
+     * @param vitalType The vital type
+     * @return The normal range as [min, max], or null if not found
+     */
+    private double[] getRangeForVitalType(String vitalType) {
+        int index = getVitalTypeIndex(vitalType);
+        if (index >= 0) {
+            return vitalRanges[index];
+        }
+        return null;
     }
     
     /**
@@ -109,7 +203,26 @@ public class VitalsGraphController extends BaseController {
         xAxis.setTickMarkVisible(true);
         
         // Configure y-axis based on selected vital type
-        updateYAxisForVitalType(vitalTypeComboBox.getValue());
+        String currentVitalType = vitalTypeComboBox.getValue();
+        
+        // Check if vital type is null and try to recover
+        if (currentVitalType == null) {
+            System.out.println("Warning: No vital type selected during chart configuration");
+            
+            // Try to set a default value if we have items
+            if (!vitalTypeComboBox.getItems().isEmpty()) {
+                currentVitalType = vitalTypeComboBox.getItems().get(0);
+                vitalTypeComboBox.setValue(currentVitalType);
+                System.out.println("Set default vital type to: " + currentVitalType);
+            } else {
+                // If no items available, use a default label
+                yAxis.setLabel("Value");
+                yAxis.setAutoRanging(true);
+                return;
+            }
+        }
+        
+        updateYAxisForVitalType(currentVitalType);
     }
     
     /**
@@ -118,10 +231,17 @@ public class VitalsGraphController extends BaseController {
      * @param vitalType The selected vital type
      */
     private void updateYAxisForVitalType(String vitalType) {
+        if (vitalType == null) {
+            System.out.println("Warning: Attempted to update y-axis with null vital type");
+            yAxis.setLabel("Value");
+            yAxis.setAutoRanging(true);
+            return;
+        }
+        
         yAxis.setLabel(vitalType);
         
         // Set y-axis range based on vital type
-        double[] range = vitalRanges.get(vitalType);
+        double[] range = getRangeForVitalType(vitalType);
         if (range != null) {
             // Add some padding to the min/max
             double padding = (range[1] - range[0]) * 0.2;
@@ -142,8 +262,20 @@ public class VitalsGraphController extends BaseController {
         LocalDate startDate = startDatePicker.getValue();
         LocalDate endDate = endDatePicker.getValue();
         
+        System.out.println("updateChart called with vitalType: " + vitalType);
+        
         if (vitalType == null || startDate == null || endDate == null) {
-            return;
+            System.out.println("Cannot update chart - null values: vitalType=" + vitalType + 
+                               ", startDate=" + startDate + ", endDate=" + endDate);
+            
+            // Try to recover if possible
+            if (vitalType == null && !vitalTypeComboBox.getItems().isEmpty()) {
+                vitalType = vitalTypeComboBox.getItems().get(0);
+                vitalTypeComboBox.setValue(vitalType);
+                System.out.println("Recovered vitalType to: " + vitalType);
+            } else {
+                return; // Cannot proceed with null values
+            }
         }
         
         if (endDate.isBefore(startDate)) {
@@ -163,7 +295,15 @@ public class VitalsGraphController extends BaseController {
         series.setName(vitalType);
         
         // For demo purposes, generate random data within the normal range for the selected vital type
-        double[] range = vitalRanges.get(vitalType);
+        double[] range = getRangeForVitalType(vitalType);
+        
+        // Check if range is available
+        if (range == null) {
+            System.err.println("No range found for vital type: " + vitalType);
+            // Use default range if missing
+            range = new double[]{0, 100};
+        }
+        
         Random random = new Random();
         
         // Calculate days between dates
@@ -219,7 +359,7 @@ public class VitalsGraphController extends BaseController {
         vitalsChart.getData().clear();
         
         // Select the vital type in the combo box if it exists
-        if (vitalRanges.containsKey(vitalType)) {
+        if (getVitalTypeIndex(vitalType) >= 0) {
             vitalTypeComboBox.setValue(vitalType);
             updateYAxisForVitalType(vitalType);
         }

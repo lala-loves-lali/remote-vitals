@@ -88,4 +88,26 @@ public class ScheduleAppointmentController extends BaseController {
     private void handleBack(ActionEvent event) {
         navigateTo(event, ScreenPaths.PATIENT_DASHBOARD, ScreenPaths.TITLE_PATIENT_DASHBOARD);
     }
+    
+    /**
+     * Handles the upload vitals button click event.
+     * Navigates to the view vitals screen.
+     * 
+     * @param event The action event
+     */
+    @FXML
+    private void handleUploadVitals(ActionEvent event) {
+        navigateTo(event, ScreenPaths.VIEW_VITALS, ScreenPaths.TITLE_VIEW_VITALS);
+    }
+    
+    /**
+     * Handles the logout button click event.
+     * Navigates back to the login screen.
+     * 
+     * @param event The action event
+     */
+    @FXML
+    private void handleLogout(ActionEvent event) {
+        navigateTo(event, ScreenPaths.LOGIN_PAGE, ScreenPaths.TITLE_LOGIN);
+    }
 } 
