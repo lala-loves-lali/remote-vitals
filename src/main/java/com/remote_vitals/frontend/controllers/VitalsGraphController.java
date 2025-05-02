@@ -238,6 +238,76 @@ public class VitalsGraphController extends BaseController {
     }
     
     /**
+     * Sets multiple vital data arrays to be displayed as multiple series on a line chart.
+     * This method can be called from other controllers to set multiple data series.
+     * 
+     * @param vitalDataArrays 2D array where each row is a separate vital data array
+     * @param vitalTypes Array of vital types corresponding to each data array
+     * @param patientName Name of the patient whose data is being displayed
+     * @param patientId ID of the patient whose data is being displayed
+     */
+    public void setMultipleVitalData(double[][] vitalDataArrays, String[] vitalTypes, String patientName, String patientId) {
+        if (vitalDataArrays == null || vitalTypes == null || 
+            vitalDataArrays.length == 0 || vitalTypes.length == 0 ||
+            vitalDataArrays.length != vitalTypes.length) {
+            showErrorAlert("Data Error", "Invalid Vital Data", 
+                    "The vital data arrays and types must have the same length.");
+            return;
+        }
+        
+        // Update patient info
+        if (patientName != null && !patientName.isEmpty()) {
+            patientNameLabel.setText(patientName);
+            currentPatientName = patientName;
+        }
+        
+        if (patientId != null && !patientId.isEmpty()) {
+            patientIdLabel.setText("ID: " + patientId);
+            currentPatientId = patientId;
+        }
+        
+        // Clear previous data
+        vitalsChart.getData().clear();
+        
+        // Configure chart for multiple series
+        vitalsChart.setTitle("Multiple Vital Signs Comparison");
+        
+        // Set y-axis to auto-ranging for multiple series
+        yAxis.setAutoRanging(true);
+        yAxis.setLabel("Value");
+        
+        // Add each data series to the chart
+        for (int i = 0; i < vitalDataArrays.length; i++) {
+            XYChart.Series<Number, Number> series = new XYChart.Series<>();
+            series.setName(vitalTypes[i]);
+            
+            for (int j = 0; j < vitalDataArrays[i].length; j++) {
+                series.getData().add(new XYChart.Data<>(j, vitalDataArrays[i][j]));
+            }
+            
+            vitalsChart.getData().add(series);
+        }
+    }
+    
+    /**
+     * Updates the patient information on the chart.
+     * 
+     * @param patientName Name of the patient
+     * @param patientId ID of the patient
+     */
+    public void setPatientInfo(String patientName, String patientId) {
+        if (patientName != null && !patientName.isEmpty()) {
+            patientNameLabel.setText(patientName);
+            currentPatientName = patientName;
+        }
+        
+        if (patientId != null && !patientId.isEmpty()) {
+            patientIdLabel.setText("ID: " + patientId);
+            currentPatientId = patientId;
+        }
+    }
+    
+    /**
      * Handles the back button click event.
      * Navigates back to the patient dashboard.
      * 

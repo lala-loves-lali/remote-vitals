@@ -24,13 +24,15 @@ public class JavaFXApplication extends Application {
     
     @Override
     public void start(Stage stage) throws IOException {
-        // You can switch between these options for testing:
+        // Start with dashboard selector for easier testing and navigation
+        loadScreen(stage, ScreenPaths.DASHBOARD_SELECTOR, ScreenPaths.TITLE_DASHBOARD_SELECTOR);
         
-        // Option 1: Start with login screen (for production)
+        // Other options:
+        // - Start with login screen (for production)
         // loadScreen(stage, ScreenPaths.LOGIN_PAGE, ScreenPaths.TITLE_LOGIN);
         
-        // Option 2: Start with dashboard selector (for testing)
-        loadScreen(stage, ScreenPaths.DASHBOARD_SELECTOR, ScreenPaths.TITLE_DASHBOARD_SELECTOR);
+        // - Start directly with a specific dashboard
+        // loadScreen(stage, ScreenPaths.PATIENT_DASHBOARD, ScreenPaths.TITLE_PATIENT_DASHBOARD);
     }
     
     /**

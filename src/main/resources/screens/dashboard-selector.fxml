@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="600.0" prefWidth="800.0" stylesheets="@application.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.remote_vitals.frontend.controllers.DashboardSelectorController">
+   <top>
+      <HBox alignment="CENTER" styleClass="header-container" BorderPane.alignment="CENTER">
+         <children>
+            <Label styleClass="header-label" text="Dashboard Selection Tool">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Label>
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+      </HBox>
+   </top>
+   <center>
+      <VBox alignment="CENTER" spacing="20.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Choose a dashboard or screen to navigate to:">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+            <HBox alignment="CENTER" spacing="30.0">
+               <children>
+                  <VBox alignment="CENTER" spacing="15.0" styleClass="card">
+                     <children>
+                        <Label styleClass="card-title" text="Dashboards">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                        <Button fx:id="patientDashboardButton" mnemonicParsing="false" onAction="#handlePatientDashboard" prefWidth="200.0" styleClass="primary-button" text="Patient Dashboard" />
+                        <Button fx:id="doctorDashboardButton" mnemonicParsing="false" onAction="#handleDoctorDashboard" prefWidth="200.0" styleClass="primary-button" text="Doctor Dashboard" />
+                        <Button fx:id="adminDashboardButton" mnemonicParsing="false" onAction="#handleAdminDashboard" prefWidth="200.0" styleClass="primary-button" text="Admin Dashboard" />
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding>
+                  </VBox>
+                  <VBox alignment="CENTER" spacing="15.0" styleClass="card">
+                     <children>
+                        <Label styleClass="card-title" text="Profile Pages">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                        <Button mnemonicParsing="false" onAction="#handlePatientProfile" prefWidth="200.0" styleClass="secondary-button" text="Patient Profile" />
+                        <Button mnemonicParsing="false" onAction="#handleDoctorProfile" prefWidth="200.0" styleClass="secondary-button" text="Doctor Profile" />
+                        <Button mnemonicParsing="false" onAction="#handleAdminProfile" prefWidth="200.0" styleClass="secondary-button" text="Admin Profile" />
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" spacing="30.0">
+               <children>
+                  <VBox alignment="CENTER" spacing="15.0" styleClass="card">
+                     <children>
+                        <Label styleClass="card-title" text="Features">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                        <Button mnemonicParsing="false" onAction="#handleVitalsGraph" prefWidth="200.0" styleClass="feature-button" text="Vitals Visualization" />
+                        <Button mnemonicParsing="false" onAction="#handleScheduleAppointment" prefWidth="200.0" styleClass="feature-button" text="Schedule Appointment" />
+                        <Button mnemonicParsing="false" onAction="#handleUploadVitals" prefWidth="200.0" styleClass="feature-button" text="Upload Vitals Data" />
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding>
+                  </VBox>
+                  <VBox alignment="CENTER" spacing="15.0" styleClass="card">
+                     <children>
+                        <Label styleClass="card-title" text="System">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                        <Button fx:id="loginButton" mnemonicParsing="false" onAction="#handleLogin" prefWidth="200.0" styleClass="system-button" text="Login Page" />
+                        <Button mnemonicParsing="false" onAction="#handleSignup" prefWidth="200.0" styleClass="system-button" text="Signup Page" />
+                        <Button mnemonicParsing="false" onAction="#handleExit" prefWidth="200.0" styleClass="danger-button" text="Exit Application" />
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+      </VBox>
+   </center>
+</BorderPane> 
