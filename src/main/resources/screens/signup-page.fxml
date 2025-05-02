@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="600.0" prefWidth="900.0" stylesheets="@application.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane prefHeight="600.0" prefWidth="900.0" stylesheets="@application.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.remote_vitals.frontend.controllers.SignupController">
    <center>
       <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
@@ -34,15 +34,15 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <ChoiceBox fx:id="choicebox_type" maxWidth="1.7976931348623157E308" />
-                              <TextField fx:id="sup_email" promptText="Email" styleClass="text-field">
+                              <ChoiceBox fx:id="user_type_dropdown" maxWidth="1.7976931348623157E308" />
+                              <TextField fx:id="email_input" promptText="Email" styleClass="text-field">
                                  <VBox.margin>
                                     <Insets top="10.0" />
                                  </VBox.margin>
                               </TextField>
-                              <PasswordField fx:id="sup_pass" promptText="Password" styleClass="text-field" />
-                              <PasswordField fx:id="sup_rpass" promptText="Repeat password" styleClass="text-field" />
-                              <Button fx:id="signup_button" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="primary-button" text="SIGN UP">
+                              <PasswordField fx:id="password_input" promptText="Password" styleClass="text-field" />
+                              <PasswordField fx:id="confirm_password_input" promptText="Repeat password" styleClass="text-field" />
+                              <Button fx:id="signup_button" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleSignup" styleClass="primary-button" text="SIGN UP">
                                  <VBox.margin>
                                     <Insets top="15.0" />
                                  </VBox.margin>
@@ -50,7 +50,7 @@
                                     <Insets bottom="12.0" left="16.0" right="16.0" top="12.0" />
                                  </padding>
                               </Button>
-                              <Button fx:id="back_to_login" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="secondary-button" text="BACK TO LOGIN">
+                              <Button fx:id="back_button" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleBack" styleClass="secondary-button" text="BACK TO LOGIN">
                                  <padding>
                                     <Insets bottom="12.0" left="16.0" right="16.0" top="12.0" />
                                  </padding>

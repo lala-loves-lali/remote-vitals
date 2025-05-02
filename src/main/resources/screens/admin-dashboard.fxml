@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane xmlns="http://javafx.com/javafx/24" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.remote_vitals.AdminDashboardController">
+<BorderPane xmlns="http://javafx.com/javafx/24" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.remote_vitals.frontend.controllers.AdminDashboardController">
     <top>
         <VBox spacing="10">
             <children>
@@ -35,10 +35,10 @@
             </padding>
             <children>
                 <Button fx:id="dashboardButton" onAction="#handleDashboard" text="Dashboard" maxWidth="Infinity" styleClass="menu-button" />
-                <Button fx:id="patientsButton" onAction="#handlePatients" text="Patients" maxWidth="Infinity" styleClass="menu-button" />
-                <Button fx:id="doctorsButton" onAction="#handleDoctors" text="Doctors" maxWidth="Infinity" styleClass="menu-button" />
+                <Button fx:id="patientsButton" onAction="#handleManageUsers" text="Manage Users" maxWidth="Infinity" styleClass="menu-button" />
+                <Button fx:id="doctorsButton" onAction="#handleViewSystemLogs" text="System Logs" maxWidth="Infinity" styleClass="menu-button" />
                 <Button fx:id="reportsButton" onAction="#handleReports" text="Reports" maxWidth="Infinity" styleClass="menu-button" />
-                <Button fx:id="settingsButton" onAction="#handleSettings" text="Settings" maxWidth="Infinity" styleClass="menu-button" />
+                <Button fx:id="settingsButton" onAction="#handleSystemSettings" text="Settings" maxWidth="Infinity" styleClass="menu-button" />
             </children>
         </VBox>
     </left>
