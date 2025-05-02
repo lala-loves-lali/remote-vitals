@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Separator?>
+
+<BorderPane prefHeight="700.0" prefWidth="1200.0" stylesheets="@application.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.remote_vitals.frontend.controllers.ViewVitalsController">
+   <center>
+      <VBox prefHeight="700.0" prefWidth="900.0" BorderPane.alignment="CENTER">
+         <children>
+            <HBox alignment="CENTER_LEFT" prefHeight="80.0" prefWidth="900.0" style="-fx-background-color: white;">
+               <children>
+                  <Label styleClass="page-title" text="My Vitals" textFill="#333333">
+                     <font>
+                        <Font name="System Bold" size="24.0" />
+                     </font>
+                  </Label>
+                  <HBox alignment="CENTER_RIGHT" prefHeight="80.0" prefWidth="900.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Button fx:id="uploadVitalsButton" mnemonicParsing="false" onAction="#handleUploadVitals" styleClass="primary-button" text="Upload Vitals" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <padding>
+                              <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+                           </padding>
+                        </Button>
+                     </children>
+                     <padding>
+                        <Insets right="20.0" />
+                     </padding>
+                  </HBox>
+               </children>
+               <padding>
+                  <Insets left="40.0" />
+               </padding>
+            </HBox>
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="620.0" prefWidth="900.0" style="-fx-background: transparent; -fx-background-color: transparent;" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
+               <content>
+                  <VBox prefWidth="900.0" spacing="20.0" style="-fx-background-color: #f8f8f8;">
+                     <children>
+                        <!-- Latest Vitals Summary Section -->
+                        <VBox prefWidth="880.0" styleClass="card">
+                           <children>
+                              <Label styleClass="section-title" text="Latest Vitals" textFill="#333333">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" />
+                                 </VBox.margin>
+                              </Label>
+                              
+                              <GridPane hgap="20" vgap="15">
+                                 <children>
+                                    <!-- Heart Rate -->
+                                    <VBox styleClass="vital-card" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                       <children>
+                                          <Label styleClass="vital-label" text="Heart Rate">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label styleClass="vital-value" fx:id="heartRateLabel" text="72">
+                                             <font>
+                                                <Font name="System Bold" size="24.0" />
+                                             </font>
+                                          </Label>
+                                          <Label styleClass="vital-unit" text="bpm">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="10.0" left="15.0" right="15.0" top="10.0" />
+                                       </padding>
+                                    </VBox>
+                                    
+                                    <!-- Oxygen Level -->
+                                    <VBox styleClass="vital-card" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                       <children>
+                                          <Label styleClass="vital-label" text="Oxygen Saturation">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label styleClass="vital-value" fx:id="oxygenLabel" text="98">
+                                             <font>
+                                                <Font name="System Bold" size="24.0" />
+                                             </font>
+                                          </Label>
+                                          <Label styleClass="vital-unit" text="percent">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="10.0" left="15.0" right="15.0" top="10.0" />
+                                       </padding>
+                                    </VBox>
+                                    
+                                    <!-- Temperature -->
+                                    <VBox styleClass="vital-card" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                                       <children>
+                                          <Label styleClass="vital-label" text="Temperature">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label styleClass="vital-value" fx:id="temperatureLabel" text="37.1">
+                                             <font>
+                                                <Font name="System Bold" size="24.0" />
+                                             </font>
+                                          </Label>
+                                          <Label styleClass="vital-unit" text="°C">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="10.0" left="15.0" right="15.0" top="10.0" />
+                                       </padding>
+                                    </VBox>
+                                    
+                                    <!-- Blood Pressure -->
+                                    <VBox styleClass="vital-card" GridPane.columnIndex="3" GridPane.rowIndex="0">
+                                       <children>
+                                          <Label styleClass="vital-label" text="Blood Pressure">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label styleClass="vital-value" fx:id="bloodPressureLabel" text="120/80">
+                                             <font>
+                                                <Font name="System Bold" size="24.0" />
+                                             </font>
+                                          </Label>
+                                          <Label styleClass="vital-unit" text="mmHg">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="10.0" left="15.0" right="15.0" top="10.0" />
+                                       </padding>
+                                    </VBox>
+                                 </children>
+                                 <columnConstraints>
+                                    <javafx.scene.layout.ColumnConstraints hgrow="SOMETIMES" minWidth="100.0" prefWidth="200.0" />
+                                    <javafx.scene.layout.ColumnConstraints hgrow="SOMETIMES" minWidth="100.0" prefWidth="200.0" />
+                                    <javafx.scene.layout.ColumnConstraints hgrow="SOMETIMES" minWidth="100.0" prefWidth="200.0" />
+                                    <javafx.scene.layout.ColumnConstraints hgrow="SOMETIMES" minWidth="100.0" prefWidth="200.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <javafx.scene.layout.RowConstraints minHeight="100.0" prefHeight="120.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" top="10.0" />
+                                 </VBox.margin>
+                              </GridPane>
+                              
+                              <Label styleClass="updated-label" fx:id="lastUpdatedLabel" text="Last updated: ">
+                                 <VBox.margin>
+                                    <Insets top="10.0" />
+                                 </VBox.margin>
+                              </Label>
+                           </children>
+                           <padding>
+                              <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                           </padding>
+                           <VBox.margin>
+                              <Insets bottom="20.0" />
+                           </VBox.margin>
+                        </VBox>
+                        
+                        <!-- Vitals History Section -->
+                        <VBox prefWidth="880.0" styleClass="card">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                 <children>
+                                    <Label styleClass="section-title" text="Vitals History" textFill="#333333">
+                                       <font>
+                                          <Font name="System Bold" size="18.0" />
+                                       </font>
+                                    </Label>
+                                    <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <Button fx:id="viewGraphsButton" mnemonicParsing="false" onAction="#handleViewGraphs" styleClass="secondary-button" text="View Graphs">
+                                             <padding>
+                                                <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
+                                             </padding>
+                                          </Button>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets bottom="15.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              
+                              <Separator />
+                              
+                              <!-- This would be replaced with a TableView in a real implementation -->
+                              <Label fx:id="noDataLabel" text="No historical vitals data available." textFill="#666666">
+                                 <VBox.margin>
+                                    <Insets top="20.0" />
+                                 </VBox.margin>
+                                 <font>
+                                    <Font style="italic" size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                           <padding>
+                              <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                           </padding>
+                        </VBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </ScrollPane>
+         </children>
+      </VBox>
+   </center>
+   <left>
+      <VBox prefHeight="700.0" prefWidth="300.0" style="-fx-background-color: #f0f0f0;" BorderPane.alignment="CENTER">
+         <children>
+            <HBox alignment="CENTER_LEFT" prefHeight="80.0" prefWidth="300.0" spacing="10.0">
+               <children>
+                  <Label styleClass="logo-label" text="RPMS" textFill="#0066cc">
+                     <font>
+                        <Font name="System Bold" size="24.0" />
+                     </font>
+                  </Label>
+               </children>
+               <padding>
+                  <Insets left="20.0" />
+               </padding>
+            </HBox>
+            <VBox prefHeight="500.0" prefWidth="300.0" spacing="10.0">
+               <children>
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button" text="Dashboard" onAction="#handleDashboard">
+                     <padding>
+                        <Insets left="20.0" />
+                     </padding>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button" text="My Profile" onAction="#handleProfile">
+                     <padding>
+                        <Insets left="20.0" />
+                     </padding>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button" text="My Doctors">
+                     <padding>
+                        <Insets left="20.0" />
+                     </padding>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button-active" text="Vitals">
+                     <padding>
+                        <Insets left="20.0" />
+                     </padding>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button" text="Appointments" onAction="#handleAppointments">
+                     <padding>
+                        <Insets left="20.0" />
+                     </padding>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+               </children>
+               <padding>
+                  <Insets top="20.0" />
+               </padding>
+            </VBox>
+            <VBox alignment="BOTTOM_LEFT" prefHeight="120.0" prefWidth="300.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="300.0" spacing="15.0">
+                     <children>
+                        <Label fx:id="id_label" text="PID" textFill="#333333">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                        <VBox prefHeight="60.0" prefWidth="180.0">
+                           <children>
+                              <Label fx:id="name_label" text="Patient Name" textFill="#333333">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label text="Patient" textFill="#666666">
+                                 <font>
+                                    <Font size="12.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                     </children>
+                     <padding>
+                        <Insets left="20.0" />
+                     </padding>
+                  </HBox>
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="logout-button" text="Logout" onAction="#handleLogout">
+                     <padding>
+                        <Insets left="20.0" />
+                     </padding>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+   </left>
+</BorderPane> 

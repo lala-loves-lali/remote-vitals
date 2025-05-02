@@ -2,14 +2,42 @@ package com.remote_vitals.frontend.controllers;
 
 import com.remote_vitals.frontend.utils.NavigationUtil;
 import javafx.event.ActionEvent;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 /**
  * Base controller class that provides common functionality for all controllers.
  * This class handles common operations like navigation and manages stage access.
  */
-public abstract class BaseController {
+public abstract class BaseController implements Initializable {
+    
+    /**
+     * Default implementation of the initialize method.
+     * Child controllers should override this method and call super.initialize() first.
+     * 
+     * @param location The location used to resolve relative paths for the root object
+     * @param resources The resources used to localize the root object
+     */
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Base initialization, can be overridden by subclasses
+    }
+    
+    /**
+     * Enables responsive behavior for the current scene.
+     * Should be called after the scene is fully loaded, typically in a controller method
+     * that's invoked after navigation, such as a custom "onSceneLoaded" method.
+     */
+    protected void setupResponsiveScene(Scene scene) {
+        if (scene != null && scene.getRoot() != null) {
+            NavigationUtil.makeResponsive(scene.getRoot(), scene);
+        }
+    }
     
     /**
      * Gets the current stage from an event's source.

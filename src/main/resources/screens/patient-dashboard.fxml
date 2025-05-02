@@ -28,7 +28,7 @@
             </HBox>
             <VBox prefHeight="500.0" prefWidth="300.0" spacing="10.0">
                <children>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button" text="Dashboard">
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button" text="Dashboard" onAction="#handleDashboardSelector">
                      <padding>
                         <Insets left="20.0" />
                      </padding>
@@ -36,7 +36,7 @@
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button" text="My Profile">
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button" text="My Profile" onAction="#handleProfile">
                      <padding>
                         <Insets left="20.0" />
                      </padding>

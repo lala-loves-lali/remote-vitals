@@ -16,20 +16,32 @@
    <center>
       <VBox alignment="TOP_CENTER" prefWidth="800.0" spacing="30.0" styleClass="content-area">
          <children>
-            <VBox spacing="10.0">
+            <HBox alignment="CENTER_LEFT" spacing="15.0">
                <children>
-                  <Label styleClass="page-title" text="Upload Vitals Data">
-                     <font>
-                        <Font name="System Bold" size="28.0" />
-                     </font>
-                  </Label>
-                  <Label styleClass="page-subtitle" text="Upload your health data in CSV format. The file should include heart rate, oxygen level, temperature, and blood pressure readings." textFill="#666666">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
+                  <Button fx:id="backButton" mnemonicParsing="false" onAction="#handleBack" styleClass="back-button" text="Back">
+                     <padding>
+                        <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
+                     </padding>
+                  </Button>
+                  <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label styleClass="page-title" text="Upload Vitals Data">
+                           <font>
+                              <Font name="System Bold" size="28.0" />
+                           </font>
+                        </Label>
+                        <Label styleClass="page-subtitle" text="Upload your health data in CSV format. The file should include heart rate, oxygen level, temperature, and blood pressure readings." textFill="#666666">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
                </children>
-            </VBox>
+               <VBox.margin>
+                  <Insets bottom="20.0" />
+               </VBox.margin>
+            </HBox>
             
             <StackPane prefHeight="300.0" prefWidth="700.0" styleClass="drop-zone">
                <children>

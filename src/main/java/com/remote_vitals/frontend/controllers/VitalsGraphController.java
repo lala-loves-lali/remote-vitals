@@ -309,12 +309,12 @@ public class VitalsGraphController extends BaseController {
     
     /**
      * Handles the back button click event.
-     * Navigates back to the patient dashboard.
+     * Navigates back to the view vitals screen.
      * 
      * @param event The action event
      */
     @FXML
     private void handleBack(ActionEvent event) {
-        navigateTo(event, ScreenPaths.PATIENT_DASHBOARD, ScreenPaths.TITLE_PATIENT_DASHBOARD);
+        navigateTo(event, ScreenPaths.VIEW_VITALS, ScreenPaths.TITLE_VIEW_VITALS);
     }
 } 

@@ -80,7 +80,7 @@ public class PatientDashboardController extends BaseController {
      */
     @FXML
     private void handleUploadVitals(ActionEvent event) {
-        navigateTo(event, ScreenPaths.UPLOAD_VITALS_DATA, ScreenPaths.TITLE_UPLOAD_VITALS);
+        navigateTo(event, ScreenPaths.VIEW_VITALS, ScreenPaths.TITLE_VIEW_VITALS);
     }
     
     /**
