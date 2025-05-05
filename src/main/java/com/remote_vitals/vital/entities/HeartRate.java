@@ -39,7 +39,7 @@ public class HeartRate extends VitalRecord {
     }
 
     /******************* Constructors *******************/
-    public HeartRate(Long id, float value) {
+    public HeartRate(Integer id, float value) {
         super(id);
         setValue(value);
     }

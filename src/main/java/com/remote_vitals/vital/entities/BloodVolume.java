@@ -39,7 +39,7 @@ public class BloodVolume extends VitalRecord {
     }
 
     /******************* Constructors *******************/
-    public BloodVolume(Long id, float value) {
+    public BloodVolume(Integer id, float value) {
         super(id);
         setValue(value);
     }

@@ -39,7 +39,7 @@ public class BodyTemperature extends VitalRecord {
     }
 
     /******************* Constructors *******************/
-    public BodyTemperature(Long id, float value) {
+    public BodyTemperature(Integer id, float value) {
         super(id);
         setValue(value);
     }

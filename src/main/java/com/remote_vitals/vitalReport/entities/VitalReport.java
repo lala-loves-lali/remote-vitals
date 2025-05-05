@@ -6,6 +6,7 @@ import com.remote_vitals.vital.entities.VitalRecord;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 // lombok annotations
@@ -28,11 +29,13 @@ public class VitalReport {
             pkColumnValue = "vital_report",
             allocationSize = 10
     )
-    private Long id;
+    private Integer id;
+    @Column(name = "report_when_made",nullable = false)
+    private LocalDateTime reportWhenMade;
     /******************* Relationships *******************/
     @OneToMany(mappedBy = "vitalReport")
     List<VitalRecord> vitalRecords;
-    @ManyToOne(cascade = CascadeType.PERSIST,optional = false,fetch = FetchType.EAGER)
-    @JoinColumn(name = "patient_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "patient_id")
     private Patient patient;
 }

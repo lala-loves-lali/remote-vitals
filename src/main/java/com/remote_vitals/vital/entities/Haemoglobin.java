@@ -39,7 +39,7 @@ public class Haemoglobin extends VitalRecord {
     }
 
     /******************* Constructors *******************/
-    public Haemoglobin(Long id, float value) {
+    public Haemoglobin(Integer id, float value) {
         super(id);
         setValue(value);
     }

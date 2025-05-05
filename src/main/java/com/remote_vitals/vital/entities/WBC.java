@@ -39,7 +39,7 @@ public class WBC extends VitalRecord {
     }
 
     /******************* Constructors *******************/
-    public WBC(Long id, float value) {
+    public WBC(Integer id, float value) {
         super(id);
         setValue(value);
     }

@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 @Data
 @NoArgsConstructor
@@ -26,13 +25,13 @@ public class Qualification {
             pkColumnValue = "qualification",
             allocationSize = 10
     )
-    private Long id;
+    private Integer id;
     @Column(nullable = false)
     private String label;
     @Column(columnDefinition = "text", nullable = false)
     private String description;
     // Relationships
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST,optional = false)
-    @JoinColumn(name = "doctor_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "doctor_id")
     private Doctor doctor;
 }

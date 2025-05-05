@@ -1,9 +1,9 @@
 package com.remote_vitals.chat.repositories;
 
-import com.remote_vitals.chat.entities.Message;
+import com.remote_vitals.chat.entities.ChatRoom;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface MessageRepository extends JpaRepository<Message, Integer> {
+public interface ChatRoomRepository extends JpaRepository<ChatRoom, Integer> {
 }

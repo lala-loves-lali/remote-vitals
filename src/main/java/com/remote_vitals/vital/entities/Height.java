@@ -42,7 +42,7 @@ public class Height extends VitalRecord {
         }
     }
     /******************* Constructors *******************/
-    public Height(Long id,float value){
+    public Height(Integer id,float value){
         super(id);
         setValue(value);
     }

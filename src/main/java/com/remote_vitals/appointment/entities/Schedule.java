@@ -38,6 +38,6 @@ public class Schedule {
     private LocalDateTime endingTime;
 
     // Relationships
-    @OneToMany(mappedBy = "schedule")
-    private List<Appointment> appointments;
+    @OneToOne(mappedBy = "schedule")
+    private Appointment appointment;
 }

@@ -32,36 +32,16 @@ public class Appointment {
     @Enumerated(EnumType.STRING)
     private AppointmentStatus status;
     // Relationships
-    @ManyToOne(
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.PERSIST,
-            optional = false
-    )
-    @JoinColumn(
-            name = "patient_id",
-            nullable = false,
-            updatable = false
-    )
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "patient_id")
     private Patient patient;
-    @ManyToOne(
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.PERSIST,
-            optional = false
-    )
-    @JoinColumn(
-            name = "doctor_id",
-            nullable = false,
-            updatable = false
-    )
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "doctor_id")
     private Doctor doctor;
 
-    @ManyToOne(
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.PERSIST
-    )
-    @JoinColumn(
-            name = "schedule_id"
-    )
+    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "schedule_id")
     private Schedule schedule;
 
     @OneToOne(mappedBy = "appointment")

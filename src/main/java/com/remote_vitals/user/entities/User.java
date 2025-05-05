@@ -4,7 +4,6 @@ import com.remote_vitals.user.enums.Gender;
 import com.remote_vitals.user.enums.Visibility;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,7 +31,7 @@ public class User {
             pkColumnValue = "user",
             allocationSize = 10
     )
-    private Long id;
+    private Integer id;
 
     private String profilePhoto; // address of photo
 
@@ -60,4 +59,5 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+
 }

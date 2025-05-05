@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,8 +29,12 @@ public class ChatRoom {
             allocationSize = 10
     )
     private Integer id;
+    private LocalDateTime timeCreated;
     // Relationships
-    @OneToOne(cascade = CascadeType.PERSIST, optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "appointment_id", unique = true, nullable = false)
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "appointment_id")
     private Appointment appointment;
+
+    @OneToMany(mappedBy = "chatRoom")
+    private List<Message> messages;
 }

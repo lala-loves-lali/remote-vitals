@@ -39,7 +39,7 @@ public class BloodPressureDiastolic extends VitalRecord {
     }
 
     /******************* Constructors *******************/
-    public BloodPressureDiastolic(Long id, float value) {
+    public BloodPressureDiastolic(Integer id, float value) {
         super(id);
         setValue(value);
     }

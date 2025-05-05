@@ -33,7 +33,7 @@ public class Message {
     @NotNull
     private LocalDateTime timeSent;
     // RelationShip
-    @ManyToOne(cascade = CascadeType.PERSIST,optional = false,fetch = FetchType.EAGER)
-    @JoinColumn(name = "chat_room_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "chat_room_id")
     private ChatRoom chatRoom;
 }

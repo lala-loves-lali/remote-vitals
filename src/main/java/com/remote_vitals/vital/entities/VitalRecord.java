@@ -34,13 +34,13 @@ public class VitalRecord {
             pkColumnValue = "vital_record",
             allocationSize = 10
     )
-    private Long id;
+    private Integer id;
     private float value;
     /***************** Relationships ******************/
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL,optional = false)
-    @JoinColumn(name = "vital_report_id",nullable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "vital_report_id")
     private VitalReport vitalReport;
     /****************** Constructors ******************/
-    public VitalRecord(Long id){ this.id = id;}
+    public VitalRecord(Integer id){ this.id = id;}
 }
 // ----------------------- // END // ---------------------- //

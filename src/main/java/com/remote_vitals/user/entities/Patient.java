@@ -32,7 +32,7 @@ public class Patient extends User {
     /******************** Attributes ********************/
     @Column(columnDefinition = "text")
     private String description;
-    @Column(name = "blood_group", nullable = false, length = 3)
+    @Column(name = "blood_group", length = 3)
     @Pattern(regexp = "^(A|B|AB|O)[+-]$", message = "Invalid blood group format")
     private String bloodGroup;
     @Column(name = "date_of_birth", nullable = true)

@@ -39,7 +39,7 @@ public class PlateletCount extends VitalRecord {
     }
 
     /******************* Constructors *******************/
-    public PlateletCount(Long id, float value) {
+    public PlateletCount(Integer id, float value) {
         super(id);
         setValue(value);
     }

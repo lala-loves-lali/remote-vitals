@@ -39,7 +39,7 @@ public class RBC extends VitalRecord {
     }
 
     /******************* Constructors *******************/
-    public RBC(Long id, float value) {
+    public RBC(Integer id, float value) {
         super(id);
         setValue(value);
     }

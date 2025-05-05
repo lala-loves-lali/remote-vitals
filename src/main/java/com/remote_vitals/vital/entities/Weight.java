@@ -39,7 +39,7 @@ public class Weight extends VitalRecord {
     }
 
     /******************* Constructors *******************/
-    public Weight(Long id, float value) {
+    public Weight(Integer id, float value) {
         super(id);
         setValue(value);
     }

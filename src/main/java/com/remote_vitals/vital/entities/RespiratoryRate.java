@@ -39,7 +39,7 @@ public class RespiratoryRate extends VitalRecord {
     }
 
     /******************* Constructors *******************/
-    public RespiratoryRate(Long id, float value) {
+    public RespiratoryRate(Integer id, float value) {
         super(id);
         setValue(value);
     }
