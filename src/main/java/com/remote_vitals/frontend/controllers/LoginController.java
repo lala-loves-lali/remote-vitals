@@ -1,5 +1,9 @@
 package com.remote_vitals.frontend.controllers;
 
+import com.remote_vitals.backend.db_handler.DB;
+import com.remote_vitals.backend.db_handler.DataBaseHandler;
+import com.remote_vitals.backend.user.entities.Patient;
+import com.remote_vitals.backend.user.enums.Gender;
 import com.remote_vitals.frontend.utils.ScreenPaths;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -9,7 +13,10 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 
 /**
@@ -17,7 +24,6 @@ import java.util.ResourceBundle;
  * Handles user authentication and navigation to the appropriate dashboard.
  */
 public class LoginController extends BaseController {
-
     @FXML
     private TextField email_input;
     
@@ -91,6 +97,23 @@ public class LoginController extends BaseController {
      */
     @FXML
     private void handleLogin(ActionEvent event) {
+
+
+
+
+        DB.dh.registerPatient(        new Patient(
+                "John",
+                "Doe",
+                Gender.MALE,
+                "+1234567890",
+                "john.doe@example.com",
+                "securePassword123",
+                "Patient with hypertension",
+                "A+",
+                LocalDateTime.of(1985, 5, 15, 0, 0)
+        ));
+
+
         String email = email_input.getText().trim();
         String password = password_input.getText().trim();
         String userType = userTypeChoice.getValue();

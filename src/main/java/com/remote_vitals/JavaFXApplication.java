@@ -1,5 +1,7 @@
 package com.remote_vitals;
 
+import com.remote_vitals.backend.db_handler.DB;
+import com.remote_vitals.backend.db_handler.DataBaseHandler;
 import com.remote_vitals.frontend.utils.ScreenPaths;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -19,7 +21,9 @@ public class JavaFXApplication extends Application {
 
     @Override
     public void init() throws Exception {
+
         context = org.springframework.boot.SpringApplication.run(RemoteVitalsApplication.class);
+        DB.dh = context.getBean(DataBaseHandler.class);
         System.out.println("**********************************************************");
     }
     

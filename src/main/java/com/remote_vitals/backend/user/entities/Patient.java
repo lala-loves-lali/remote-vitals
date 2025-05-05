@@ -4,6 +4,7 @@ package com.remote_vitals.backend.user.entities;
 // imports
 import com.remote_vitals.backend.appointment.entities.Appointment;
 import com.remote_vitals.backend.checkup.entities.CheckUp;
+import com.remote_vitals.backend.user.enums.Gender;
 import com.remote_vitals.backend.vitalReport.entities.VitalReport;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Past;
@@ -47,4 +48,12 @@ public class Patient extends User {
 
     @OneToMany(mappedBy = "patient")
     private List<CheckUp> checkups;
+
+
+    public Patient(String firstName, String lastName, Gender gender, String phoneNumber, String email, String password, String description, String bloodGroup, LocalDateTime dateOfBirth) {
+        super(firstName, lastName, gender, phoneNumber, email, password);
+        this.description = description;
+        this.bloodGroup = bloodGroup;
+        this.dateOfBirth = dateOfBirth;
+    }
 }

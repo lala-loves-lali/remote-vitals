@@ -38,6 +38,17 @@ public class User {
     @Column(nullable = false)
     private String firstName;
 
+    public User(String firstName, String lastName, Gender gender, String phoneNumber, String email, String password) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.gender = gender;
+        this.phoneNumber = phoneNumber;
+        this.pnVisibility = Visibility.PRIVATE;
+        this.email = email;
+        this.eVisibility = Visibility.PRIVATE;
+        this.password = password;
+    }
+
     @Column(nullable = false)
     private String lastName;
 
