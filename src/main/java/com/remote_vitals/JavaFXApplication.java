@@ -20,6 +20,7 @@ public class JavaFXApplication extends Application {
     @Override
     public void init() throws Exception {
         context = org.springframework.boot.SpringApplication.run(RemoteVitalsApplication.class);
+        System.out.println("**********************************************************");
     }
     
     @Override
