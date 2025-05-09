@@ -3,7 +3,11 @@ package com.remote_vitals.frontend.controllers;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import com.remote_vitals.backend.user.entities.Admin;
+import com.remote_vitals.backend.user.entities.Doctor;
+import com.remote_vitals.backend.user.entities.Patient;
 import com.remote_vitals.backend.user.entities.User;
+import com.remote_vitals.backend.user.enums.UserType;
 import com.remote_vitals.frontend.utils.ScreenPaths;
 import com.remote_vitals.backend.user.enums.Gender;
 
@@ -93,9 +97,6 @@ public class LoginController extends BaseController {
      */
     @FXML
     private void handleLogin(ActionEvent event) {
-
-        
-
         String email = email_input.getText().trim();
         String password = password_input.getText().trim();
         String userType = userTypeChoice.getValue();
@@ -118,28 +119,31 @@ public class LoginController extends BaseController {
         if(BaseController.getDb()==null){
             return;
         }
-        if((user= BaseController.getDb().getUserFromEmail(email))==null){
-            if(user.getPassword()==password){
-                BaseController.setCurrentUser(user);
-
-                switch (userType) {
-                    case "Admin":
-                        navigateTo(event, ScreenPaths.ADMIN_DASHBOARD, ScreenPaths.TITLE_ADMIN_DASHBOARD);
-                        break;
-                    case "Doctor":
-                        navigateTo(event, ScreenPaths.DOCTOR_DASHBOARD, ScreenPaths.TITLE_DOCTOR_DASHBOARD);
-                        break;
-                    case "Patient":
-                    default:
-                        navigateTo(event, ScreenPaths.PATIENT_DASHBOARD, ScreenPaths.TITLE_PATIENT_DASHBOARD);
-                        break;
-                }
-        }
-
-        }
-        else {
+        user = BaseController.getDb().getUserFromEmail(email);
+        if(user == null){
             showErrorAlert("Login Error", "Authentication Failed", 
                     "Invalid email or password. Please try again.");
+            return;
+        }
+
+        if(user.getPassword().equals(password)){
+            BaseController.setCurrentUser(user);
+            if(user instanceof Admin){
+                BaseController.setUserType(UserType.ADMIN);
+                navigateTo(event, ScreenPaths.ADMIN_DASHBOARD, ScreenPaths.TITLE_ADMIN_DASHBOARD);
+            }
+            else if(user instanceof Doctor){
+                BaseController.setUserType(UserType.DOCTOR);
+                navigateTo(event, ScreenPaths.DOCTOR_DASHBOARD, ScreenPaths.TITLE_DOCTOR_DASHBOARD);
+            }
+            else if(user instanceof Patient){
+                BaseController.setUserType(UserType.PATIENT);   
+                navigateTo(event, ScreenPaths.PATIENT_DASHBOARD, ScreenPaths.TITLE_PATIENT_DASHBOARD);
+            }
+        }
+        else{
+            showErrorAlert("Login Error", "Invalid Password", 
+                    "Invalid password. Please try again.");
         }
     }
     

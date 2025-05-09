@@ -106,4 +106,20 @@ public class User {
     /** User's password - required field */
     @Column(nullable = false)
     private String password;
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", profilePhoto='" + profilePhoto + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", gender=" + gender +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", pnVisibility=" + pnVisibility +
+                ", email='" + email + '\'' +
+                ", eVisibility=" + eVisibility +
+                ", password='" + password + '\'' +
+                '}';
+    }
 }
