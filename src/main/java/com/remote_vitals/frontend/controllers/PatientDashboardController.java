@@ -344,22 +344,54 @@ public class PatientDashboardController extends BaseController implements Initia
     @FXML
     private void handleRemoveDoctor(ActionEvent event) { 
         System.out.println("Removing doctor...");
-            
-             try{
+        
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Remove Doctor");
+        alert.setHeaderText("Remove Doctor");
+        alert.setContentText("Are you sure you want to remove your assigned doctor?");
+        
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                try {
                     System.out.println("Removing doctor from database...");
-                    getDb().removePatientFromDoctor(getPatientUser());
-                    setCurrentUser(getDb().getPatient(getPatientUser().getId()));
-                    System.out.println("Patient set as current user");
-                    System.out.println("Current user: " + getCurrentUser().getFirstName());
-                    System.out.println("Doctor removed from database");
-                   
-
-                    navigateTo(event, ScreenPaths.PATIENT_DASHBOARD, ScreenPaths.TITLE_PATIENT_DASHBOARD);
+                    
+                    // Get a fresh instance of the patient and doctor to avoid lazy loading issues
+                    Patient currentPatient = getDb().getPatient(getPatientUser().getId());
+                    if (currentPatient == null) {
+                        System.out.println("Error: Failed to retrieve current patient data");
+                        showErrorAlert("Error", "Removal Failed", "Patient data not available. Please log in again.");
+                        return;
+                    }
+                    
+                    // Get a reference to the doctor before removal for logging
+                    Doctor doctor = currentPatient.getAssignedDoctor();
+                    if (doctor != null) {
+                        System.out.println("Removing doctor: " + doctor.getFirstName() + " " + doctor.getLastName());
+                    }
+                    
+                    // Perform the removal with a session-managed transaction
+                    int result = getDb().removePatientFromDoctor(currentPatient);
+                    if (result == 0) {
+                        System.out.println("Doctor removed successfully");
+                        
+                        // Update the current user with fresh data from database
+                        setCurrentUser(getDb().getPatient(currentPatient.getId()));
+                        System.out.println("Patient data refreshed");
+                        
+                        showInfoAlert("Success", "Doctor Removed", "Your doctor has been successfully removed.");
+                        navigateTo(event, ScreenPaths.PATIENT_DASHBOARD, ScreenPaths.TITLE_PATIENT_DASHBOARD);
+                    } else {
+                        System.out.println("Error: Database operation returned " + result);
+                        showErrorAlert("Error", "Removal Failed", "Failed to remove the doctor. Please try again.");
+                    }
                 } catch (Exception e) {
-                    showErrorAlert("Error", "Removal failed", 
-                            e.getMessage());
+                    System.out.println("Exception in handleRemoveDoctor: " + e.getMessage());
+                    e.printStackTrace();
+                    showErrorAlert("Error", "Removal Failed", e.getMessage());
                 }
             }
+        });
+    }
   
     
     /**

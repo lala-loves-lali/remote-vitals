@@ -113,6 +113,7 @@ public class PatientProfileController extends ProfileController {
             showErrorAlert("Error", "Invalid User Type",
                     "Expected Patient user type but got different type.");
         }
+        handleCancel(null);
     }
 
     /**

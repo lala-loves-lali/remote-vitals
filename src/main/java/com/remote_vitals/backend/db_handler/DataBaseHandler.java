@@ -1,10 +1,10 @@
 package com.remote_vitals.backend.db_handler;
 
 import com.remote_vitals.backend.appointment.entities.Appointment;
-import com.remote_vitals.backend.appointment.entities.Schedule;
+
 import com.remote_vitals.backend.appointment.enums.AppointmentStatus;
 import com.remote_vitals.backend.appointment.repositories.AppointmentRepository;
-import com.remote_vitals.backend.appointment.repositories.ScheduleRepository;
+
 //import com.remote_vitals.backend.chat.entities.ChatRoom;
 //import com.remote_vitals.backend.chat.entities.Message;
 //import com.remote_vitals.backend.chat.repositories.ChatRoomRepository;
@@ -38,7 +38,7 @@ public class DataBaseHandler {
     private final QualificationRepository qualificationRepository;
     private final CheckUpRepository checkUpRepository;
     private final AppointmentRepository appointmentRepository;
-    private final ScheduleRepository scheduleRepository;
+    
 //   private final ChatRoomRepository chatRoomRepository;
 //   private final MessageRepository messageRepository;
 
@@ -52,8 +52,8 @@ public class DataBaseHandler {
             DoctorRepository doctorRepository,
             QualificationRepository qualificationRepository,
             CheckUpRepository checkUpRepository,
-            AppointmentRepository appointmentRepository,
-            ScheduleRepository scheduleRepository
+            AppointmentRepository appointmentRepository
+          
 //            ,ChatRoomRepository chatRoomRepository,
 //            MessageRepository messageRepository
             ) {
@@ -66,7 +66,7 @@ public class DataBaseHandler {
         this.qualificationRepository = qualificationRepository;
         this.checkUpRepository = checkUpRepository;
         this.appointmentRepository = appointmentRepository;
-        this.scheduleRepository = scheduleRepository;
+    
 //        this.chatRoomRepository = chatRoomRepository;
 //        this.messageRepository = messageRepository;
     }
@@ -221,6 +221,41 @@ public class DataBaseHandler {
     @Transactional
     public int placeAppointmentRequest(
             Patient patient,
+            Doctor doctor,
+            LocalDateTime startingTime,
+            LocalDateTime endingTime,
+            String linkForRoom
+    ){
+        if(patient == null || patient.getId() == null) return -1;
+        if(patientRepository.findById(patient.getId()).isEmpty()) return -1;
+        if(doctor == null || doctor.getId() == null) return -1;
+        if(doctorRepository.findById(doctor.getId()).isEmpty()) return -1;
+        if(startingTime == null || endingTime == null || startingTime.isAfter(endingTime)) return -1;
+
+        Appointment appointment = new Appointment();
+        appointment.setPatient(patient);
+        appointment.setDoctor(doctor);
+        appointment.setStatus(AppointmentStatus.REQUESTED);
+        appointment.setStartingTime(startingTime);
+        appointment.setEndingTime(endingTime);
+        appointment.setLinkForRoom(linkForRoom);
+        
+        try {
+            appointment = appointmentRepository.save(appointment);
+            patient.getAppointments().add(appointment);
+            doctor.getAppointments().add(appointment);
+            patientRepository.save(patient);
+            doctorRepository.save(doctor);
+            return appointment.getId();
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    // Simplified version without separate schedule
+    @Transactional
+    public int placeAppointmentRequest(
+            Patient patient,
             Doctor doctor
     ){
         if(patient == null || patient.getId() == null) return -1;
@@ -231,6 +266,13 @@ public class DataBaseHandler {
         Appointment appointment = new Appointment();
         appointment.setPatient(patient);
         appointment.setDoctor(doctor);
+        appointment.setStatus(AppointmentStatus.REQUESTED);
+        
+        // Set default appointment time (now + 1 day for 1 hour)
+        LocalDateTime startTime = LocalDateTime.now().plusDays(1);
+        appointment.setStartingTime(startTime);
+        appointment.setEndingTime(startTime.plusHours(1));
+        
         try {
             appointment = appointmentRepository.save(appointment);
             patient.getAppointments().add(appointment);
@@ -317,9 +359,9 @@ public class DataBaseHandler {
         }
     }
 
-    // 16
+    // 16 - Updated to work directly with Appointment
     @Transactional
-    public int addAppointmentSchedule(
+    public int updateAppointmentTime(
             Appointment appointment,
             LocalDateTime startingTime,
             LocalDateTime endingTime
@@ -329,33 +371,10 @@ public class DataBaseHandler {
         if(appointmentRepository.findById(appointment.getId()).isEmpty()) return -1;
 
         try {
-            Schedule schedule = new Schedule();
-            schedule.setStartingTime(startingTime);
-            schedule.setEndingTime(endingTime);
-            appointment.setSchedule(schedule = scheduleRepository.save(schedule));
-            schedule.setAppointment(appointmentRepository.save(appointment));
-            schedule =  scheduleRepository.save(schedule);
-            return schedule.getId();
-        } catch (Exception e) {
-            return -1;
-        }
-    }
-
-    // 17
-    @Transactional
-    public int updateAppointmentSchedule(
-            Schedule schedule,
-            LocalDateTime startingTime,
-            LocalDateTime endingTime
-    ){
-        if(startingTime == null || endingTime == null || startingTime.isAfter(endingTime)) return -1;
-        if(schedule == null || schedule.getId() == null) return -1;
-        if(scheduleRepository.findById(schedule.getId()).isEmpty()) return -1;
-        try {
-            schedule.setStartingTime(startingTime);
-            schedule.setEndingTime(endingTime);
-            schedule = scheduleRepository.save(schedule);
-            return schedule.getId();
+            appointment.setStartingTime(startingTime);
+            appointment.setEndingTime(endingTime);
+            appointmentRepository.save(appointment);
+            return appointment.getId();
         } catch (Exception e) {
             return -1;
         }
@@ -367,13 +386,9 @@ public class DataBaseHandler {
         if(appointment == null || appointment.getId() == null) return -1;
         if(appointmentRepository.findById(appointment.getId()).isEmpty()) return -1;
         try {
-            if(appointment.getSchedule() != null) {
-                scheduleRepository.delete(appointment.getSchedule());
-            }
             appointment.getPatient().getAppointments().remove(appointment);
             appointment.getDoctor().getAppointments().remove(appointment);
             patientRepository.save(appointment.getPatient());
-            scheduleRepository.save(appointment.getSchedule());
             appointmentRepository.delete(appointment);
             return 0;
         } catch (Exception e) {

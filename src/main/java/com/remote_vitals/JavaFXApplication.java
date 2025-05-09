@@ -8,7 +8,6 @@ import com.remote_vitals.frontend.controllers.BaseController;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import com.remote_vitals.backend.appointment.entities.Appointment;
-import com.remote_vitals.backend.appointment.entities.Schedule;
 //import com.remote_vitals.backend.chat.entities.ChatRoom;
 import com.remote_vitals.backend.checkup.entities.CheckUp;
 
@@ -98,10 +97,12 @@ public class JavaFXApplication extends Application {
         // Create dummy doctors with their specialties
         Doctor doctor1 = new Doctor("John", "Smith", Gender.MALE, "1234567890", "john.smith@hospital.com", "password123");
         doctor1.setDescription("Cardiologist with 10 years of experience");
+        doctor1.setQualificationString("MD, Cardiology Specialist");
         BaseController.getDb().registerDoctor(doctor1);
 
         Doctor doctor2 = new Doctor("Sarah", "Johnson", Gender.FEMALE, "9876543210", "sarah.j@hospital.com", "password456");
         doctor2.setDescription("Pediatrician specializing in child development");
+        doctor2.setQualificationString("MD, Pediatric Specialist");
         BaseController.getDb().registerDoctor(doctor2);
 
         // Create dummy patients with their medical information
@@ -142,19 +143,31 @@ public class JavaFXApplication extends Application {
         CheckUp checkup2 = new CheckUp("feed", "description", LocalDateTime.now(), patient2, doctor2);
         BaseController.getDb().addCheckUp(checkup2);
 
-        // Create schedules for appointments
-        Schedule schedule1 = new Schedule(LocalDateTime.now().plusDays(7),  new Appointment());
-        // BaseController.getDb().addSchedule(schedule1);
+        // Create sample appointments with direct time values
+        LocalDateTime appointment1Start = LocalDateTime.now().plusDays(7);
+        LocalDateTime appointment1End = appointment1Start.plusHours(1);
+        
+        // Create appointment with direct time values
+        Appointment appointment1 = new Appointment();
+        appointment1.setPatient(patient1);
+        appointment1.setDoctor(doctor1);
+        appointment1.setStartingTime(appointment1Start);
+        appointment1.setEndingTime(appointment1End);
+        appointment1.setLinkForRoom("https://meet.example.com/appointment1");
+        BaseController.getDb().placeAppointmentRequest(patient1, doctor1, appointment1Start, appointment1End, "https://meet.example.com/appointment1");
 
-        Schedule schedule2 = new Schedule(LocalDateTime.now().plusDays(14), new Appointment());
-        // BaseController.getDb().addSchedule(schedule2);
-
-        // Create sample appointments with chat rooms
-        Appointment appointment1 = new Appointment(patient1, doctor1, schedule1,"dsf");
-        BaseController.getDb().addAppointmentSchedule(appointment1, schedule1.getStartingTime(), schedule1.getEndingTime());
-
-        Appointment appointment2 = new Appointment(patient2, doctor2, schedule2,"sdfs");
-        BaseController.getDb().addAppointmentSchedule(appointment2, schedule2.getStartingTime(), schedule2.getEndingTime());
+        // Create second appointment
+        LocalDateTime appointment2Start = LocalDateTime.now().plusDays(14);
+        LocalDateTime appointment2End = appointment2Start.plusHours(1);
+        
+        // Using the static helper method we created
+        Appointment appointment2 = Appointment.createWithHourDuration(
+            patient2, 
+            doctor2, 
+            appointment2Start, 
+            "https://meet.example.com/appointment2"
+        );
+        BaseController.getDb().placeAppointmentRequest(patient2, doctor2, appointment2Start, appointment2End, "https://meet.example.com/appointment2");
     }
 
     /**
