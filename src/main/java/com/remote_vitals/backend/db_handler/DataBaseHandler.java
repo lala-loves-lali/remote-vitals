@@ -528,4 +528,27 @@ public class DataBaseHandler {
         }
     }
 
+    // 36
+    public Optional<User> getUserById(Integer id){
+        if(id == null) return Optional.empty();
+        return userRepository.findById(id);
+    }
+
+    // 37
+    public Optional<Appointment> getAppointmentBId(Integer id){
+        if(id == null) return Optional.empty();
+        return appointmentRepository.findById(id);
+    }
+
+    // 38
+    public Optional<CheckUp> getCheckUpById(Integer id){
+        if(id == null) return Optional.empty();
+        return checkUpRepository.findById(id);
+    }
+
+    // 39
+    public Optional<VitalReport> getVitalReportById(Integer id){
+        if(id == null) return Optional.empty();
+        return vitalReportRepository.findById(id);
+    }
 }
