@@ -49,6 +49,10 @@ public class Doctor extends User {
     @Column(columnDefinition = "text")
     private String description;
 
+    /** Doctor's qualification as a simple string */
+    @Column(name = "qualification", columnDefinition = "text")
+    private String qualificationString;
+
     /** List of appointments associated with this doctor */
     @OneToMany(mappedBy = "doctor")
     private List<Appointment> appointments;
@@ -61,6 +65,10 @@ public class Doctor extends User {
     @OneToMany(mappedBy = "doctor")
     private List<CheckUp> checkups;
 
+    /** List of patients assigned to this doctor */
+    @OneToMany(mappedBy = "assignedDoctor")
+    private List<Patient> assignedPatients;
+
     /**
      * Constructor for creating a new doctor with basic information
      * Initializes empty lists for appointments, qualifications, and checkups
@@ -68,8 +76,23 @@ public class Doctor extends User {
     public Doctor(String firstName, String lastName, Gender gender, String phoneNumber, String email, String password) {
         super(firstName, lastName, gender, phoneNumber, email, password);
         this.description = "";
+        this.qualificationString = "";
         this.appointments = new ArrayList<>();
         this.qualifications = new ArrayList<>();
         this.checkups = new ArrayList<>();
+        this.assignedPatients = new ArrayList<>();
+    }
+
+    /**
+     * Constructor with qualification string
+     */
+    public Doctor(String firstName, String lastName, Gender gender, String phoneNumber, String email, String password, String qualification) {
+        super(firstName, lastName, gender, phoneNumber, email, password);
+        this.description = "";
+        this.qualificationString = qualification;
+        this.appointments = new ArrayList<>();
+        this.qualifications = new ArrayList<>();
+        this.checkups = new ArrayList<>();
+        this.assignedPatients = new ArrayList<>();
     }
 }

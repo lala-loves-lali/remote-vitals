@@ -9,6 +9,8 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
 
 <BorderPane prefHeight="700.0" prefWidth="1200.0" stylesheets="@application.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.remote_vitals.frontend.controllers.PatientDashboardController">
    <left>
@@ -152,7 +154,7 @@
                            <children>
                               <VBox prefHeight="400.0" prefWidth="420.0" styleClass="card">
                                  <children>
-                                    <Label styleClass="section-title" text="Recent Medical Report" textFill="#333333">
+                                    <Label styleClass="section-title" text="My Doctor" textFill="#333333">
                                        <font>
                                           <Font name="System Bold" size="16.0" />
                                        </font>
@@ -160,15 +162,43 @@
                                           <Insets bottom="10.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <TextArea fx:id="rmr_ta" prefHeight="300.0" styleClass="content-area" wrapText="true" VBox.vgrow="ALWAYS" />
+                                    <VBox fx:id="doctorInfoBox" spacing="10.0" VBox.vgrow="ALWAYS">
+                                       <children>
+                                          <Label fx:id="doctorNameLabel" text="No doctor assigned" textFill="#666666">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="doctorEmailLabel" textFill="#666666">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="doctorPhoneLabel" textFill="#666666">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="doctorQualificationLabel" textFill="#666666">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Button fx:id="removeDoctorButton" mnemonicParsing="false" onAction="#handleRemoveDoctor" styleClass="secondary-button" text="Remove Doctor" visible="false">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </Button>
+                                       </children>
+                                    </VBox>
                                  </children>
                                  <padding>
                                     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                                  </padding>
                               </VBox>
-                              <VBox prefHeight="400.0" prefWidth="420.0" styleClass="card">
+                              <VBox fx:id="availableDoctorsBox" prefHeight="400.0" prefWidth="420.0" styleClass="card">
                                  <children>
-                                    <Label styleClass="section-title" text="Today's Appointments" textFill="#333333">
+                                    <Label styleClass="section-title" text="Available Doctors" textFill="#333333">
                                        <font>
                                           <Font name="System Bold" size="16.0" />
                                        </font>
@@ -176,7 +206,15 @@
                                           <Insets bottom="10.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <TextArea fx:id="app_ta" prefHeight="300.0" styleClass="content-area" wrapText="true" VBox.vgrow="ALWAYS" />
+                                    <TableView fx:id="doctorsTable" prefHeight="300.0" VBox.vgrow="ALWAYS">
+                                       <columns>
+                                          <TableColumn fx:id="doctorNameColumn" prefWidth="100.0" text="Name" />
+                                          <TableColumn fx:id="doctorEmailColumn" prefWidth="100.0" text="Email" />
+                                          <TableColumn fx:id="doctorPhoneColumn" prefWidth="60.0" text="Phone" />
+                                          <TableColumn fx:id="doctorQualificationColumn" prefWidth="120.0" text="Qualification" />
+                                          <TableColumn fx:id="doctorActionColumn" prefWidth="60.0" text="Action" />
+                                       </columns>
+                                    </TableView>
                                  </children>
                                  <padding>
                                     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

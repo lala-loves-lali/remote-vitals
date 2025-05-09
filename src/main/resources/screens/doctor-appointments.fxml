@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.remote_vitals.frontend.controllers.DoctorAppointmentsController"
+      spacing="10">
+    <padding>
+        <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
+    </padding>
+    
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Label text="Appointment Management" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+    </HBox>
+    
+    <TableView fx:id="appointmentsTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="patientNameColumn" text="Patient Name" prefWidth="150"/>
+            <TableColumn fx:id="dateColumn" text="Date" prefWidth="100"/>
+            <TableColumn fx:id="timeColumn" text="Time" prefWidth="100"/>
+            <TableColumn fx:id="reasonColumn" text="Reason" prefWidth="200"/>
+            <TableColumn fx:id="statusColumn" text="Status" prefWidth="100"/>
+        </columns>
+    </TableView>
+    
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button fx:id="acceptButton" text="Accept" onAction="#handleAccept" 
+                style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+        <Button fx:id="rejectButton" text="Reject" onAction="#handleReject"
+                style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
+        <Button fx:id="backButton" text="Back" onAction="#handleBack"/>
+    </HBox>
+    
+</VBox> 

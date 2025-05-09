@@ -1,17 +1,17 @@
 package com.remote_vitals.frontend.controllers;
 
-
 import com.remote_vitals.backend.user.entities.Doctor;
-import com.remote_vitals.backend.user.entities.Qualification;
 import com.remote_vitals.frontend.utils.ScreenPaths;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 /**
  * Controller for the doctor profile page.
@@ -23,19 +23,10 @@ public class DoctorProfileController extends ProfileController {
     private TextArea descriptionTextArea;
     
     @FXML
-    private ListView<String> qualificationsList;
-    
-    @FXML
-    private TextField newQualificationField;
+    private TextField qualificationField;
     
     @FXML
     private TextField emailField;
-    
-    @FXML
-    private Button addQualificationButton;
-    
-    @FXML
-    private Button removeQualificationButton;
     
     private Doctor doctor;
     
@@ -43,17 +34,15 @@ public class DoctorProfileController extends ProfileController {
      * Initialize the controller. This method is automatically called
      * after the FXML file has been loaded.
      */
-    @FXML
     @Override
-    protected void initialize() {
-        userType = "Doctor";
-        super.initialize();
+    public void initialize(URL location, ResourceBundle resources) {
+        super.initialize(location, resources);
         
         // Make email field non-editable
         emailField.setEditable(false);
         
         // Get doctor from current user
-        if ( (doctor = BaseController.getDoctorUser()) != null) {
+        if ((doctor = BaseController.getDoctorUser()) != null) {
             loadDoctorData();
         }
         else {
@@ -73,14 +62,9 @@ public class DoctorProfileController extends ProfileController {
             emailField.setText(doctor.getEmail());
             phoneField.setText(doctor.getPhoneNumber());
             descriptionTextArea.setText(doctor.getDescription());
-
-            // Load qualifications
-            qualificationsList.getItems().clear();
-            if (doctor.getQualifications() != null) {
-                for (Qualification qual : doctor.getQualifications()) {
-                    qualificationsList.getItems().add(qual.getLabel());
-                }
-            }
+            
+            // Load qualification string
+            qualificationField.setText(doctor.getQualificationString());
         }
     }
 
@@ -104,10 +88,11 @@ public class DoctorProfileController extends ProfileController {
         doctor.setLastName(lastNameField.getText().trim());
         doctor.setPhoneNumber(phoneField.getText().trim());
         doctor.setDescription(descriptionTextArea.getText().trim());
+        doctor.setQualificationString(qualificationField.getText().trim());
 
         // Save changes
         try {
-           // BaseController.getDb().updateUser(doctor);
+            BaseController.getDb().updateDoctor(doctor);
             showInfoAlert("Success", "Profile Updated",
                     "Your profile has been updated successfully.");
         } catch (Exception e) {
@@ -117,81 +102,9 @@ public class DoctorProfileController extends ProfileController {
     }
 
     /**
-     * Handles adding a new qualification.
-     *
-     * @param event The action event
-     */
-    @FXML
-    private void handleAddQualification(ActionEvent event) {
-        String newQualification = newQualificationField.getText().trim();
-
-        if (newQualification.isEmpty()) {
-            showErrorAlert("Validation Error", "Empty Qualification",
-                    "Please enter a qualification before adding.");
-            return;
-        }
-
-        try {
-            Qualification qualification = new Qualification();
-            qualification.setLabel(newQualification);
-
-            int result = BaseController.getDb().addQualificationTo(doctor, qualification);
-            if (result == 0) {
-                qualificationsList.getItems().add(newQualification);
-                newQualificationField.clear();
-                showInfoAlert("Success", "Qualification Added",
-                        "New qualification has been added successfully.");
-            } else {
-                showErrorAlert("Error", "Add Failed",
-                        "Failed to add qualification. Please try again.");
-            }
-        } catch (Exception e) {
-            showErrorAlert("Error", "Add Failed",
-                    "Failed to add qualification. Please try again.");
-        }
-    }
-
-    /**
-     * Handles removing a qualification.
-     *
-     * @param event The action event
-     */
-    @FXML
-    private void handleRemoveQualification(ActionEvent event) {
-        int selectedIndex = qualificationsList.getSelectionModel().getSelectedIndex();
-
-        if (selectedIndex < 0) {
-            showErrorAlert("Selection Error", "No Qualification Selected",
-                    "Please select a qualification to remove.");
-            return;
-        }
-
-        try {
-            // Get the qualification to remove
-            String qualificationLabel = qualificationsList.getItems().get(selectedIndex);
-            Qualification qualificationToRemove = doctor.getQualifications().stream()
-                .filter(q -> q.getLabel().equals(qualificationLabel))
-                .findFirst()
-                .orElse(null);
-
-            if (qualificationToRemove != null) {
-                // Remove from database
-               // BaseController.getDb().removeQualificationFrom(doctor, qualificationToRemove);
-                // Remove from list
-                qualificationsList.getItems().remove(selectedIndex);
-                showInfoAlert("Success", "Qualification Removed", 
-                        "Qualification has been removed successfully.");
-            }
-        } catch (Exception e) {
-            showErrorAlert("Error", "Remove Failed", 
-                    "Failed to remove qualification. Please try again.");
-        }
-    }
-    
-    /**
      * Handles the back button click event.
      * Navigates back to the doctor dashboard.
-     * 
+     *
      * @param event The action event
      */
     @FXML

@@ -42,9 +42,9 @@ public class Schedule {
     private Appointment appointment;
 
 
-    public Schedule(LocalDateTime startingTime, LocalDateTime endingTime, Appointment appointment) {
+    public Schedule(LocalDateTime startingTime,  Appointment appointment) {
         this.startingTime = startingTime;
-        this.endingTime = endingTime;
+        this.endingTime = startingTime.plusHours(1);
         this.appointment = appointment;
     }
 }

@@ -243,6 +243,62 @@ public class DataBaseHandler {
         }
     }
 
+    /**
+     * Assigns a patient to a doctor
+     * @param patient The patient to be assigned
+     * @param doctor The doctor to assign the patient to, or null to remove assignment
+     * @return 0 if successful, -1 if failed
+     */
+    @Transactional
+    public int assignPatientToDoctor(Patient patient, Doctor doctor) {
+        if(patient == null || patient.getId() == null) return -1;
+        if(patientRepository.findById(patient.getId()).isEmpty()) return -1;
+        
+        try {
+            // Case 1: Doctor is null - remove assignment
+            if (doctor == null) {
+                return removePatientFromDoctor(patient);
+            }
+            
+            // Case 2: Doctor is not null - assign patient to doctor
+            if(doctorRepository.findById(doctor.getId()).isEmpty()) return -1;
+            
+            // Remove patient from previous doctor if any
+            if(patient.getAssignedDoctor() != null) {
+                patient.getAssignedDoctor().getAssignedPatients().remove(patient);
+                doctorRepository.save(patient.getAssignedDoctor());
+            }
+
+            // Assign patient to new doctor
+            patient.setAssignedDoctor(doctor);
+            doctor.getAssignedPatients().add(patient);
+
+            // Save changes
+            patientRepository.save(patient);
+            doctorRepository.save(doctor);
+            return 0;
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    @Transactional
+    public int removePatientFromDoctor(Patient patient){
+        if(patient == null || patient.getId() == null) return -1;
+        if(patientRepository.findById(patient.getId()).isEmpty()) return -1;
+        if(patient.getAssignedDoctor() == null) return -1;
+        
+        // Remove from doctor's list
+        patient.getAssignedDoctor().getAssignedPatients().remove(patient);
+        doctorRepository.save(patient.getAssignedDoctor());
+        
+        // Set patient's doctor to null
+        patient.setAssignedDoctor(null);
+        patientRepository.save(patient);
+        
+        return 0;
+    }
+
     // 15
     @Transactional
     public int changeAppointmentStatus(
@@ -559,6 +615,25 @@ public class DataBaseHandler {
     // 40
     public User getUserFromEmail(String email){
         return userRepository.findByEmail(email).orElse(null);
+    }
+
+    /**
+     * Updates a doctor's qualification string
+     * @param doctor The doctor to update
+     * @param qualification The new qualification string
+     * @return 0 if successful, -1 if failed
+     */
+    @Transactional
+    public int updateDoctorQualification(Doctor doctor, String qualification) {
+        if(doctor == null || doctor.getId() == null) return -1;
+        if(doctorRepository.findById(doctor.getId()).isEmpty()) return -1;
+        try {
+            doctor.setQualificationString(qualification);
+            doctorRepository.save(doctor);
+            return 0;
+        } catch (Exception e) {
+            return -1;
+        }
     }
 
     

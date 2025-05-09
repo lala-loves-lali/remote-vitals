@@ -4,6 +4,7 @@ package com.remote_vitals.backend.user.entities;
 // imports
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.ArrayList;
 
 import com.remote_vitals.backend.appointment.entities.Appointment;
 import com.remote_vitals.backend.checkup.entities.CheckUp;
@@ -22,6 +23,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.FetchType;
 
 /**
  * Patient entity class that extends the base User class.
@@ -77,6 +81,11 @@ public class Patient extends User {
     @OneToMany(mappedBy = "patient")
     private List<CheckUp> checkups;
 
+    /** The doctor assigned to this patient */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "assigned_doctor_id")
+    private Doctor assignedDoctor;
+
     /**
      * Constructor for creating a new patient with basic information
      * @param firstName First name of the patient
@@ -94,5 +103,8 @@ public class Patient extends User {
         this.description = description;
         this.bloodGroup = bloodGroup;
         this.dateOfBirth = dateOfBirth;
+        this.appointments = new ArrayList<>();
+        this.vitalReport = new ArrayList<>();
+        this.checkups = new ArrayList<>();
     }
 }

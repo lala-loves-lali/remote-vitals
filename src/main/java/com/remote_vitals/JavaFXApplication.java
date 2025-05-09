@@ -107,6 +107,8 @@ public class JavaFXApplication extends Application {
         // Create dummy patients with their medical information
         Patient patient1 = new Patient("Michael", "Brown", Gender.MALE, "5551234567", "michael.b@email.com", "password789", "description", "A+", LocalDateTime.now());
         BaseController.getDb().registerPatient(patient1);
+        patient1.setAssignedDoctor(doctor1);
+        BaseController.getDb().removePatientFromDoctor(patient1);
 
         Patient patient2 = new Patient("Emily", "Davis", Gender.FEMALE, "5559876543", "emily.d@email.com", "password012", "description", "B-", LocalDateTime.now());
         BaseController.getDb().registerPatient(patient2);
@@ -141,18 +143,18 @@ public class JavaFXApplication extends Application {
         BaseController.getDb().addCheckUp(checkup2);
 
         // Create schedules for appointments
-        Schedule schedule1 = new Schedule(LocalDateTime.now().plusDays(7), LocalDateTime.now().plusDays(7).plusHours(1), new Appointment());
+        Schedule schedule1 = new Schedule(LocalDateTime.now().plusDays(7),  new Appointment());
         // BaseController.getDb().addSchedule(schedule1);
 
-        Schedule schedule2 = new Schedule(LocalDateTime.now().plusDays(14), LocalDateTime.now().plusDays(14).plusHours(1), new Appointment());
+        Schedule schedule2 = new Schedule(LocalDateTime.now().plusDays(14), new Appointment());
         // BaseController.getDb().addSchedule(schedule2);
 
         // Create sample appointments with chat rooms
-        Appointment appointment1 = new Appointment(patient1, doctor1, schedule1);
-        // BaseController.getDb().addAppointment(appointment1);
+        Appointment appointment1 = new Appointment(patient1, doctor1, schedule1,"dsf");
+        BaseController.getDb().addAppointmentSchedule(appointment1, schedule1.getStartingTime(), schedule1.getEndingTime());
 
-        Appointment appointment2 = new Appointment(patient2, doctor2, schedule2);
-        // BaseController.getDb().addAppointment(appointment2);
+        Appointment appointment2 = new Appointment(patient2, doctor2, schedule2,"sdfs");
+        BaseController.getDb().addAppointmentSchedule(appointment2, schedule2.getStartingTime(), schedule2.getEndingTime());
     }
 
     /**

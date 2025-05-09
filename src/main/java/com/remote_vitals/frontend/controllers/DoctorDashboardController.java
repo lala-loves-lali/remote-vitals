@@ -64,9 +64,7 @@ public class DoctorDashboardController extends BaseController {
      */
     @FXML
     private void handleViewAppointments(ActionEvent event) {
-        // To be implemented with the appointments screen
-        showInfoAlert("Feature Coming Soon", "View Appointments", 
-                "This feature will be available in a future update.");
+        navigateTo(event, ScreenPaths.DOCTOR_APPOINTMENTS, ScreenPaths.TITLE_DOCTOR_APPOINTMENTS);
     }
     
     /**

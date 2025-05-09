@@ -22,6 +22,7 @@ public class ScreenPaths {
     
     // Feature screens
     public static final String SCHEDULE_APPOINTMENT = SCREENS_BASE_PATH + "schedule-appointment.fxml";
+    public static final String DOCTOR_APPOINTMENTS = SCREENS_BASE_PATH + "doctor-appointments.fxml";
     public static final String UPLOAD_VITALS_DATA = SCREENS_BASE_PATH + "upload-vitals-data.fxml";
     public static final String VIEW_VITALS = SCREENS_BASE_PATH + "view-vitals.fxml";
     
@@ -44,6 +45,7 @@ public class ScreenPaths {
     public static final String TITLE_PATIENT_DASHBOARD = "Patient Dashboard - Remote Vitals";
     public static final String TITLE_DOCTOR_DASHBOARD = "Doctor Dashboard - Remote Vitals";
     public static final String TITLE_SCHEDULE_APPOINTMENT = "Schedule Appointment - Remote Vitals";
+    public static final String TITLE_DOCTOR_APPOINTMENTS = "Manage Appointments - Remote Vitals";
     public static final String TITLE_UPLOAD_VITALS = "Upload Vitals Data - Remote Vitals";
     public static final String TITLE_VIEW_VITALS = "View Vitals - Remote Vitals";
     public static final String TITLE_PATIENT_PROFILE = "Patient Profile - Remote Vitals";

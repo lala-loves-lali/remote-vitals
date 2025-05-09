@@ -56,14 +56,7 @@
             <TextField fx:id="phoneField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <TextArea fx:id="descriptionTextArea" prefHeight="80.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             
-            <VBox spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                <ListView fx:id="qualificationsList" prefHeight="100.0" />
-                <HBox spacing="10.0">
-                    <TextField fx:id="newQualificationField" HBox.hgrow="ALWAYS" promptText="Enter new qualification" />
-                    <Button onAction="#handleAddQualification" text="Add" />
-                    <Button onAction="#handleRemoveQualification" text="Remove" />
-                </HBox>
-            </VBox>
+            <TextField fx:id="qualificationField" promptText="Enter your qualifications" GridPane.columnIndex="1" GridPane.rowIndex="5" />
          </children>
          <padding>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
