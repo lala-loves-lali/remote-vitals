@@ -38,4 +38,11 @@ public class VitalReport {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "patient_id")
     private Patient patient;
+
+
+    public VitalReport(LocalDateTime reportWhenMade, List<VitalRecord> vitalRecords, Patient patient) {
+        this.reportWhenMade = reportWhenMade;
+        this.vitalRecords = vitalRecords;
+        this.patient = patient;
+    }
 }

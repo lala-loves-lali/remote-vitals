@@ -47,5 +47,22 @@ public class Appointment {
     @OneToOne(mappedBy = "appointment")
     private ChatRoom chatRoom;
 
+
+    public Appointment(AppointmentStatus status, Patient patient, Doctor doctor, Schedule schedule, ChatRoom chatRoom) {
+        this.status = status;
+        this.patient = patient;
+        this.doctor = doctor;
+        this.schedule = schedule;
+        this.chatRoom = chatRoom;
+    }
+
+
+    public Appointment(Patient patient, Doctor doctor, Schedule schedule, ChatRoom chatRoom) {
+        this.status=AppointmentStatus.REQUESTED;
+        this.patient = patient;
+        this.doctor = doctor;
+        this.schedule = schedule;
+        this.chatRoom = chatRoom;
+    }
 }
 

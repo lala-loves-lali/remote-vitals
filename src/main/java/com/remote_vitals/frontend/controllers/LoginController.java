@@ -1,24 +1,17 @@
 package com.remote_vitals.frontend.controllers;
 
-import com.remote_vitals.backend.db_handler.DB;
-import com.remote_vitals.backend.db_handler.DataBaseHandler;
-import com.remote_vitals.backend.user.entities.Doctor;
-import com.remote_vitals.backend.user.entities.Patient;
-import com.remote_vitals.backend.user.enums.Gender;
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import com.remote_vitals.frontend.utils.ScreenPaths;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.net.URL;
-import java.time.LocalDateTime;
-import java.util.ResourceBundle;
 
 /**
  * Controller for the login page.
@@ -99,17 +92,7 @@ public class LoginController extends BaseController {
     @FXML
     private void handleLogin(ActionEvent event) {
 
-        Doctor doctor = new Doctor();
-
-        // Set doctor properties/fields
-        doctor.setFirstName("John");
-        doctor.setLastName("Doe");
-        doctor.setEmail("john.doe@example.com");
-        doctor.setGender(Gender.MALE); // Sample value from Gender enum
-      // Assuming Doctor has specialization field
-
-        DB.dh.registerDoctor(doctor);
-                DB.cu=DB.dh.getDoctor(doctor.getId());
+        
 
         String email = email_input.getText().trim();
         String password = password_input.getText().trim();

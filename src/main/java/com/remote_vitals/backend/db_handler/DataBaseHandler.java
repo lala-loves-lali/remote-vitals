@@ -149,6 +149,8 @@ public class DataBaseHandler {
         }
     }
 
+
+
     // 7
     @Transactional
     public int addVitalReport(

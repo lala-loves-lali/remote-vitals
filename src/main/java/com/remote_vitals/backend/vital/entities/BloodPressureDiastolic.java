@@ -52,4 +52,6 @@ public class BloodPressureDiastolic extends VitalRecord {
     public static boolean isValidDiastolic(float diastolic) {
         return diastolic >= MIN_DIASTOLIC && diastolic <= MAX_DIASTOLIC;
     }
+
+
 }

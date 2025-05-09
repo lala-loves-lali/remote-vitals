@@ -40,4 +40,11 @@ public class Schedule {
     // Relationships
     @OneToOne(mappedBy = "schedule")
     private Appointment appointment;
+
+
+    public Schedule(LocalDateTime startingTime, LocalDateTime endingTime, Appointment appointment) {
+        this.startingTime = startingTime;
+        this.endingTime = endingTime;
+        this.appointment = appointment;
+    }
 }

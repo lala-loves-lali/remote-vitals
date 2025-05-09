@@ -43,4 +43,13 @@ public class CheckUp {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "doctor_id")
     private Doctor doctor;
+
+
+    public CheckUp(String prescription, String feedback, LocalDateTime timeWhenMade, Patient patient, Doctor doctor) {
+        this.prescription = prescription;
+        this.feedback = feedback;
+        this.timeWhenMade = timeWhenMade;
+        this.patient = patient;
+        this.doctor = doctor;
+    }
 }
