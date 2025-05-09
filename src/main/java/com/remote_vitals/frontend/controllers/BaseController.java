@@ -135,7 +135,7 @@ public abstract class BaseController implements Initializable {
         if (getCurrentUser()== null){
             return false;
         }
-        if (userType.equals("Doctor")){
+        if (userType == UserType.DOCTOR){
             return true;
         }
 
@@ -158,7 +158,7 @@ public abstract class BaseController implements Initializable {
         if (getCurrentUser()== null){
             return null;
         }
-        if (userType.equals("Patient")){
+        if (userType == UserType.PATIENT){
             return (Patient) getCurrentUser();
         }
 

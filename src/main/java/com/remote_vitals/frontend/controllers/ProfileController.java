@@ -54,7 +54,7 @@ public class ProfileController extends BaseController {
     @FXML
     protected void initialize() {
         // This will be overridden by subclasses to load specific user data
-        loadUserData();
+        // Do not call loadUserData() here as it will be called by subclasses
     }
     
     /**
@@ -62,47 +62,22 @@ public class ProfileController extends BaseController {
      * This method should be overridden by subclasses to load specific user type data.
      */
     protected void loadUserData() {
-        // For demonstration, use placeholder data
-        userNameLabel.setText("John Doe");
-        userTypeLabel.setText(userType);
-        userIdLabel.setText("ID: 12345");
-        
-        firstNameField.setText("John");
-        lastNameField.setText("Doe");
-        emailField.setText("john.doe@example.com");
-        phoneField.setText("123-456-7890");
-        
-        // Load default profile image
-        try {
-            profileImageView.setImage(new Image(getClass().getResourceAsStream("/images/default-profile.png")));
-        } catch (Exception e) {
-            // If image doesn't exist, just continue without it
-            System.out.println("Default profile image not found");
-        }
+        // This method should be overridden by subclasses
+        // Do not provide default implementation to force subclasses to implement it
     }
     
     /**
      * Handles the save button click event.
      * Saves the user profile changes.
+     * This method should be overridden by subclasses to implement specific save logic.
      * 
      * @param event The action event
      */
     @FXML
     protected void handleSave(ActionEvent event) {
-        // Validate inputs
-        if (firstNameField.getText().isEmpty() || lastNameField.getText().isEmpty() || 
-                emailField.getText().isEmpty()) {
-            showErrorAlert("Validation Error", "Missing Information", 
-                    "Please fill in all required fields.");
-            return;
-        }
-        
-        // In a real application, this would save the data to the backend
-        showInfoAlert("Profile Updated", "Success", 
-                "Your profile has been updated successfully.");
-        
-        // Update displayed name
-        userNameLabel.setText(firstNameField.getText() + " " + lastNameField.getText());
+        // This method should be overridden by subclasses
+        showErrorAlert("Error", "Not Implemented", 
+                "Save functionality must be implemented by the specific profile controller.");
     }
     
     /**
@@ -119,6 +94,7 @@ public class ProfileController extends BaseController {
     /**
      * Handles the back button click event.
      * Navigates back to the appropriate dashboard.
+     * This method should be overridden by subclasses to navigate to the correct dashboard.
      * 
      * @param event The action event
      */
