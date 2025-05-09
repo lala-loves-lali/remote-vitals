@@ -439,6 +439,10 @@ public class DataBaseHandler {
         return userRepository.findByEmail(email);
     }
 
+
+ 
+
+
     // 28
     @Transactional
     public int addQualificationTo(Doctor doctor, Qualification qualification){
@@ -551,4 +555,11 @@ public class DataBaseHandler {
         if(id == null) return Optional.empty();
         return vitalReportRepository.findById(id);
     }
+
+    // 40
+    public User getUserFromEmail(String email){
+        return userRepository.findByEmail(email).orElse(null);
+    }
+
+    
 }

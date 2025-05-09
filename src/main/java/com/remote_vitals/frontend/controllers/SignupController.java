@@ -1,6 +1,6 @@
 package com.remote_vitals.frontend.controllers;
 
-import com.remote_vitals.backend.db_handler.DB;
+
 import com.remote_vitals.backend.user.entities.Doctor;
 import com.remote_vitals.backend.user.entities.Patient;
 import com.remote_vitals.frontend.utils.ScreenPaths;
@@ -415,7 +415,7 @@ public class SignupController extends BaseController implements Initializable {
                 // Create doctor with empty lists for appointments, qualifications, and checkups
                 // In a real application, this would be handled by a service
                 Doctor doc = new Doctor(firstName , lastName , gender , phoneNumber, email , password);
-                DB.dh.registerDoctor(doc);
+                BaseController.getDb().registerDoctor(doc);
 
             } else if (USER_TYPE_PATIENT.equals(userType)) {
                 LocalDateTime dateOfBirth = date_of_birth_picker.getValue().atStartOfDay();
@@ -430,7 +430,7 @@ public class SignupController extends BaseController implements Initializable {
                     blood_group_dropdown.getValue(),
                     dateOfBirth
                 );
-                DB.dh.registerPatient(pat);
+                BaseController.getDb().registerPatient(pat);
                 showInfoAlert("Registration Success", "Patient Account Created", 
                         "Your patient account has been created successfully. Please log in with your credentials.");
 

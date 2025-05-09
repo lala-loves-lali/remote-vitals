@@ -1,6 +1,6 @@
 package com.remote_vitals.frontend.controllers;
 
-import com.remote_vitals.backend.db_handler.DB;
+
 import com.remote_vitals.backend.user.entities.Doctor;
 import com.remote_vitals.backend.user.entities.Qualification;
 import com.remote_vitals.frontend.utils.ScreenPaths;
@@ -53,15 +53,15 @@ public class DoctorProfileController extends ProfileController {
         emailField.setEditable(false);
         
         // Get doctor from current user
-        if (DB.cu instanceof Doctor) {
-            doctor = (Doctor) DB.cu;
+        if ( (doctor = BaseController.getDoctorUser()) != null) {
             loadDoctorData();
-        } else {
-            showErrorAlert("Error", "Invalid User Type", 
+        }
+        else {
+            showErrorAlert("Error", "Invalid User Type",
                     "Expected Doctor user type but got different type.");
         }
     }
-    
+
     /**
      * Loads the doctor data from the current user object.
      */
@@ -73,7 +73,7 @@ public class DoctorProfileController extends ProfileController {
             emailField.setText(doctor.getEmail());
             phoneField.setText(doctor.getPhoneNumber());
             descriptionTextArea.setText(doctor.getDescription());
-            
+
             // Load qualifications
             qualificationsList.getItems().clear();
             if (doctor.getQualifications() != null) {
@@ -83,89 +83,89 @@ public class DoctorProfileController extends ProfileController {
             }
         }
     }
-    
+
     /**
      * Handles the save button click event.
      * Saves the doctor profile changes.
-     * 
+     *
      * @param event The action event
      */
     @FXML
     @Override
     protected void handleSave(ActionEvent event) {
         if (doctor == null) {
-            showErrorAlert("Error", "No Doctor Data", 
+            showErrorAlert("Error", "No Doctor Data",
                     "Unable to save changes. Doctor data not found.");
             return;
         }
-        
+
         // Update doctor data
         doctor.setFirstName(firstNameField.getText().trim());
         doctor.setLastName(lastNameField.getText().trim());
         doctor.setPhoneNumber(phoneField.getText().trim());
         doctor.setDescription(descriptionTextArea.getText().trim());
-        
+
         // Save changes
         try {
-           // DB.dh.updateUser(doctor);
-            showInfoAlert("Success", "Profile Updated", 
+           // BaseController.getDb().updateUser(doctor);
+            showInfoAlert("Success", "Profile Updated",
                     "Your profile has been updated successfully.");
         } catch (Exception e) {
-            showErrorAlert("Error", "Update Failed", 
+            showErrorAlert("Error", "Update Failed",
                     "Failed to update profile. Please try again.");
         }
     }
-    
+
     /**
      * Handles adding a new qualification.
-     * 
+     *
      * @param event The action event
      */
     @FXML
     private void handleAddQualification(ActionEvent event) {
         String newQualification = newQualificationField.getText().trim();
-        
+
         if (newQualification.isEmpty()) {
-            showErrorAlert("Validation Error", "Empty Qualification", 
+            showErrorAlert("Validation Error", "Empty Qualification",
                     "Please enter a qualification before adding.");
             return;
         }
-        
+
         try {
             Qualification qualification = new Qualification();
             qualification.setLabel(newQualification);
-            
-            int result = DB.dh.addQualificationTo(doctor, qualification);
+
+            int result = BaseController.getDb().addQualificationTo(doctor, qualification);
             if (result == 0) {
                 qualificationsList.getItems().add(newQualification);
                 newQualificationField.clear();
-                showInfoAlert("Success", "Qualification Added", 
+                showInfoAlert("Success", "Qualification Added",
                         "New qualification has been added successfully.");
             } else {
-                showErrorAlert("Error", "Add Failed", 
+                showErrorAlert("Error", "Add Failed",
                         "Failed to add qualification. Please try again.");
             }
         } catch (Exception e) {
-            showErrorAlert("Error", "Add Failed", 
+            showErrorAlert("Error", "Add Failed",
                     "Failed to add qualification. Please try again.");
         }
     }
-    
+
     /**
      * Handles removing a qualification.
-     * 
+     *
      * @param event The action event
      */
     @FXML
     private void handleRemoveQualification(ActionEvent event) {
         int selectedIndex = qualificationsList.getSelectionModel().getSelectedIndex();
-        
+
         if (selectedIndex < 0) {
-            showErrorAlert("Selection Error", "No Qualification Selected", 
+            showErrorAlert("Selection Error", "No Qualification Selected",
                     "Please select a qualification to remove.");
             return;
         }
-        
+
         try {
             // Get the qualification to remove
             String qualificationLabel = qualificationsList.getItems().get(selectedIndex);
@@ -173,10 +173,10 @@ public class DoctorProfileController extends ProfileController {
                 .filter(q -> q.getLabel().equals(qualificationLabel))
                 .findFirst()
                 .orElse(null);
-            
+
             if (qualificationToRemove != null) {
                 // Remove from database
-               // DB.dh.removeQualificationFrom(doctor, qualificationToRemove);
+               // BaseController.getDb().removeQualificationFrom(doctor, qualificationToRemove);
                 // Remove from list
                 qualificationsList.getItems().remove(selectedIndex);
                 showInfoAlert("Success", "Qualification Removed", 

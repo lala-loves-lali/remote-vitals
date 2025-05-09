@@ -4,13 +4,14 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+import com.remote_vitals.frontend.controllers.BaseController;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import com.remote_vitals.backend.appointment.entities.Appointment;
 import com.remote_vitals.backend.appointment.entities.Schedule;
 //import com.remote_vitals.backend.chat.entities.ChatRoom;
 import com.remote_vitals.backend.checkup.entities.CheckUp;
-import com.remote_vitals.backend.db_handler.DB;
+
 import com.remote_vitals.backend.db_handler.DataBaseHandler;
 import com.remote_vitals.backend.user.entities.Doctor;
 import com.remote_vitals.backend.user.entities.Patient;
@@ -45,10 +46,13 @@ public class JavaFXApplication extends Application {
     public void init() throws Exception {
         // Initialize Spring Boot context
         context = org.springframework.boot.SpringApplication.run(RemoteVitalsApplication.class);
-        // Get database handler bean
-        DB.dh = context.getBean(DataBaseHandler.class);
+        
+        // Set the database handler in BaseController first
+        BaseController.setDb(context.getBean(DataBaseHandler.class));
+        
         // Initialize database with sample data
         initializeDummyData();
+        
         System.out.println("**********************************************************");
     }
     
@@ -94,61 +98,61 @@ public class JavaFXApplication extends Application {
         // Create dummy doctors with their specialties
         Doctor doctor1 = new Doctor("John", "Smith", Gender.MALE, "1234567890", "john.smith@hospital.com", "password123");
         doctor1.setDescription("Cardiologist with 10 years of experience");
-        DB.dh.registerDoctor(doctor1);
+        BaseController.getDb().registerDoctor(doctor1);
 
         Doctor doctor2 = new Doctor("Sarah", "Johnson", Gender.FEMALE, "9876543210", "sarah.j@hospital.com", "password456");
         doctor2.setDescription("Pediatrician specializing in child development");
-        DB.dh.registerDoctor(doctor2);
+        BaseController.getDb().registerDoctor(doctor2);
 
         // Create dummy patients with their medical information
         Patient patient1 = new Patient("Michael", "Brown", Gender.MALE, "5551234567", "michael.b@email.com", "password789", "description", "A+", LocalDateTime.now());
-        DB.dh.registerPatient(patient1);
+        BaseController.getDb().registerPatient(patient1);
 
         Patient patient2 = new Patient("Emily", "Davis", Gender.FEMALE, "5559876543", "emily.d@email.com", "password012", "description", "B-", LocalDateTime.now());
-        DB.dh.registerPatient(patient2);
+        BaseController.getDb().registerPatient(patient2);
 
         // Add professional qualifications for doctors
         Qualification qual1 = new Qualification("MD in Cardiology", doctor1);
-        // DB.dh.addQualification(qual1);
+        // BaseController.getDb().addQualification(qual1);
 
         Qualification qual2 = new Qualification();
         qual2.setLabel("Pediatric Specialist");
         qual2.setDoctor(doctor2);
-        // DB.dh.addQualification(qual2);
+        // BaseController.getDb().addQualification(qual2);
 
         // Add sample vital records for patients
         ArrayList<VitalRecord> vitals1 = new ArrayList<>();
         vitals1.add(new BloodPressureSystolic(90));
         vitals1.add(new HeartRate(75));
         vitals1.add(new BodyTemperature(33));
-        DB.dh.addVitalReport(patient1, LocalDateTime.now(), vitals1);
+        BaseController.getDb().addVitalReport(patient1, LocalDateTime.now(), vitals1);
 
         ArrayList<VitalRecord> vitals2 = new ArrayList<>();
         vitals2.add(new BloodPressureSystolic(90));
         vitals2.add(new HeartRate(72));
         vitals2.add(new BodyTemperature(33));
-        DB.dh.addVitalReport(patient2, LocalDateTime.now(), vitals2);
+        BaseController.getDb().addVitalReport(patient2, LocalDateTime.now(), vitals2);
 
         // Add sample medical checkups
         CheckUp checkup1 = new CheckUp("feed", "description", LocalDateTime.now(), patient1, doctor1);
-        DB.dh.addCheckUp(checkup1);
+        BaseController.getDb().addCheckUp(checkup1);
 
         CheckUp checkup2 = new CheckUp("feed", "description", LocalDateTime.now(), patient2, doctor2);
-        DB.dh.addCheckUp(checkup2);
+        BaseController.getDb().addCheckUp(checkup2);
 
         // Create schedules for appointments
         Schedule schedule1 = new Schedule(LocalDateTime.now().plusDays(7), LocalDateTime.now().plusDays(7).plusHours(1), new Appointment());
-        // DB.dh.addSchedule(schedule1);
+        // BaseController.getDb().addSchedule(schedule1);
 
         Schedule schedule2 = new Schedule(LocalDateTime.now().plusDays(14), LocalDateTime.now().plusDays(14).plusHours(1), new Appointment());
-        // DB.dh.addSchedule(schedule2);
+        // BaseController.getDb().addSchedule(schedule2);
 
         // Create sample appointments with chat rooms
         Appointment appointment1 = new Appointment(patient1, doctor1, schedule1);
-        // DB.dh.addAppointment(appointment1);
+        // BaseController.getDb().addAppointment(appointment1);
 
         Appointment appointment2 = new Appointment(patient2, doctor2, schedule2);
-        // DB.dh.addAppointment(appointment2);
+        // BaseController.getDb().addAppointment(appointment2);
     }
 
     /**

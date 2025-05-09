@@ -1,4 +1,4 @@
-package com.remote_vitals.backend.reportGenerator;
+package com.remote_vitals.backend.user.reportGenerator;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;

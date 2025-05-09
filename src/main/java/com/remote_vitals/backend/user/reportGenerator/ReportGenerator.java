@@ -1,4 +1,4 @@
-package com.remote_vitals.backend.reportGenerator;
+package com.remote_vitals.backend.user.reportGenerator;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;

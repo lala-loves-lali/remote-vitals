@@ -3,7 +3,9 @@ package com.remote_vitals.frontend.controllers;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import com.remote_vitals.backend.user.entities.User;
 import com.remote_vitals.frontend.utils.ScreenPaths;
+import com.remote_vitals.backend.user.enums.Gender;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -111,27 +113,31 @@ public class LoginController extends BaseController {
                     "Password must be at least 4 characters long.");
             return;
         }
-        
-        // For demonstration purposes, we'll use the selected user type to determine the dashboard
-        // In a real application, this would verify credentials against a database
 
-        boolean loginSuccess = true; // Simulate successful login
-        
-        if (loginSuccess) {
-            // Navigate to the appropriate dashboard based on user type
-            switch (userType) {
-                case "Admin":
-                    navigateTo(event, ScreenPaths.ADMIN_DASHBOARD, ScreenPaths.TITLE_ADMIN_DASHBOARD);
-                    break;
-                case "Doctor":
-                    navigateTo(event, ScreenPaths.DOCTOR_DASHBOARD, ScreenPaths.TITLE_DOCTOR_DASHBOARD);
-                    break;
-                case "Patient":
-                default:
-                    navigateTo(event, ScreenPaths.PATIENT_DASHBOARD, ScreenPaths.TITLE_PATIENT_DASHBOARD);
-                    break;
-            }
-        } else {
+        User user;
+        if(BaseController.getDb()==null){
+            return;
+        }
+        if((user= BaseController.getDb().getUserFromEmail(email))==null){
+            if(user.getPassword()==password){
+                BaseController.setCurrentUser(user);
+
+                switch (userType) {
+                    case "Admin":
+                        navigateTo(event, ScreenPaths.ADMIN_DASHBOARD, ScreenPaths.TITLE_ADMIN_DASHBOARD);
+                        break;
+                    case "Doctor":
+                        navigateTo(event, ScreenPaths.DOCTOR_DASHBOARD, ScreenPaths.TITLE_DOCTOR_DASHBOARD);
+                        break;
+                    case "Patient":
+                    default:
+                        navigateTo(event, ScreenPaths.PATIENT_DASHBOARD, ScreenPaths.TITLE_PATIENT_DASHBOARD);
+                        break;
+                }
+        }
+
+        }
+        else {
             showErrorAlert("Login Error", "Authentication Failed", 
                     "Invalid email or password. Please try again.");
         }
@@ -145,8 +151,6 @@ public class LoginController extends BaseController {
      */
     @FXML
     private void handleSignup(ActionEvent event) {
-
-
         navigateTo(event, ScreenPaths.SIGNUP_PAGE, ScreenPaths.TITLE_SIGNUP);
     }
     
@@ -160,13 +164,25 @@ public class LoginController extends BaseController {
     private void handleForgotPassword(ActionEvent event) {
         String email = email_input.getText().trim();
         
-        if (email.isEmpty()) {
-            showInfoAlert("Password Reset", "Email Required", 
-                    "Please enter your email address in the email field first.");
-        } else {
-            // In a real application, this would send a password reset email
-            showInfoAlert("Password Reset", "Reset Link Sent", 
-                    "If an account exists with email " + email + ", a password reset link has been sent. Please check your email.");
-        }
+        // if (email.isEmpty()) {
+        //     showInfoAlert("Password Reset", "Email Required", 
+        //             "Please enter your email address in the email field first.");
+        // } else {
+        //     User user = BaseController.getDb().getUserFromEmail(email)   ;
+        //     if(user.getPassword().equals(password)){
+        //         showInfoAlert("Password Reset", "Reset Link Sent", 
+        //             "If an account exists with email " + email + ", a password reset link has been sent. Please check your email.");
+        //     }
+        //     else{
+        //         showErrorAlert("Password Reset", "Invalid Password", 
+        //             "Invalid password. Please try again.");
+        //     }
+
+        //     // In a real application, this would send a password reset email
+        //     showInfoAlert("Password Reset", "Reset Link Sent", 
+        //             "If an account exists with email " + email + ", a password reset link has been sent. Please check your email.");
+        // }
+
+
     }
 } 
