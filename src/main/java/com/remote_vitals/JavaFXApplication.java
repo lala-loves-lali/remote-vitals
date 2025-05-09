@@ -8,7 +8,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import com.remote_vitals.backend.appointment.entities.Appointment;
 import com.remote_vitals.backend.appointment.entities.Schedule;
-import com.remote_vitals.backend.chat.entities.ChatRoom;
+//import com.remote_vitals.backend.chat.entities.ChatRoom;
 import com.remote_vitals.backend.checkup.entities.CheckUp;
 import com.remote_vitals.backend.db_handler.DB;
 import com.remote_vitals.backend.db_handler.DataBaseHandler;
@@ -144,10 +144,10 @@ public class JavaFXApplication extends Application {
         // DB.dh.addSchedule(schedule2);
 
         // Create sample appointments with chat rooms
-        Appointment appointment1 = new Appointment(patient1, doctor1, schedule1, new ChatRoom());
+        Appointment appointment1 = new Appointment(patient1, doctor1, schedule1);
         // DB.dh.addAppointment(appointment1);
 
-        Appointment appointment2 = new Appointment(patient2, doctor2, schedule2, new ChatRoom());
+        Appointment appointment2 = new Appointment(patient2, doctor2, schedule2);
         // DB.dh.addAppointment(appointment2);
     }
 

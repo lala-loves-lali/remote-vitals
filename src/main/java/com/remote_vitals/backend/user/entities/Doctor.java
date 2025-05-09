@@ -42,7 +42,7 @@ import lombok.experimental.SuperBuilder;
  * @PrimaryKeyJoinColumn - Specifies the foreign key column for the joined inheritance strategy
  */
 @Entity
-@PrimaryKeyJoinColumn(name = "user_id", columnDefinition = "bigint")
+@PrimaryKeyJoinColumn(name = "user_id", columnDefinition = "int")
 public class Doctor extends User {
     /******************** Attributes ********************/
     /** Professional description or biography of the doctor */

@@ -5,20 +5,14 @@ import com.remote_vitals.backend.appointment.entities.Schedule;
 import com.remote_vitals.backend.appointment.enums.AppointmentStatus;
 import com.remote_vitals.backend.appointment.repositories.AppointmentRepository;
 import com.remote_vitals.backend.appointment.repositories.ScheduleRepository;
-import com.remote_vitals.backend.chat.entities.ChatRoom;
-import com.remote_vitals.backend.chat.entities.Message;
-import com.remote_vitals.backend.chat.repositories.ChatRoomRepository;
-import com.remote_vitals.backend.chat.repositories.MessageRepository;
+//import com.remote_vitals.backend.chat.entities.ChatRoom;
+//import com.remote_vitals.backend.chat.entities.Message;
+//import com.remote_vitals.backend.chat.repositories.ChatRoomRepository;
+//import com.remote_vitals.backend.chat.repositories.MessageRepository;
 import com.remote_vitals.backend.checkup.entities.CheckUp;
 import com.remote_vitals.backend.checkup.repositories.CheckUpRepository;
-import com.remote_vitals.backend.user.entities.Doctor;
-import com.remote_vitals.backend.user.entities.Patient;
-import com.remote_vitals.backend.user.entities.Qualification;
-import com.remote_vitals.backend.user.entities.User;
-import com.remote_vitals.backend.user.repositories.DoctorRepository;
-import com.remote_vitals.backend.user.repositories.PatientRepository;
-import com.remote_vitals.backend.user.repositories.QualificationRepository;
-import com.remote_vitals.backend.user.repositories.UserRepository;
+import com.remote_vitals.backend.user.entities.*;
+import com.remote_vitals.backend.user.repositories.*;
 import com.remote_vitals.backend.vital.entities.VitalRecord;
 import com.remote_vitals.backend.vital.repositories.VitalRecordRepository;
 import com.remote_vitals.backend.vitalReport.entities.VitalReport;
@@ -38,39 +32,43 @@ public class DataBaseHandler {
     private final VitalRecordRepository vitalRecordRepository;
     private final VitalReportRepository vitalReportRepository;
     private final UserRepository userRepository;
+    private final AdminRepository adminRepository;
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
     private final QualificationRepository qualificationRepository;
     private final CheckUpRepository checkUpRepository;
     private final AppointmentRepository appointmentRepository;
     private final ScheduleRepository scheduleRepository;
-    private final ChatRoomRepository chatRoomRepository;
-    private final MessageRepository messageRepository;
+//   private final ChatRoomRepository chatRoomRepository;
+//   private final MessageRepository messageRepository;
 
     @Autowired
     public DataBaseHandler(
             VitalRecordRepository vitalRecordRepository,
             UserRepository userRepository,
             VitalReportRepository vitalReportRepository,
+            AdminRepository adminRepository,
             PatientRepository patientRepository,
             DoctorRepository doctorRepository,
             QualificationRepository qualificationRepository,
             CheckUpRepository checkUpRepository,
             AppointmentRepository appointmentRepository,
-            ScheduleRepository scheduleRepository,
-            ChatRoomRepository chatRoomRepository,
-            MessageRepository messageRepository) {
+            ScheduleRepository scheduleRepository
+//            ,ChatRoomRepository chatRoomRepository,
+//            MessageRepository messageRepository
+            ) {
         this.vitalRecordRepository = vitalRecordRepository;
         this.vitalReportRepository = vitalReportRepository;
         this.userRepository = userRepository;
+        this.adminRepository = adminRepository;
         this.patientRepository = patientRepository;
         this.doctorRepository = doctorRepository;
         this.qualificationRepository = qualificationRepository;
         this.checkUpRepository = checkUpRepository;
         this.appointmentRepository = appointmentRepository;
         this.scheduleRepository = scheduleRepository;
-        this.chatRoomRepository = chatRoomRepository;
-        this.messageRepository = messageRepository;
+//        this.chatRoomRepository = chatRoomRepository;
+//        this.messageRepository = messageRepository;
     }
 
     // 1
@@ -78,8 +76,8 @@ public class DataBaseHandler {
     public int registerDoctor(Doctor doctor){
         if(doctor == null || doctor.getId() != null) return -1;
         try {
-            doctorRepository.save(doctor);
-            return 0;
+            doctor = doctorRepository.save(doctor);
+            return doctor.getId();
         } catch (Exception e) {
             return -1;
         }
@@ -91,8 +89,8 @@ public class DataBaseHandler {
         if(doctor == null || doctor.getId() == null) return -1;
         if(doctorRepository.findById(doctor.getId()).isEmpty()) return -1;
         try {
-            doctorRepository.save(doctor);
-            return 0;
+            doctor = doctorRepository.save(doctor);
+            return doctor.getId();
         } catch (Exception e) {
             return -1;
         }
@@ -116,8 +114,8 @@ public class DataBaseHandler {
     public int registerPatient(Patient patient){
         if(patient == null || patient.getId() != null) return -1;
         try {
-            patientRepository.save(patient);
-            return 0;
+            patient = patientRepository.save(patient);
+            return patient.getId();
         } catch (Exception e) {
             return -1;
         }
@@ -129,8 +127,8 @@ public class DataBaseHandler {
         if(patient == null || patient.getId() == null) return -1;
         if(patientRepository.findById(patient.getId()).isEmpty()) return -1;
         try {
-            patientRepository.save(patient);
-            return 0;
+            patient = patientRepository.save(patient);
+            return patient.getId();
         } catch (Exception e) {
             return -1;
         }
@@ -148,8 +146,6 @@ public class DataBaseHandler {
             return -1;
         }
     }
-
-
 
     // 7
     @Transactional
@@ -170,8 +166,8 @@ public class DataBaseHandler {
             vitalReport.setPatient(patient);
             vitalReport.setReportWhenMade(timeWhenMade);
             vitalReport.setVitalRecords(vitalRecordRepository.saveAll(vitalRecords));
-            vitalReportRepository.save(vitalReport);
-            return 0;
+            vitalReport = vitalReportRepository.save(vitalReport);
+            return vitalReport.getId();
         } catch (Exception e) {
             return -1;
         }
@@ -241,7 +237,7 @@ public class DataBaseHandler {
             doctor.getAppointments().add(appointment);
             patientRepository.save(patient);
             doctorRepository.save(doctor);
-            return 0;
+            return appointment.getId();
         } catch (Exception e) {
             return -1;
         }
@@ -282,8 +278,8 @@ public class DataBaseHandler {
             schedule.setEndingTime(endingTime);
             appointment.setSchedule(schedule = scheduleRepository.save(schedule));
             schedule.setAppointment(appointmentRepository.save(appointment));
-            scheduleRepository.save(schedule);
-            return 0;
+            schedule =  scheduleRepository.save(schedule);
+            return schedule.getId();
         } catch (Exception e) {
             return -1;
         }
@@ -302,8 +298,8 @@ public class DataBaseHandler {
         try {
             schedule.setStartingTime(startingTime);
             schedule.setEndingTime(endingTime);
-            scheduleRepository.save(schedule);
-            return 0;
+            schedule = scheduleRepository.save(schedule);
+            return schedule.getId();
         } catch (Exception e) {
             return -1;
         }
@@ -349,94 +345,94 @@ public class DataBaseHandler {
         return patient.getAppointments();
     }
 
-    // 21
-    @Transactional
-    public int createChatRoomFor(Appointment appointment, LocalDateTime timeCreated){
-        if(timeCreated == null) return -1;
-        if(appointment == null || appointment.getId() == null) return -1;
-        if(appointmentRepository.findById(appointment.getId()).isEmpty()) return -1;
-        if(appointment.getChatRoom() != null) return -1;
-        try {
-            ChatRoom chatRoom = new ChatRoom();
-            chatRoom.setTimeCreated(timeCreated);
-            chatRoom.setAppointment(appointment);
-            appointment.setChatRoom(chatRoomRepository.save(chatRoom));
-            appointmentRepository.save(appointment);
-            return 0;
-        } catch (Exception e) {
-            return -1;
-        }
-    }
+//    // 21
+//    @Transactional
+//    public int createChatRoomFor(Appointment appointment, LocalDateTime timeCreated){
+//        if(timeCreated == null) return -1;
+//        if(appointment == null || appointment.getId() == null) return -1;
+//        if(appointmentRepository.findById(appointment.getId()).isEmpty()) return -1;
+//        if(appointment.getChatRoom() != null) return -1;
+//        try {
+//            ChatRoom chatRoom = new ChatRoom();
+//            chatRoom.setTimeCreated(timeCreated);
+//            chatRoom.setAppointment(appointment);
+//            appointment.setChatRoom(chatRoomRepository.save(chatRoom));
+//            appointmentRepository.save(appointment);
+//            return 0;
+//        } catch (Exception e) {
+//            return -1;
+//        }
+//    }
 
-    // 22
-    @Transactional
-    public int deleteChatRoom(ChatRoom chatRoom){
-        if(chatRoom == null || chatRoom.getId() == null) return -1;
-        if(chatRoomRepository.findById(chatRoom.getId()).isEmpty()) return -1;
-        try {
-            if(chatRoom.getAppointment() != null) {
-                appointmentRepository.delete(chatRoom.getAppointment());
-            }
-            if(chatRoom.getMessages() != null) {
-                messageRepository.deleteAll(chatRoom.getMessages());
-            }
-            chatRoomRepository.delete(chatRoom);
-            return 0;
-        } catch (Exception e) {
-            return -1;
-        }
-    }
+//    // 22
+//    @Transactional
+//    public int deleteChatRoom(ChatRoom chatRoom){
+//        if(chatRoom == null || chatRoom.getId() == null) return -1;
+//        if(chatRoomRepository.findById(chatRoom.getId()).isEmpty()) return -1;
+//        try {
+//            if(chatRoom.getAppointment() != null) {
+//                appointmentRepository.delete(chatRoom.getAppointment());
+//            }
+//            if(chatRoom.getMessages() != null) {
+//                messageRepository.deleteAll(chatRoom.getMessages());
+//            }
+//            chatRoomRepository.delete(chatRoom);
+//            return 0;
+//        } catch (Exception e) {
+//            return -1;
+//        }
+//    }
 
     // 23
-    @Transactional
-    public int addChatMessage(ChatRoom chatRoom, Message message){
-        if(chatRoom == null || chatRoom.getId() == null) return -1;
-        if(chatRoomRepository.findById(chatRoom.getId()).isEmpty()) return -1;
-        if(
-                message == null ||
-                message.getId() != null ||
-                message.getChatRoom() != null
-        ) return -1;
-        try {
-            message.setChatRoom(chatRoom);
-            chatRoom.getMessages().add(messageRepository.save(message));
-            chatRoomRepository.save(chatRoom);
-            return 0;
-        } catch (Exception e) {
-            return -1;
-        }
-    }
+//    @Transactional
+//    public int addChatMessage(ChatRoom chatRoom, Message message){
+//        if(chatRoom == null || chatRoom.getId() == null) return -1;
+//        if(chatRoomRepository.findById(chatRoom.getId()).isEmpty()) return -1;
+//        if(
+//                message == null ||
+//                message.getId() != null ||
+//                message.getChatRoom() != null
+//        ) return -1;
+//        try {
+//            message.setChatRoom(chatRoom);
+//            chatRoom.getMessages().add(messageRepository.save(message));
+//            chatRoomRepository.save(chatRoom);
+//            return 0;
+//        } catch (Exception e) {
+//            return -1;
+//        }
+//    }
 
     // 24
-    @Transactional
-    public int deleteChatMessage(ChatRoom chatRoom,Message message){
-        if(chatRoom == null || chatRoom.getId() == null) return -1;
-        if(chatRoomRepository.findById(chatRoom.getId()).isEmpty()) return -1;
-        if(message == null || message.getId() == null) return -1;
-        if(messageRepository.findById(message.getId()).isEmpty()) return -1;
-        try {
-            chatRoom.getMessages().remove(message);
-            chatRoomRepository.save(chatRoom);
-            messageRepository.delete(message);
-            return 0;
-        } catch (Exception e) {return -1;}
-    }
+//    @Transactional
+//    public int deleteChatMessage(ChatRoom chatRoom,Message message){
+//        if(chatRoom == null || chatRoom.getId() == null) return -1;
+//        if(chatRoomRepository.findById(chatRoom.getId()).isEmpty()) return -1;
+//        if(message == null || message.getId() == null) return -1;
+//        if(messageRepository.findById(message.getId()).isEmpty()) return -1;
+//        try {
+//            chatRoom.getMessages().remove(message);
+//            chatRoomRepository.save(chatRoom);
+//            messageRepository.delete(message);
+//            return 0;
+//        } catch (Exception e) {return -1;}
+//    }
 
-    // 25
-    public List<ChatRoom> getAllChatRoomsOfDoctor(Doctor doctor){
-        if(doctor == null || doctor.getId() == null) return null;
-        if(doctorRepository.findById(doctor.getId()).isEmpty()) return null;
-        if(doctor.getAppointments() == null || doctor.getAppointments().isEmpty()) return null;
-        return doctor.getAppointments().stream().map(Appointment::getChatRoom).toList();
-    }
+//    // 25
+//    public List<ChatRoom> getAllChatRoomsOfDoctor(Doctor doctor){
+//        if(doctor == null || doctor.getId() == null) return null;
+//        if(doctorRepository.findById(doctor.getId()).isEmpty()) return null;
+//        if(doctor.getAppointments() == null || doctor.getAppointments().isEmpty()) return null;
+//        return doctor.getAppointments().stream().map(Appointment::getChatRoom).toList();
+//    }
 
     // 26
-    public List<ChatRoom> getAllChatRoomsOfPatient(Patient patient){
-        if(patient == null || patient.getId() == null) return null;
-        if(patientRepository.findById(patient.getId()).isEmpty()) return null;
-        if(patient.getAppointments() == null || patient.getAppointments().isEmpty()) return null;
-        return patient.getAppointments().stream().map(Appointment::getChatRoom).toList();
-    }
+//    public List<ChatRoom> getAllChatRoomsOfPatient(Patient patient){
+//        if(patient == null || patient.getId() == null) return null;
+//        if(patientRepository.findById(patient.getId()).isEmpty()) return null;
+//        if(patient.getAppointments() == null || patient.getAppointments().isEmpty()) return null;
+//        return patient.getAppointments().stream().map(Appointment::getChatRoom).toList();
+//    }
 
     // 27
     public Optional<User> getUserFromPassword(String email, String password){
@@ -475,8 +471,8 @@ public class DataBaseHandler {
         try {
             patientRepository.save(checkUp.getPatient());
             doctorRepository.save(checkUp.getDoctor());
-            checkUpRepository.save(checkUp);
-            return 0;
+            checkUp = checkUpRepository.save(checkUp);
+            return checkUp.getId();
         } catch (Exception e) {return -1;}
     }
 
@@ -487,4 +483,49 @@ public class DataBaseHandler {
         if(patient.getCheckups() == null || patient.getCheckups().isEmpty()) return null;
         return patient.getCheckups();
     }
+
+    // 32
+    public List<CheckUp> getAllCheckUpsOf(Doctor doctor){
+        if(doctor == null || doctor.getId() == null) return null;
+        if(doctorRepository.findById(doctor.getId()).isEmpty()) return null;
+        if(doctor.getCheckups() == null || doctor.getCheckups().isEmpty()) return null;
+        return doctor.getCheckups();
+    }
+
+    // 33
+    public int registerAdmin(Admin admin){
+        if(admin == null || admin.getId() != null) return -1;
+        try {
+            admin = adminRepository.save(admin);
+            return admin.getId();
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    // 34
+    public int updateAdmin(Admin admin){
+        if(admin == null || admin.getId() == null) return -1;
+        if(adminRepository.findById(admin.getId()).isEmpty()) return -1;
+        try {
+            admin = adminRepository.save(admin);
+            return admin.getId();
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    // 35
+    public int deleteAdmin(Admin admin){
+        if(admin == null || admin.getId() == null) return -1;
+        if(adminRepository.findById(admin.getId()).isEmpty()) return -1;
+        try {
+            adminRepository.delete(admin);
+            return 0;
+        }
+        catch (Exception ex){
+            return -1;
+        }
+    }
+
 }

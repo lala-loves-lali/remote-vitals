@@ -48,7 +48,7 @@ import lombok.experimental.SuperBuilder;
  */
 @Entity
 @Table(name = "patient")
-@PrimaryKeyJoinColumn(name = "user_id", columnDefinition = "bigint")
+@PrimaryKeyJoinColumn(name = "user_id", columnDefinition = "int")
 public class Patient extends User {
     /******************** Attributes ********************/
     /** Medical description or history of the patient */

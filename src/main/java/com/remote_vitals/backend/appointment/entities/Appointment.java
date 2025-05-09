@@ -1,7 +1,7 @@
 package com.remote_vitals.backend.appointment.entities;
 
 import com.remote_vitals.backend.appointment.enums.AppointmentStatus;
-import com.remote_vitals.backend.chat.entities.ChatRoom;
+//import com.remote_vitals.backend.chat.entities.ChatRoom;
 import com.remote_vitals.backend.user.entities.Doctor;
 import com.remote_vitals.backend.user.entities.Patient;
 import jakarta.persistence.*;
@@ -31,6 +31,8 @@ public class Appointment {
     private Integer id;
     @Enumerated(EnumType.STRING)
     private AppointmentStatus status;
+    @Column(name = "link_for_room")
+    private String linkForRoom;
     // Relationships
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "patient_id")
@@ -44,25 +46,24 @@ public class Appointment {
     @JoinColumn(name = "schedule_id")
     private Schedule schedule;
 
-    @OneToOne(mappedBy = "appointment")
-    private ChatRoom chatRoom;
+//    @OneToOne(mappedBy = "appointment")
+//    private ChatRoom chatRoom;
 
-
-    public Appointment(AppointmentStatus status, Patient patient, Doctor doctor, Schedule schedule, ChatRoom chatRoom) {
+    public Appointment(AppointmentStatus status, Patient patient, Doctor doctor, Schedule schedule/*, ChatRoom chatRoom */) {
         this.status = status;
         this.patient = patient;
         this.doctor = doctor;
         this.schedule = schedule;
-        this.chatRoom = chatRoom;
+//        this.chatRoom = chatRoom;
     }
 
 
-    public Appointment(Patient patient, Doctor doctor, Schedule schedule, ChatRoom chatRoom) {
+    public Appointment(Patient patient, Doctor doctor, Schedule schedule /*, ChatRoom chatRoom */) {
         this.status=AppointmentStatus.REQUESTED;
         this.patient = patient;
         this.doctor = doctor;
         this.schedule = schedule;
-        this.chatRoom = chatRoom;
+//        this.chatRoom = chatRoom;
     }
 }
 

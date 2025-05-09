@@ -18,7 +18,7 @@ import lombok.experimental.SuperBuilder;
 // JPA annotations
 @Entity
 @Table(name = "admin")
-@PrimaryKeyJoinColumn(name = "user_id", columnDefinition = "bigint")
+@PrimaryKeyJoinColumn(name = "user_id", columnDefinition = "int")
 public class Admin extends User{
 
     public Admin(String firstName, String lastName, Gender gender, String phoneNumber, String email, String password) {
