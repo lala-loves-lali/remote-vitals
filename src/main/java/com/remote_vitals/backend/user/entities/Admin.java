@@ -2,6 +2,7 @@
 package com.remote_vitals.backend.user.entities;
 
 // imports
+import com.remote_vitals.backend.user.enums.Gender;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,4 +21,7 @@ import lombok.experimental.SuperBuilder;
 @PrimaryKeyJoinColumn(name = "user_id", columnDefinition = "bigint")
 public class Admin extends User{
 
+    public Admin(String firstName, String lastName, Gender gender, String phoneNumber, String email, String password) {
+        super(firstName, lastName, gender, phoneNumber, email, password);
+    }
 }

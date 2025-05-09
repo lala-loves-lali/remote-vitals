@@ -28,8 +28,7 @@ public class Qualification {
     private Integer id;
     @Column(nullable = false)
     private String label;
-    @Column(columnDefinition = "text", nullable = false)
-    private String description;
+  
     // Relationships
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "doctor_id")

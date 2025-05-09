@@ -2,6 +2,7 @@ package com.remote_vitals.frontend.controllers;
 
 import com.remote_vitals.backend.db_handler.DB;
 import com.remote_vitals.backend.db_handler.DataBaseHandler;
+import com.remote_vitals.backend.user.entities.Doctor;
 import com.remote_vitals.backend.user.entities.Patient;
 import com.remote_vitals.backend.user.enums.Gender;
 import com.remote_vitals.frontend.utils.ScreenPaths;
@@ -98,21 +99,17 @@ public class LoginController extends BaseController {
     @FXML
     private void handleLogin(ActionEvent event) {
 
+        Doctor doctor = new Doctor();
 
+        // Set doctor properties/fields
+        doctor.setFirstName("John");
+        doctor.setLastName("Doe");
+        doctor.setEmail("john.doe@example.com");
+        doctor.setGender(Gender.MALE); // Sample value from Gender enum
+      // Assuming Doctor has specialization field
 
-
-        DB.dh.registerPatient(        new Patient(
-                "John",
-                "Doe",
-                Gender.MALE,
-                "+1234567890",
-                "john.doe@example.com",
-                "securePassword123",
-                "Patient with hypertension",
-                "A+",
-                LocalDateTime.of(1985, 5, 15, 0, 0)
-        ));
-
+        DB.dh.registerDoctor(doctor);
+                DB.cu=DB.dh.getDoctor(doctor.getId());
 
         String email = email_input.getText().trim();
         String password = password_input.getText().trim();
@@ -134,7 +131,7 @@ public class LoginController extends BaseController {
         
         // For demonstration purposes, we'll use the selected user type to determine the dashboard
         // In a real application, this would verify credentials against a database
-        
+
         boolean loginSuccess = true; // Simulate successful login
         
         if (loginSuccess) {
@@ -165,6 +162,8 @@ public class LoginController extends BaseController {
      */
     @FXML
     private void handleSignup(ActionEvent event) {
+
+
         navigateTo(event, ScreenPaths.SIGNUP_PAGE, ScreenPaths.TITLE_SIGNUP);
     }
     
