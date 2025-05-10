@@ -52,6 +52,52 @@ public class JavaFXApplication extends Application {
         // Initialize database with sample data
         initializeDummyData();
         
+        DataBaseHandler db = BaseController.getDb();
+        System.out.println("=== Testing DataBaseHandler methods ===");
+        try {
+            System.out.println("All doctors: " + db.getAllDoctors());
+        } catch (Exception e) {
+            System.out.println("getAllDoctors() failed: " + e.getMessage());
+        }
+        try {
+            System.out.println("All patients: " + db.getAllPatients());
+        } catch (Exception e) {
+            System.out.println("getAllPatients() failed: " + e.getMessage());
+        }
+        try {
+            var doctors = db.getAllDoctors();
+            if (!doctors.isEmpty()) {
+                System.out.println("All appointments for first doctor: " + db.getAllAppointmentsForDoctor(doctors.get(0)));
+            }
+        } catch (Exception e) {
+            System.out.println("getAllAppointmentsForDoctor() failed: " + e.getMessage());
+        }
+        try {
+            var patients = db.getAllPatients();
+            if (!patients.isEmpty()) {
+                System.out.println("All vital reports for first patient: " + db.getAllVitalReportsOf(patients.get(0)));
+            }
+        } catch (Exception e) {
+            System.out.println("getAllVitalReportsOf() failed: " + e.getMessage());
+        }
+        try {
+            var patients = db.getAllPatients();
+            if (!patients.isEmpty()) {
+                System.out.println("All checkups for first patient: " + db.getAllCheckUpsOf(patients.get(0)));
+            }
+        } catch (Exception e) {
+            System.out.println("getAllCheckUpsOf(Patient) failed: " + e.getMessage());
+        }
+        try {
+            var doctors = db.getAllDoctors();
+            if (!doctors.isEmpty()) {
+                System.out.println("All checkups for first doctor: " + db.getAllCheckUpsOf(doctors.get(0)));
+            }
+        } catch (Exception e) {
+            System.out.println("getAllCheckUpsOf(Doctor) failed: " + e.getMessage());
+        }
+        System.out.println("=== End of DataBaseHandler tests ===");
+        
         System.out.println("**********************************************************");
     }
     

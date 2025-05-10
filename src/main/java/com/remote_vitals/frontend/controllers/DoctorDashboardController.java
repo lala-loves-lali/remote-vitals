@@ -51,9 +51,7 @@ public class DoctorDashboardController extends BaseController {
      */
     @FXML
     private void handleViewPatients(ActionEvent event) {
-        // To be implemented with the patient list screen
-        showInfoAlert("Feature Coming Soon", "View Patients", 
-                "This feature will be available in a future update.");
+        navigateTo(event, ScreenPaths.DOCTOR_PATIENTS, ScreenPaths.TITLE_DOCTOR_PATIENTS);
     }
     
     /**

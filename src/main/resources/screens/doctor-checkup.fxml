@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.remote_vitals.frontend.controllers.DoctorCheckupController"
+      spacing="20" styleClass="main-container">
+    
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Label fx:id="patientNameLabel" styleClass="header-label"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="backButton" text="Back" onAction="#handleBack" styleClass="secondary-button"/>
+    </HBox>
+
+    <TitledPane text="Patient Information" expanded="true">
+        <VBox spacing="10">
+            <GridPane hgap="10" vgap="10">
+                <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <Label fx:id="emailLabel" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                
+                <Label text="Phone:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <Label fx:id="phoneLabel" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                
+                <Label text="Blood Group:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <Label fx:id="bloodGroupLabel" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+            </GridPane>
+        </VBox>
+    </TitledPane>
+
+    <TitledPane text="Latest Vitals" expanded="true">
+        <VBox spacing="10">
+            <TableView fx:id="vitalsTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="dateColumn" text="Date" prefWidth="150"/>
+                    <TableColumn fx:id="heartRateColumn" text="Heart Rate" prefWidth="100"/>
+                    <TableColumn fx:id="bloodPressureColumn" text="Blood Pressure" prefWidth="150"/>
+                    <TableColumn fx:id="temperatureColumn" text="Temperature" prefWidth="100"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </TitledPane>
+
+    <TitledPane text="Checkup Details" expanded="true">
+        <VBox spacing="10">
+            <Label text="Prescription:"/>
+            <TextArea fx:id="prescriptionArea" prefRowCount="3" wrapText="true"/>
+            
+            <Label text="Feedback:"/>
+            <TextArea fx:id="feedbackArea" prefRowCount="3" wrapText="true"/>
+            
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Button fx:id="saveButton" text="Save Checkup" onAction="#handleSave" styleClass="primary-button"/>
+            </HBox>
+        </VBox>
+    </TitledPane>
+
+</VBox> 

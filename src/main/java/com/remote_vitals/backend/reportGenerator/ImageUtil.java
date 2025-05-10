@@ -1,4 +1,4 @@
-package com.remote_vitals.backend.user.reportGenerator;
+package com.remote_vitals.backend.reportGenerator;
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.Image;
 import com.mxgraph.util.mxCellRenderer;

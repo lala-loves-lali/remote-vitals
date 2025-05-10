@@ -53,4 +53,10 @@ public class ScreenPaths {
     public static final String TITLE_ADMIN_PROFILE = "Admin Profile - Remote Vitals";
     public static final String TITLE_VITALS_GRAPH = "Vitals Visualization - Remote Vitals";
     public static final String TITLE_DASHBOARD_SELECTOR = "Dashboard Selection - Remote Vitals";
+    
+    public static final String DOCTOR_PATIENTS = "/screens/doctor-patients.fxml";
+    public static final String TITLE_DOCTOR_PATIENTS = "My Patients";
+    
+    public static final String DOCTOR_CHECKUP = "/screens/doctor-checkup.fxml";
+    public static final String TITLE_DOCTOR_CHECKUP = "Patient Checkup";
 } 
