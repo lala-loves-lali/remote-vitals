@@ -6,14 +6,17 @@
 package com.remote_vitals.backend.vital.entities;
 
 // imports
+import com.remote_vitals.backend.vital.enums.VitalStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 // lombok annotations
 @Data
+@ToString(callSuper = true)
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder
@@ -22,42 +25,54 @@ import lombok.experimental.SuperBuilder;
 @Entity
 @DiscriminatorValue("Height")
 public class Height extends VitalRecord {
+
     /******************** Attributes *******************/
-    // static
-    public static final float MIN_HEIGHT = 0.0f;
-    public static final float MAX_HEIGHT = 0.0f;
+    public static final float MIN_HEIGHT = 0.0f;   // in cm (example: 30cm = 0.3m)
+    public static final float MAX_HEIGHT = 272.0f;  // in cm (Robert Wadlow)
+
+    public static final boolean IS_VALID_BELOW_MIN_HEIGHT = false;
+    public static final boolean IS_VALID_ABOVE_MAX_HEIGHT = true;
+
     /********************* Setters *********************/
     @Override
     public void setValue(float height) throws IllegalArgumentException {
-        // check if height is valid
-        int result = isValidHeight(height);
-        if(result == 0){
-            super.setValue(height);
-        }else if(result == 1){
-            throw new IllegalArgumentException
-            ("Height( " + height + " ) is greater than maximum height( "+ MAX_HEIGHT +" )\n");
-        }else{
-            throw new IllegalArgumentException
-            ("Height( " + height + " ) is less than minimum height( "+ MIN_HEIGHT +" )\n");
+        if (!isValid(height)) {
+            throw new IllegalArgumentException(
+                    this.getClass().getSimpleName() + " has an invalid value(" + height + ")"
+            );
         }
+        super.setValue(height);
     }
-    /******************* Constructors *******************/
-    public Height(Integer id,float value){
-        super(id);
-        setValue(value);
-    }
-    public Height(float value){
-        setValue(value);
-    }
-    /********************* Methods *********************/
 
-    // returns 0 if height lies in valid range
-    // returns 1 if height is greater than maximum height,
-    // returns -1 if height is less than minimum height
-    public static int isValidHeight(float height){
-        if(height < MIN_HEIGHT){ return -1;}
-        else if(height > MAX_HEIGHT){ return 1;}
-        else{ return 0;}
+    /******************* Constructors *******************/
+    public Height(Integer id, float value) {
+        super(id, determineStatus(value));
+        setValue(value);
+    }
+
+    public Height(float value) {
+        super(null, determineStatus(value));
+        setValue(value);
+    }
+
+    /********************* Methods *********************/
+    public static boolean isValid(float height) {
+        return (height >= MIN_HEIGHT && height <= MAX_HEIGHT) ||
+                (height < MIN_HEIGHT && IS_VALID_BELOW_MIN_HEIGHT) ||
+                (height > MAX_HEIGHT && IS_VALID_ABOVE_MAX_HEIGHT);
+    }
+
+    private static VitalStatus determineStatus(float height) {
+        if (height >= MIN_HEIGHT && height <= MAX_HEIGHT) {
+            return VitalStatus.NORMAL;
+        } else if ((height < MIN_HEIGHT && IS_VALID_BELOW_MIN_HEIGHT) ||
+                (height > MAX_HEIGHT && IS_VALID_ABOVE_MAX_HEIGHT)) {
+            return VitalStatus.ABNORMAL;
+        } else {
+            throw new IllegalArgumentException(
+                    Height.class.getSimpleName() + " has an invalid value(" + height + ")"
+            );
+        }
     }
 }
 // ----------------------- // END // ---------------------- //

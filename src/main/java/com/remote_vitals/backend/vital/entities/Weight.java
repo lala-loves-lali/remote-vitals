@@ -6,14 +6,17 @@
 package com.remote_vitals.backend.vital.entities;
 
 // imports
+import com.remote_vitals.backend.vital.enums.VitalStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 // lombok annotations
 @Data
+@ToString(callSuper = true)
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder
@@ -22,17 +25,20 @@ import lombok.experimental.SuperBuilder;
 @Entity
 @DiscriminatorValue("Weight")
 public class Weight extends VitalRecord {
+
     /******************** Attributes *******************/
-    // static constants
-    public static final float MIN_WEIGHT = 0.0f;
-    public static final float MAX_WEIGHT = 500.0f; // Max weight in kg
-    
-    /********************* Setters ********************/
+    public static final float MIN_WEIGHT = 0.0f;   // minimum weight in kg
+    public static final float MAX_WEIGHT = 500.0f; // maximum weight in kg
+
+    public static final boolean IS_VALID_BELOW_MIN_WEIGHT = false;
+    public static final boolean IS_VALID_ABOVE_MAX_WEIGHT = true;
+
+    /********************* Setters *********************/
     @Override
     public void setValue(float weight) throws IllegalArgumentException {
-        if (!isValidWeight(weight)) {
+        if (!isValid(weight)) {
             throw new IllegalArgumentException(
-                "Weight (" + weight + ") is outside the valid range of " + MIN_WEIGHT + " to " + MAX_WEIGHT + "."
+                    getClass().getSimpleName() + " has an invalid value(" + weight + ")"
             );
         }
         super.setValue(weight);
@@ -40,17 +46,33 @@ public class Weight extends VitalRecord {
 
     /******************* Constructors *******************/
     public Weight(Integer id, float value) {
-        super(id);
+        super(id, determineStatus(value));
         setValue(value);
     }
 
     public Weight(float value) {
+        super(null, determineStatus(value));
         setValue(value);
     }
 
     /********************* Methods *********************/
-    public static boolean isValidWeight(float weight) {
-        return weight >= MIN_WEIGHT && weight <= MAX_WEIGHT;
+    public static boolean isValid(float weight) {
+        return (weight >= MIN_WEIGHT && weight <= MAX_WEIGHT) ||
+                (weight < MIN_WEIGHT && IS_VALID_BELOW_MIN_WEIGHT) ||
+                (weight > MAX_WEIGHT && IS_VALID_ABOVE_MAX_WEIGHT);
+    }
+
+    private static VitalStatus determineStatus(float weight) {
+        if (weight >= MIN_WEIGHT && weight <= MAX_WEIGHT) {
+            return VitalStatus.NORMAL;
+        } else if ((weight < MIN_WEIGHT && IS_VALID_BELOW_MIN_WEIGHT) ||
+                (weight > MAX_WEIGHT && IS_VALID_ABOVE_MAX_WEIGHT)) {
+            return VitalStatus.ABNORMAL;
+        } else {
+            throw new IllegalArgumentException(
+                    Weight.class.getSimpleName() + " has an invalid value(" + weight + ")"
+            );
+        }
     }
 }
 // ----------------------- // END // ---------------------- //

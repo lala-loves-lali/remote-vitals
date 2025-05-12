@@ -9,14 +9,9 @@ import com.remote_vitals.backend.appointment.entities.Appointment;
 import com.remote_vitals.backend.checkup.entities.CheckUp;
 import com.remote_vitals.backend.user.enums.Gender;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import com.remote_vitals.backend.user.enums.Visibility;
+import jakarta.persistence.*;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 /**
@@ -31,6 +26,9 @@ import lombok.experimental.SuperBuilder;
  * @SuperBuilder - Enables builder pattern with inheritance support
  */
 @Data
+@ToString(exclude = {
+        "appointments","checkUps"
+})
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
@@ -45,54 +43,64 @@ import lombok.experimental.SuperBuilder;
 @PrimaryKeyJoinColumn(name = "user_id", columnDefinition = "int")
 public class Doctor extends User {
     /******************** Attributes ********************/
+    @Column(columnDefinition = "text")
+    private String qualificationString;
+
     /** Professional description or biography of the doctor */
     @Column(columnDefinition = "text")
     private String description;
 
-    /** Doctor's qualification as a simple string */
-    @Column(name = "qualification", columnDefinition = "text")
-    private String qualificationString;
-
+    /******************** Relationships ********************/
     /** List of appointments associated with this doctor */
-    @OneToMany(mappedBy = "doctor")
+    @OneToMany(
+            fetch = FetchType.EAGER,
+            mappedBy = "doctor",
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            orphanRemoval = true
+    )
     private List<Appointment> appointments;
 
-    /** List of professional qualifications held by the doctor */
-    @OneToMany(mappedBy = "doctor")
-    private List<Qualification> qualifications;
-
     /** List of medical checkups performed by the doctor */
-    @OneToMany(mappedBy = "doctor")
-    private List<CheckUp> checkups;
+    @OneToMany(
+            fetch = FetchType.EAGER,
+            mappedBy = "doctor",
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            orphanRemoval = true
+    )
+    private List<CheckUp> checkUps;
 
-    /** List of patients assigned to this doctor */
-    @OneToMany(mappedBy = "assignedDoctor")
-    private List<Patient> assignedPatients;
-
+    /******************** Constructors ********************/
     /**
      * Constructor for creating a new doctor with basic information
      * Initializes empty lists for appointments, qualifications, and checkups
      */
-    public Doctor(String firstName, String lastName, Gender gender, String phoneNumber, String email, String password) {
+    public Doctor(
+            String firstName,
+            String lastName,
+            Gender gender,
+            String phoneNumber,
+            String email,
+            String password,
+            String qualificationString,
+            String description
+    ) {
         super(firstName, lastName, gender, phoneNumber, email, password);
-        this.description = "";
-        this.qualificationString = "";
+        this.qualificationString = qualificationString;
+        this.description = description;
         this.appointments = new ArrayList<>();
-        this.qualifications = new ArrayList<>();
-        this.checkups = new ArrayList<>();
-        this.assignedPatients = new ArrayList<>();
+        this.checkUps = new ArrayList<>();
     }
 
-    /**
-     * Constructor with qualification string
-     */
-    public Doctor(String firstName, String lastName, Gender gender, String phoneNumber, String email, String password, String qualification) {
+    public Doctor(
+            String firstName,
+            String lastName,
+            Gender gender,
+            String phoneNumber,
+            String email,
+            String password
+    ) {
         super(firstName, lastName, gender, phoneNumber, email, password);
-        this.description = "";
-        this.qualificationString = qualification;
         this.appointments = new ArrayList<>();
-        this.qualifications = new ArrayList<>();
-        this.checkups = new ArrayList<>();
-        this.assignedPatients = new ArrayList<>();
+        this.checkUps = new ArrayList<>();
     }
 }

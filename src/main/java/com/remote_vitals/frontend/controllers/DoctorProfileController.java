@@ -36,19 +36,19 @@ public class DoctorProfileController extends ProfileController {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        super.initialize(location, resources);
-        
-        // Make email field non-editable
-        emailField.setEditable(false);
-        
-        // Get doctor from current user
-        if ((doctor = BaseController.getDoctorUser()) != null) {
-            loadDoctorData();
-        }
-        else {
-            showErrorAlert("Error", "Invalid User Type",
-                    "Expected Doctor user type but got different type.");
-        }
+//        super.initialize(location, resources);
+//
+//        // Make email field non-editable
+//        emailField.setEditable(false);
+//
+//        // Get doctor from current user
+//        if ((doctor = BaseController.getDoctorUser()) != null) {
+//            loadDoctorData();
+//        }
+//        else {
+//            showErrorAlert("Error", "Invalid User Type",
+//                    "Expected Doctor user type but got different type.");
+//        }
     }
 
     /**
@@ -77,28 +77,28 @@ public class DoctorProfileController extends ProfileController {
     @FXML
     @Override
     protected void handleSave(ActionEvent event) {
-        if (doctor == null) {
-            showErrorAlert("Error", "No Doctor Data",
-                    "Unable to save changes. Doctor data not found.");
-            return;
-        }
-
-        // Update doctor data
-        doctor.setFirstName(firstNameField.getText().trim());
-        doctor.setLastName(lastNameField.getText().trim());
-        doctor.setPhoneNumber(phoneField.getText().trim());
-        doctor.setDescription(descriptionTextArea.getText().trim());
-        doctor.setQualificationString(qualificationField.getText().trim());
-
-        // Save changes
-        try {
-            BaseController.getDb().updateDoctor(doctor);
-            showInfoAlert("Success", "Profile Updated",
-                    "Your profile has been updated successfully.");
-        } catch (Exception e) {
-            showErrorAlert("Error", "Update Failed",
-                    "Failed to update profile. Please try again.");
-        }
+//        if (doctor == null) {
+//            showErrorAlert("Error", "No Doctor Data",
+//                    "Unable to save changes. Doctor data not found.");
+//            return;
+//        }
+//
+//        // Update doctor data
+//        doctor.setFirstName(firstNameField.getText().trim());
+//        doctor.setLastName(lastNameField.getText().trim());
+//        doctor.setPhoneNumber(phoneField.getText().trim());
+//        doctor.setDescription(descriptionTextArea.getText().trim());
+//        doctor.setQualificationString(qualificationField.getText().trim());
+//
+//        // Save changes
+//        try {
+//            BaseController.getDb().updateDoctor(doctor);
+//            showInfoAlert("Success", "Profile Updated",
+//                    "Your profile has been updated successfully.");
+//        } catch (Exception e) {
+//            showErrorAlert("Error", "Update Failed",
+//                    "Failed to update profile. Please try again.");
+//        }
     }
 
     /**

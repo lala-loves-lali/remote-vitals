@@ -20,7 +20,7 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "admin")
 @PrimaryKeyJoinColumn(name = "user_id", columnDefinition = "int")
 public class Admin extends User{
-
+    /******************** Constructors ********************/
     public Admin(String firstName, String lastName, Gender gender, String phoneNumber, String email, String password) {
         super(firstName, lastName, gender, phoneNumber, email, password);
     }

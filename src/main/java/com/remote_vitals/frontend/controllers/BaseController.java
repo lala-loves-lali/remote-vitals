@@ -1,14 +1,16 @@
 package com.remote_vitals.frontend.controllers;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
-import com.remote_vitals.backend.db_handler.DataBaseHandler;
+
+import com.remote_vitals.backend.services.UserService;
 import com.remote_vitals.backend.user.entities.Admin;
 import com.remote_vitals.backend.user.entities.Doctor;
 import com.remote_vitals.backend.user.entities.Patient;
 import com.remote_vitals.backend.user.entities.User;
-import com.remote_vitals.backend.user.enums.UserType;
+
 import com.remote_vitals.frontend.utils.NavigationUtil;
 
 import javafx.event.ActionEvent;
@@ -16,15 +18,23 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.springframework.context.ConfigurableApplicationContext;
+
 /**
  * Base controller class that provides common functionality for all controllers.
  * This class handles common operations like navigation and manages stage access.
  */
 public abstract class BaseController implements Initializable {
 
-    protected static UserType userType;
-    protected static User currentUser;
-    protected  static DataBaseHandler db;
+    protected static ConfigurableApplicationContext context;
+
+    public static ConfigurableApplicationContext getContext() {
+        return context;
+    }
+
+    public static void setContext(ConfigurableApplicationContext context) {
+        BaseController.context = context;
+    }
 
     
     /**
@@ -117,78 +127,92 @@ public abstract class BaseController implements Initializable {
     protected void showInfoAlert(String title, String header, String content) {
         NavigationUtil.showInfoAlert(title, header, content);
     }
-
+    
 
     public static Doctor getDoctorUser(){
-        if (getCurrentUser()== null){
-            return null;
+     
+        if (getCurrentUser()!= null && getCurrentUser().isPresent() && getCurrentUser().get() instanceof Doctor){
+            return (Doctor) getCurrentUser().get();
         }
-        if (userType == UserType.DOCTOR){
-            return (Doctor) getCurrentUser();
-        }
-
+        System.out.println("No doctor user found,In base controller, getDoctorUser()");
         return null;
     }
-
-
-    public static boolean isDoctorUser(){
-        if (getCurrentUser()== null){
-            return false;
-        }
-        if (userType == UserType.DOCTOR){
-            return true;
-        }
-
-        return false;
-    }
-
 
     public static Admin getAdminUser(){
-        if (getCurrentUser()== null){
-            return null;
+        if (getCurrentUser()!= null && getCurrentUser().isPresent() && getCurrentUser().get() instanceof Admin){
+            return (Admin) getCurrentUser().get();
         }
-        if (userType == UserType.ADMIN){
-            return (Admin) getCurrentUser();
-        }   
-
+        System.out.println("No admin user found,In base controller, getAdminUser()");
         return null;
     }
-
-    public static Patient getPatientUser(){
-        if (getCurrentUser()== null){
-            return null;
-        }
-        if (userType == UserType.PATIENT){
-            return (Patient) getCurrentUser();
-        }
-
-        return null;
-    }
-
-
     
-    public static UserType getUserType() {
-        return userType;
+    public static Patient getPatientUser(){
+        if (getCurrentUser()!= null && getCurrentUser().isPresent() && getCurrentUser().get() instanceof Patient){
+            return (Patient) getCurrentUser().get();
+        }
+        System.out.println("No patient user found,In base controller, getPatientUser()");
+        return null;
     }
 
-    public static void setUserType(UserType userType) {
-        BaseController.userType = userType;
-    }
+//
+//    public static boolean isDoctorUser(){
+//        if (getCurrentUser()== null){
+//            return false;
+//        }
+//        if (userType == UserType.DOCTOR){
+//            return true;
+//        }
+//
+//        return false;
+//    }
+//
+//
+//    public static Admin getAdminUser(){
+//        if (getCurrentUser()== null){
+//            return null;
+//        }
+//        if (userType == UserType.ADMIN){
+//            return (Admin) getCurrentUser();
+//        }
+//
+//        return null;
+//    }
+//
+//    public static Patient getPatientUser(){
+//        if (getCurrentUser()== null){
+//            return null;
+//        }
+//        if (userType == UserType.PATIENT){
+//            return (Patient) getCurrentUser();
+//        }
+//
+//        return null;
+//    }
+//
+//
+//
+//    public static UserType getUserType() {
+//        return userType;
+//    }
+//
+//    public static void setUserType(UserType userType) {
+//        BaseController.userType = userType;
+//    }
+//
+   public static Optional<User> getCurrentUser() {
+       return getContext().getBean(UserService.class).getCurrentUser();
+   }
+//
+//    public static void setCurrentUs
+//    public static void setDb(DataBaseHandler db) {
+//        BaseController.db = db;
+//    }er(User currentUser) {
+//        BaseController.currentUser = currentUser;
+//    }
+//
+//
+//    public static DataBaseHandler getDb() {
+//        return db;
+//    }
 
-    public static User getCurrentUser() {
-        return currentUser;
-    }
-
-    public static void setCurrentUser(User currentUser) {
-        BaseController.currentUser = currentUser;
-    }
-
-
-    public static DataBaseHandler getDb() {
-        return db;
-    }
-
-    public static void setDb(DataBaseHandler db) {
-        BaseController.db = db;
-    }
 }

@@ -1,9 +1,19 @@
 package com.remote_vitals;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Optional;
 
+import com.remote_vitals.backend.services.LoginService;
+import com.remote_vitals.backend.services.SignUpService;
+import com.remote_vitals.backend.services.UserService;
+import com.remote_vitals.backend.user.dtos.PatientUpdateDto;
+import com.remote_vitals.backend.user.entities.Admin;
+import com.remote_vitals.backend.user.entities.User;
+import com.remote_vitals.backend.vital.enums.VitalStatus;
+import com.remote_vitals.backend.vitalReport.entities.VitalReport;
 import com.remote_vitals.frontend.controllers.BaseController;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -11,10 +21,10 @@ import com.remote_vitals.backend.appointment.entities.Appointment;
 //import com.remote_vitals.backend.chat.entities.ChatRoom;
 import com.remote_vitals.backend.checkup.entities.CheckUp;
 
-import com.remote_vitals.backend.db_handler.DataBaseHandler;
+
 import com.remote_vitals.backend.user.entities.Doctor;
 import com.remote_vitals.backend.user.entities.Patient;
-import com.remote_vitals.backend.user.entities.Qualification;
+
 import com.remote_vitals.backend.user.enums.Gender;
 import com.remote_vitals.backend.vital.entities.BloodPressureSystolic;
 import com.remote_vitals.backend.vital.entities.BodyTemperature;
@@ -44,60 +54,15 @@ public class JavaFXApplication extends Application {
     @Override
     public void init() throws Exception {
         // Initialize Spring Boot context
-        context = org.springframework.boot.SpringApplication.run(RemoteVitalsApplication.class);
-        
-        // Set the database handler in BaseController first
-        BaseController.setDb(context.getBean(DataBaseHandler.class));
-        
-        // Initialize database with sample data
+      context = org.springframework.boot.SpringApplication.run(RemoteVitalsApplication.class);
+//
+//        // Set the database handler in BaseController first
+        BaseController.setContext(context); 
+//
+//        // Initialize database with sample data
         initializeDummyData();
-        
-        DataBaseHandler db = BaseController.getDb();
-        System.out.println("=== Testing DataBaseHandler methods ===");
-        try {
-            System.out.println("All doctors: " + db.getAllDoctors());
-        } catch (Exception e) {
-            System.out.println("getAllDoctors() failed: " + e.getMessage());
-        }
-        try {
-            System.out.println("All patients: " + db.getAllPatients());
-        } catch (Exception e) {
-            System.out.println("getAllPatients() failed: " + e.getMessage());
-        }
-        try {
-            var doctors = db.getAllDoctors();
-            if (!doctors.isEmpty()) {
-                System.out.println("All appointments for first doctor: " + db.getAllAppointmentsForDoctor(doctors.get(0)));
-            }
-        } catch (Exception e) {
-            System.out.println("getAllAppointmentsForDoctor() failed: " + e.getMessage());
-        }
-        try {
-            var patients = db.getAllPatients();
-            if (!patients.isEmpty()) {
-                System.out.println("All vital reports for first patient: " + db.getAllVitalReportsOf(patients.get(0)));
-            }
-        } catch (Exception e) {
-            System.out.println("getAllVitalReportsOf() failed: " + e.getMessage());
-        }
-        try {
-            var patients = db.getAllPatients();
-            if (!patients.isEmpty()) {
-                System.out.println("All checkups for first patient: " + db.getAllCheckUpsOf(patients.get(0)));
-            }
-        } catch (Exception e) {
-            System.out.println("getAllCheckUpsOf(Patient) failed: " + e.getMessage());
-        }
-        try {
-            var doctors = db.getAllDoctors();
-            if (!doctors.isEmpty()) {
-                System.out.println("All checkups for first doctor: " + db.getAllCheckUpsOf(doctors.get(0)));
-            }
-        } catch (Exception e) {
-            System.out.println("getAllCheckUpsOf(Doctor) failed: " + e.getMessage());
-        }
-        System.out.println("=== End of DataBaseHandler tests ===");
-        
+
+
         System.out.println("**********************************************************");
     }
     
@@ -140,80 +105,121 @@ public class JavaFXApplication extends Application {
      * Creates dummy doctors, patients, vital records, checkups, and appointments
      */
     private void initializeDummyData() {
-        // Create dummy doctors with their specialties
-        Doctor doctor1 = new Doctor("John", "Smith", Gender.MALE, "1234567890", "john.smith@hospital.com", "password123");
-        doctor1.setDescription("Cardiologist with 10 years of experience");
-        doctor1.setQualificationString("MD, Cardiology Specialist");
-        BaseController.getDb().registerDoctor(doctor1);
+        System.out.println("Javafx ");
 
-        Doctor doctor2 = new Doctor("Sarah", "Johnson", Gender.FEMALE, "9876543210", "sarah.j@hospital.com", "password456");
-        doctor2.setDescription("Pediatrician specializing in child development");
-        doctor2.setQualificationString("MD, Pediatric Specialist");
-        BaseController.getDb().registerDoctor(doctor2);
+        try {
+            // Get services
+            SignUpService signUpService = context.getBean(SignUpService.class);
+            UserService userService = context.getBean(UserService.class);
+            LoginService loginService = context.getBean(LoginService.class);
 
-        // Create dummy patients with their medical information
-        Patient patient1 = new Patient("Michael", "Brown", Gender.MALE, "5551234567", "michael.b@email.com", "password789", "description", "A+", LocalDateTime.now());
-        BaseController.getDb().registerPatient(patient1);
-        patient1.setAssignedDoctor(doctor1);
-        BaseController.getDb().removePatientFromDoctor(patient1);
+            // Create test users
+            Patient patient = new Patient(
+                    "John", "Doe",
+                    Gender.MALE, "1234567890",
+                    "john.doe@example.com", "password123",
+                    "No major medical history", "A+",
+                    LocalDate.of(1990, 1, 1)
+            );
 
-        Patient patient2 = new Patient("Emily", "Davis", Gender.FEMALE, "5559876543", "emily.d@email.com", "password012", "description", "B-", LocalDateTime.now());
-        BaseController.getDb().registerPatient(patient2);
+            Doctor doctor = new Doctor(
+                    "Jane", "Smith",
+                    Gender.FEMALE, "9876543210",
+                    "jane.smith@example.com", "password456",
+                    "MD, Cardiology", "Experienced cardiologist"
+            );
 
-        // Add professional qualifications for doctors
-        Qualification qual1 = new Qualification("MD in Cardiology", doctor1);
-        // BaseController.getDb().addQualification(qual1);
+            Admin admin = new Admin(
+                    "Admin", "User",
+                    Gender.OTHER, "5555555555",
+                    "admin@example.com", "admin123"
+            );
 
-        Qualification qual2 = new Qualification();
-        qual2.setLabel("Pediatric Specialist");
-        qual2.setDoctor(doctor2);
-        // BaseController.getDb().addQualification(qual2);
+            // Save users to database with error handling
+            try {
+                signUpService.signUp(patient);
+                System.out.println("Patient created successfully");
+            } catch (Exception e) {
+                System.err.println("Error creating patient: " + e.getMessage());
+                return; // Exit if patient creation fails
+            }
 
-        // Add sample vital records for patients
-        ArrayList<VitalRecord> vitals1 = new ArrayList<>();
-        vitals1.add(new BloodPressureSystolic(90));
-        vitals1.add(new HeartRate(75));
-        vitals1.add(new BodyTemperature(33));
-        BaseController.getDb().addVitalReport(patient1, LocalDateTime.now(), vitals1);
+            try {
+                signUpService.signUp(doctor);
+                System.out.println("Doctor created successfully");
+            } catch (Exception e) {
+                System.err.println("Error creating doctor: " + e.getMessage());
+            }
 
-        ArrayList<VitalRecord> vitals2 = new ArrayList<>();
-        vitals2.add(new BloodPressureSystolic(90));
-        vitals2.add(new HeartRate(72));
-        vitals2.add(new BodyTemperature(33));
-        BaseController.getDb().addVitalReport(patient2, LocalDateTime.now(), vitals2);
+            try {
+                signUpService.signUp(admin);
+                System.out.println("Admin created successfully");
+            } catch (Exception e) {
+                System.err.println("Error creating admin: " + e.getMessage());
+            }
 
-        // Add sample medical checkups
-        CheckUp checkup1 = new CheckUp("feed", "description", LocalDateTime.now(), patient1, doctor1);
-        BaseController.getDb().addCheckUp(checkup1);
+            // Login as patient to set current user ID
+            try {
+                loginService.login(patient.getEmail(), patient.getPassword(), Patient.class);
+                System.out.println("Logged in as patient successfully");
+            } catch (Exception e) {
+                System.err.println("Error logging in as patient: " + e.getMessage());
+                return;
+            }
 
-        CheckUp checkup2 = new CheckUp("feed", "description", LocalDateTime.now(), patient2, doctor2);
-        BaseController.getDb().addCheckUp(checkup2);
+            // Create test vital records with error handling
+            try {
+                HeartRate heartRate = new HeartRate();
+                heartRate.setValue(75);
+                heartRate.setStatus(VitalStatus.NORMAL);
 
-        // Create sample appointments with direct time values
-        LocalDateTime appointment1Start = LocalDateTime.now().plusDays(7);
-        LocalDateTime appointment1End = appointment1Start.plusHours(1);
-        
-        // Create appointment with direct time values
-        Appointment appointment1 = new Appointment();
-        appointment1.setPatient(patient1);
-        appointment1.setDoctor(doctor1);
-        appointment1.setStartingTime(appointment1Start);
-        appointment1.setEndingTime(appointment1End);
-        appointment1.setLinkForRoom("https://meet.example.com/appointment1");
-        BaseController.getDb().placeAppointmentRequest(patient1, doctor1, appointment1Start, appointment1End, "https://meet.example.com/appointment1");
+                BloodPressureSystolic bloodPressure = new BloodPressureSystolic();
+                bloodPressure.setValue(120);
+                bloodPressure.setStatus(VitalStatus.NORMAL);
 
-        // Create second appointment
-        LocalDateTime appointment2Start = LocalDateTime.now().plusDays(14);
-        LocalDateTime appointment2End = appointment2Start.plusHours(1);
-        
-        // Using the static helper method we created
-        Appointment appointment2 = Appointment.createWithHourDuration(
-            patient2, 
-            doctor2, 
-            appointment2Start, 
-            "https://meet.example.com/appointment2"
-        );
-        BaseController.getDb().placeAppointmentRequest(patient2, doctor2, appointment2Start, appointment2End, "https://meet.example.com/appointment2");
+                BodyTemperature temperature = new BodyTemperature();
+                temperature.setValue(37.0f);
+                temperature.setStatus(VitalStatus.NORMAL);
+
+                // Create vital report
+                VitalReport report = new VitalReport();
+                report.setReportWhenMade(LocalDateTime.now());
+                report.getVitalRecords().add(heartRate);
+                report.getVitalRecords().add(bloodPressure);
+                report.getVitalRecords().add(temperature);
+
+                // Get current user (which should be the patient we just logged in as)
+                Optional<User> currentUser = userService.getCurrentUser();
+                if (currentUser.isPresent() && currentUser.get() instanceof Patient) {
+                    Patient dbPatient = (Patient) currentUser.get();
+
+                    // Associate report with patient
+                    dbPatient.getVitalReports().add(report);
+
+                    // Update patient with new report
+                    PatientUpdateDto updateDto = new PatientUpdateDto(
+                            dbPatient.getPhoneNumber(),
+                            dbPatient.getPnVisibility(),
+                            dbPatient.getEmail(),
+                            dbPatient.getEVisibility(),
+                            dbPatient.getPassword(),
+                            dbPatient.getMedicalHistory(),
+                            dbPatient.getNextOfKinEmail()
+                    );
+                    userService.updateUser(updateDto);
+                    System.out.println("Patient updated successfully");
+                } else {
+                    System.err.println("Error: Could not find current user or user is not a patient");
+                }
+            } catch (Exception e) {
+                System.err.println("Error creating vital records: " + e.getMessage());
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error in initializeDummyData: " + e.getMessage());
+            e.printStackTrace();
+        }
+        System.out.println("ending");
     }
 
     /**

@@ -18,6 +18,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 /**
@@ -63,6 +64,38 @@ public class User {
     @Column(nullable = false)
     private String firstName;
 
+    /** User's last name - required field */
+    @Column(nullable = false)
+    private String lastName;
+
+    /** User's gender - stored as an enumerated type */
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Gender gender;
+
+    /** User's phone number */
+    @Column(nullable = false,unique = true, length = 15)
+    private String phoneNumber;
+
+    /** Visibility setting for phone number */
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Visibility pnVisibility;
+
+    /** User's email address - required, unique, and validated */
+    @Email
+    @Column(name = "email", nullable = false, unique = true, length = 255)
+    private String email;
+
+    /** Visibility setting for email address */
+    @Enumerated(EnumType.STRING)
+    private Visibility eVisibility;
+
+    /** User's password - required field */
+    @Column(nullable = false)
+    private String password;
+
+    /******************** Constructor ********************/
     /**
      * Constructor for creating a new user with basic information
      * Sets default visibility to PRIVATE for phone and email
@@ -76,50 +109,5 @@ public class User {
         this.email = email;
         this.eVisibility = Visibility.PRIVATE;
         this.password = password;
-    }
-
-    /** User's last name - required field */
-    @Column(nullable = false)
-    private String lastName;
-
-    /** User's gender - stored as an enumerated type */
-    @Enumerated(EnumType.STRING)
-    private Gender gender;
-
-    /** User's phone number */
-    private String phoneNumber;
-
-    /** Visibility setting for phone number */
-    @Enumerated(EnumType.STRING)
-    private Visibility pnVisibility;
-
-    /** User's email address - required, unique, and validated */
-    @Email
-    @Size(max = 255)
-    @Column(name = "email", nullable = false, unique = true, length = 255)
-    private String email;
-
-    /** Visibility setting for email address */
-    @Enumerated(EnumType.STRING)
-    private Visibility eVisibility;
-
-    /** User's password - required field */
-    @Column(nullable = false)
-    private String password;
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", profilePhoto='" + profilePhoto + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", gender=" + gender +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", pnVisibility=" + pnVisibility +
-                ", email='" + email + '\'' +
-                ", eVisibility=" + eVisibility +
-                ", password='" + password + '\'' +
-                '}';
     }
 }

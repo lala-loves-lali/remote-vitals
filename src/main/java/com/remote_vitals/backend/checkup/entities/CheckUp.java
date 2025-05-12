@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 
 @Entity
 public class CheckUp {
-    // Attributes
+    /******************** Attributes ********************/
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "CheckupGenerator")
     @TableGenerator(
@@ -30,22 +30,44 @@ public class CheckUp {
             allocationSize = 10
     )
     private Integer id;
+
     @Column(columnDefinition = "text")
     private String prescription;
+
     @Column(columnDefinition = "text")
     private String feedback;
+
     @Column(nullable = false)
     private LocalDateTime timeWhenMade;
-    // Relationships
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "patient_id")
+
+    /******************** Relationships ********************/
+    @ManyToOne(
+            cascade = CascadeType.PERSIST,
+            fetch = FetchType.EAGER
+    )
+    @JoinColumn(
+            name = "patient_id",
+            nullable = false
+    )
     private Patient patient;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "doctor_id")
+    @ManyToOne(
+            cascade = CascadeType.PERSIST,
+            fetch = FetchType.EAGER
+    )
+    @JoinColumn(
+            name = "doctor_id",
+            nullable = false
+    )
     private Doctor doctor;
 
-
-    public CheckUp(String prescription, String feedback, LocalDateTime timeWhenMade, Patient patient, Doctor doctor) {
+    /******************** Constructors ********************/
+    public CheckUp(
+            String prescription,
+            String feedback,
+            LocalDateTime timeWhenMade,
+            Patient patient,
+            Doctor doctor
+    ){
         this.prescription = prescription;
         this.feedback = feedback;
         this.timeWhenMade = timeWhenMade;

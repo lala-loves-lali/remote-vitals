@@ -98,32 +98,32 @@ public class DoctorPatientsController extends BaseController implements Initiali
     }
     
     private void loadPatients() {
-        try {
-            // Get current doctor
-            Doctor currentDoctor = getDoctorUser();
-            if (currentDoctor == null) {
-                showErrorAlert("Error", "Session Error", "No doctor session found. Please log in again.");
-                return;
-            }
-            
-            // Get assigned patients
-            patients.setAll(currentDoctor.getAssignedPatients());
-            patientsTable.setItems(patients);
-            
-        } catch (Exception e) {
-            showErrorAlert("Error", "Loading Error", "Failed to load patients: " + e.getMessage());
-        }
+//        try {
+//            // Get current doctor
+//            Doctor currentDoctor = getDoctorUser();
+//            if (currentDoctor == null) {
+//                showErrorAlert("Error", "Session Error", "No doctor session found. Please log in again.");
+//                return;
+//            }
+//
+//            // Get assigned patients
+//            patients.setAll(currentDoctor.getAssignedPatients());
+//            patientsTable.setItems(patients);
+//
+//        } catch (Exception e) {
+//            showErrorAlert("Error", "Loading Error", "Failed to load patients: " + e.getMessage());
+//        }
     }
     
     private void handleCheckup(Patient patient) {
-        try {
-            // Store the selected patient in the controller
-            setCurrentUser(patient);
-            // Navigate to checkup screen
-            navigateTo(new ActionEvent(), ScreenPaths.DOCTOR_CHECKUP, ScreenPaths.TITLE_DOCTOR_CHECKUP);
-        } catch (Exception e) {
-            showErrorAlert("Error", "Navigation Error", "Failed to open checkup screen: " + e.getMessage());
-        }
+//        try {
+//            // Store the selected patient in the controller
+//            setCurrentUser(patient);
+//            // Navigate to checkup screen
+//            navigateTo(new ActionEvent(), ScreenPaths.DOCTOR_CHECKUP, ScreenPaths.TITLE_DOCTOR_CHECKUP);
+//        } catch (Exception e) {
+//            showErrorAlert("Error", "Navigation Error", "Failed to open checkup screen: " + e.getMessage());
+//        }
     }
     
     @FXML

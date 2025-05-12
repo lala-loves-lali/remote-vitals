@@ -6,14 +6,17 @@
 package com.remote_vitals.backend.vital.entities;
 
 // imports
+import com.remote_vitals.backend.vital.enums.VitalStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 // lombok annotations
 @Data
+@ToString(callSuper = true)
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder
@@ -22,17 +25,20 @@ import lombok.experimental.SuperBuilder;
 @Entity
 @DiscriminatorValue("PlateletCount")
 public class PlateletCount extends VitalRecord {
-    /******************** Attributes *******************/
-    // static constants
-    public static final int MIN_PLATELET_COUNT = 150000; // per microliter
-    public static final int MAX_PLATELET_COUNT = 450000; // per microliter
 
-    /********************* Setters ********************/
+    /******************** Attributes *******************/
+    public static final float MIN_PLATELET_COUNT = 150_000f; // per microliter
+    public static final float MAX_PLATELET_COUNT = 450_000f; // per microliter
+
+    public static final boolean IS_VALID_BELOW_MIN_PLATELET = true;
+    public static final boolean IS_VALID_ABOVE_MAX_PLATELET = true;
+
+    /********************* Setters *********************/
     @Override
     public void setValue(float plateletCount) throws IllegalArgumentException {
-        if (!isValidPlateletCount(plateletCount)) {
+        if (!isValid(plateletCount)) {
             throw new IllegalArgumentException(
-                "Platelet Count (" + plateletCount + ") is outside the valid range of " + MIN_PLATELET_COUNT + " to " + MAX_PLATELET_COUNT + "."
+                    getClass().getSimpleName() + " has an invalid value(" + plateletCount + ")"
             );
         }
         super.setValue(plateletCount);
@@ -40,17 +46,33 @@ public class PlateletCount extends VitalRecord {
 
     /******************* Constructors *******************/
     public PlateletCount(Integer id, float value) {
-        super(id);
+        super(id, determineStatus(value));
         setValue(value);
     }
 
     public PlateletCount(float value) {
+        super(null, determineStatus(value));
         setValue(value);
     }
 
     /********************* Methods *********************/
-    public static boolean isValidPlateletCount(float plateletCount) {
-        return plateletCount >= MIN_PLATELET_COUNT && plateletCount <= MAX_PLATELET_COUNT;
+    public static boolean isValid(float plateletCount) {
+        return (plateletCount >= MIN_PLATELET_COUNT && plateletCount <= MAX_PLATELET_COUNT) ||
+                (plateletCount < MIN_PLATELET_COUNT && IS_VALID_BELOW_MIN_PLATELET) ||
+                (plateletCount > MAX_PLATELET_COUNT && IS_VALID_ABOVE_MAX_PLATELET);
+    }
+
+    private static VitalStatus determineStatus(float plateletCount) {
+        if (plateletCount >= MIN_PLATELET_COUNT && plateletCount <= MAX_PLATELET_COUNT) {
+            return VitalStatus.NORMAL;
+        } else if ((plateletCount < MIN_PLATELET_COUNT && IS_VALID_BELOW_MIN_PLATELET) ||
+                (plateletCount > MAX_PLATELET_COUNT && IS_VALID_ABOVE_MAX_PLATELET)) {
+            return VitalStatus.ABNORMAL;
+        } else {
+            throw new IllegalArgumentException(
+                    PlateletCount.class.getSimpleName() + " has an invalid value(" + plateletCount + ")"
+            );
+        }
     }
 }
 // ----------------------- // END // ---------------------- //

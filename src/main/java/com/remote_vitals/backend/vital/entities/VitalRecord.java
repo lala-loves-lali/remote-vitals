@@ -7,22 +7,13 @@
 package com.remote_vitals.backend.vital.entities;
 
 // imports
+import com.remote_vitals.backend.vital.enums.VitalStatus;
 import com.remote_vitals.backend.vitalReport.entities.VitalReport;
 
-import jakarta.persistence.DiscriminatorColumn;
-import jakarta.persistence.DiscriminatorType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.TableGenerator;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 /**
@@ -36,6 +27,7 @@ import lombok.experimental.SuperBuilder;
  * @SuperBuilder - Enables builder pattern with inheritance support
  */
 @Data
+@ToString(exclude = "vitalReport")
 @NoArgsConstructor
 @SuperBuilder
 
@@ -68,14 +60,20 @@ public class VitalRecord {
 
     /** The measured value of the vital sign */
     private float value;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private VitalStatus status;
 
     /***************** Relationships ******************/
     /**
      * The vital report this record belongs to
      * Many vital records can belong to one vital report
      */
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "vital_report_id")
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(
+            name = "vital_report_id",
+            nullable = false
+    )
     private VitalReport vitalReport;
 
     /****************** Constructors ******************/
@@ -83,6 +81,9 @@ public class VitalRecord {
      * Constructor that takes an ID
      * @param id The ID to set for this vital record
      */
-    public VitalRecord(Integer id){ this.id = id;}
+    public VitalRecord(Integer id, VitalStatus status){
+        this.id = id;
+        this.status = status;
+    }
 }
 // ----------------------- // END // ---------------------- //

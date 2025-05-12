@@ -3,11 +3,12 @@ package com.remote_vitals.frontend.controllers;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import com.remote_vitals.backend.services.LoginService;
 import com.remote_vitals.backend.user.entities.Admin;
 import com.remote_vitals.backend.user.entities.Doctor;
 import com.remote_vitals.backend.user.entities.Patient;
 import com.remote_vitals.backend.user.entities.User;
-import com.remote_vitals.backend.user.enums.UserType;
+
 import com.remote_vitals.frontend.utils.ScreenPaths;
 import com.remote_vitals.backend.user.enums.Gender;
 
@@ -97,54 +98,69 @@ public class LoginController extends BaseController {
      */
     @FXML
     private void handleLogin(ActionEvent event) {
-        String email = email_input.getText().trim();
-        String password = password_input.getText().trim();
-        String userType = userTypeChoice.getValue();
-        
-        // Input validation
-        if (email.isEmpty() || password.isEmpty()) {
-            showErrorAlert("Login Error", "Missing Information", 
-                    "Please enter both email and password.");
-            return;
-        }
-        
-        // Simple password validation
-        if (password.length() < 4) {
-            showErrorAlert("Login Error", "Invalid Password", 
-                    "Password must be at least 4 characters long.");
-            return;
-        }
+       String email = email_input.getText().trim();
+       String password = password_input.getText().trim();
+       String userType = userTypeChoice.getValue();
 
-        User user;
-        if(BaseController.getDb()==null){
-            return;
-        }
-        user = BaseController.getDb().getUserFromEmail(email);
-        if(user == null){
-            showErrorAlert("Login Error", "Authentication Failed", 
-                    "Invalid email or password. Please try again.");
-            return;
-        }
+       // Input validation
+       if (email.isEmpty() || password.isEmpty()) {
+           showErrorAlert("Login Error", "Missing Information",
+                   "Please enter both email and password.");
+           return;
+       }
 
-        if(user.getPassword().equals(password)){
-            BaseController.setCurrentUser(user);
-            if(user instanceof Admin){
-                BaseController.setUserType(UserType.ADMIN);
-                navigateTo(event, ScreenPaths.ADMIN_DASHBOARD, ScreenPaths.TITLE_ADMIN_DASHBOARD);
-            }
-            else if(user instanceof Doctor){
-                BaseController.setUserType(UserType.DOCTOR);
-                navigateTo(event, ScreenPaths.DOCTOR_DASHBOARD, ScreenPaths.TITLE_DOCTOR_DASHBOARD);
-            }
-            else if(user instanceof Patient){
-                BaseController.setUserType(UserType.PATIENT);   
+       // Simple password validation
+       if (password.length() < 4) {
+           showErrorAlert("Login Error", "Invalid Password",
+                   "Password must be at least 4 characters long.");
+           return;
+       }
+
+       User user;
+       if(getContext()==null){
+           return;
+       }
+
+       switch(userType){
+        case "Patient":
+            try{
+                getContext().getBean(LoginService.class).login(email, password, Patient.class);
                 navigateTo(event, ScreenPaths.PATIENT_DASHBOARD, ScreenPaths.TITLE_PATIENT_DASHBOARD);
             }
-        }
-        else{
-            showErrorAlert("Login Error", "Invalid Password", 
-                    "Invalid password. Please try again.");
-        }
+            catch(RuntimeException e){
+                showErrorAlert("Login Error", "Authentication Failed",
+                        "Invalid email or password. Please try again.");
+                return;
+            }
+
+            break;
+        case "Doctor":
+            try{
+                getContext().getBean(LoginService.class).login(email, password, Doctor.class);
+                navigateTo(event, ScreenPaths.DOCTOR_DASHBOARD, ScreenPaths.TITLE_DOCTOR_DASHBOARD);
+            }
+            catch(RuntimeException e){
+                showErrorAlert("Login Error", "Authentication Failed",
+                        "Invalid email or password. Please try again.");
+                return;
+            }
+        case "Admin":
+            try{
+                getContext().getBean(LoginService.class).login(email, password, Admin.class);
+                navigateTo(event, ScreenPaths.ADMIN_DASHBOARD, ScreenPaths.TITLE_ADMIN_DASHBOARD);
+            }
+            catch(RuntimeException e){
+                showErrorAlert("Login Error", "Authentication Failed",
+                        "Invalid email or password. Please try again.");
+                return;
+            }
+            break;
+       }
+       
+
+       
+       
+       
     }
     
     /**

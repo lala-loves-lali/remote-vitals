@@ -6,14 +6,17 @@
 package com.remote_vitals.backend.vital.entities;
 
 // imports
+import com.remote_vitals.backend.vital.enums.VitalStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 // lombok annotations
 @Data
+@ToString(callSuper = true)
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder
@@ -22,17 +25,20 @@ import lombok.experimental.SuperBuilder;
 @Entity
 @DiscriminatorValue("RespiratoryRate")
 public class RespiratoryRate extends VitalRecord {
-    /******************** Attributes *******************/
-    // static constants
-    public static final int MIN_RESPIRATORY_RATE = 12; // breaths per minute
-    public static final int MAX_RESPIRATORY_RATE = 20; // breaths per minute
 
-    /********************* Setters ********************/
+    /******************** Attributes *******************/
+    public static final float MIN_RESPIRATORY_RATE = 12.0f; // breaths per minute
+    public static final float MAX_RESPIRATORY_RATE = 20.0f; // breaths per minute
+
+    public static final boolean IS_VALID_BELOW_MIN_RESPIRATORY_RATE = true;
+    public static final boolean IS_VALID_ABOVE_MAX_RESPIRATORY_RATE = true;
+
+    /********************* Setters *********************/
     @Override
     public void setValue(float respiratoryRate) throws IllegalArgumentException {
-        if (!isValidRespiratoryRate(respiratoryRate)) {
+        if (!isValid(respiratoryRate)) {
             throw new IllegalArgumentException(
-                "Respiratory Rate (" + respiratoryRate + ") is outside the valid range of " + MIN_RESPIRATORY_RATE + " to " + MAX_RESPIRATORY_RATE + "."
+                    getClass().getSimpleName() + " has an invalid value(" + respiratoryRate + ")"
             );
         }
         super.setValue(respiratoryRate);
@@ -40,17 +46,33 @@ public class RespiratoryRate extends VitalRecord {
 
     /******************* Constructors *******************/
     public RespiratoryRate(Integer id, float value) {
-        super(id);
+        super(id, determineStatus(value));
         setValue(value);
     }
 
     public RespiratoryRate(float value) {
+        super(null, determineStatus(value));
         setValue(value);
     }
 
     /********************* Methods *********************/
-    public static boolean isValidRespiratoryRate(float respiratoryRate) {
-        return respiratoryRate >= MIN_RESPIRATORY_RATE && respiratoryRate <= MAX_RESPIRATORY_RATE;
+    public static boolean isValid(float respiratoryRate) {
+        return (respiratoryRate >= MIN_RESPIRATORY_RATE && respiratoryRate <= MAX_RESPIRATORY_RATE) ||
+                (respiratoryRate < MIN_RESPIRATORY_RATE && IS_VALID_BELOW_MIN_RESPIRATORY_RATE) ||
+                (respiratoryRate > MAX_RESPIRATORY_RATE && IS_VALID_ABOVE_MAX_RESPIRATORY_RATE);
+    }
+
+    private static VitalStatus determineStatus(float respiratoryRate) {
+        if (respiratoryRate >= MIN_RESPIRATORY_RATE && respiratoryRate <= MAX_RESPIRATORY_RATE) {
+            return VitalStatus.NORMAL;
+        } else if ((respiratoryRate < MIN_RESPIRATORY_RATE && IS_VALID_BELOW_MIN_RESPIRATORY_RATE) ||
+                (respiratoryRate > MAX_RESPIRATORY_RATE && IS_VALID_ABOVE_MAX_RESPIRATORY_RATE)) {
+            return VitalStatus.ABNORMAL;
+        } else {
+            throw new IllegalArgumentException(
+                    RespiratoryRate.class.getSimpleName() + " has an invalid value(" + respiratoryRate + ")"
+            );
+        }
     }
 }
 // ----------------------- // END // ---------------------- //

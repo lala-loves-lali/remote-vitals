@@ -1,20 +1,26 @@
 package com.remote_vitals.frontend.controllers;
 
 
+import com.remote_vitals.backend.services.SignUpService;
+import com.remote_vitals.backend.user.entities.Admin;
 import com.remote_vitals.backend.user.entities.Doctor;
 import com.remote_vitals.backend.user.entities.Patient;
 import com.remote_vitals.frontend.utils.ScreenPaths;
 import com.remote_vitals.backend.user.enums.Gender;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 import java.util.ArrayList;
+
+import org.springframework.beans.BeansException;
 
 /**
  * Controller for the signup page.
@@ -88,8 +94,7 @@ public class SignupController extends BaseController implements Initializable {
             setupValidationListeners();
             setupPatientFieldsVisibility();
         } catch (Exception e) {
-            showErrorAlert("Initialization Error", "Error Setting Up Form", 
-                    "There was an error initializing the form. Please try again.");
+           
         }
     }
 
@@ -411,40 +416,55 @@ public class SignupController extends BaseController implements Initializable {
         
         // Create user based on type
         try {
-            if (USER_TYPE_DOCTOR.equals(userType)) {
-                // Create doctor with empty lists for appointments, qualifications, and checkups
-                // In a real application, this would be handled by a service
-                Doctor doc = new Doctor(firstName , lastName , gender , phoneNumber, email , password);
-                BaseController.getDb().registerDoctor(doc);
 
-            } else if (USER_TYPE_PATIENT.equals(userType)) {
-                LocalDateTime dateOfBirth = date_of_birth_picker.getValue().atStartOfDay();
-                Patient pat = new Patient(
-                    firstName,
-                    lastName,
-                    gender,
-                    phoneNumber,
-                    email,
-                    password,
-                    "",
-                    blood_group_dropdown.getValue(),
-                    dateOfBirth
-                );
-                BaseController.getDb().registerPatient(pat);
-                showInfoAlert("Registration Success", "Patient Account Created", 
-                        "Your patient account has been created successfully. Please log in with your credentials.");
-
-            } else {
+         
+            if (null == userType) {
+                Admin admin = new Admin(firstName, lastName, gender, phoneNumber, email, password);
+                context.getBean(SignUpService.class).signUp(admin);
                 // Create admin
-                showInfoAlert("Registration Success", "Admin Account Created", 
+                showInfoAlert("Registration Success", "Admin Account Created",
                         "Your admin account has been created successfully. Please log in with your credentials.");
+            } else switch (userType) {
+                case USER_TYPE_DOCTOR:
+                    // Create doctor with empty lists for appointments, qualifications, and checkups
+                    // In a real application, this would be handled by a service
+                    Doctor doc = new Doctor(firstName , lastName , gender , phoneNumber, email , password);
+                    context.getBean(SignUpService.class).signUp(doc);
+                    break;
+                case USER_TYPE_PATIENT:
+                    LocalDateTime dateOfBirth = date_of_birth_picker.getValue().atStartOfDay();
+                    Patient pat = new Patient(
+                            firstName,
+                            lastName,
+                            gender,
+                            phoneNumber,
+                            email,
+                            password,
+                            "",
+                            blood_group_dropdown.getValue(),
+                            dateOfBirth.toLocalDate()
+                    );  context.getBean(SignUpService.class).signUp(pat);
+                    showInfoAlert("Registration Success", "Patient Account Created",
+                            "Your patient account has been created successfully. Please log in with your credentials.");
+                    break;
+                default:
+                    Admin admin = new Admin(firstName, lastName, gender, phoneNumber, email, password);
+                    context.getBean(SignUpService.class).signUp(admin);
+                    // Create admin
+                    showInfoAlert("Registration Success", "Admin Account Created",
+                            "Your admin account has been created successfully. Please log in with your credentials.");
+                    break;
             }
-            
+
             // Navigate to login page
             navigateTo(event, ScreenPaths.LOGIN_PAGE, ScreenPaths.TITLE_LOGIN);
-        } catch (Exception e) {
-            showErrorAlert("Registration Error", "Account Creation Failed", 
-                    "There was an error creating your account. Please try again.");
+        } catch (BeansException e) {
+            showErrorAlert("Registration Error", "Account Creation Failed",
+                    "There was an error creating your account. Please try again."+e.getMessage());
+        }
+        catch (Exception e) {
+            showErrorAlert("Registration Error", "Account Creation Failed",
+                    "There was an error creating your account. Please try again."+e.getMessage());
         }
     }
     

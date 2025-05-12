@@ -2,30 +2,22 @@
 package com.remote_vitals.backend.user.entities;
 
 // imports
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.remote_vitals.backend.appointment.entities.Appointment;
 import com.remote_vitals.backend.checkup.entities.CheckUp;
 import com.remote_vitals.backend.user.enums.Gender;
 import com.remote_vitals.backend.vitalReport.entities.VitalReport;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.FetchType;
 
 /**
  * Patient entity class that extends the base User class.
@@ -39,6 +31,9 @@ import jakarta.persistence.FetchType;
  * @SuperBuilder - Enables builder pattern with inheritance support
  */
 @Data
+@ToString(exclude = {
+        "appointments","checkUps","vitalReports"
+})
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
@@ -55,9 +50,8 @@ import jakarta.persistence.FetchType;
 @PrimaryKeyJoinColumn(name = "user_id", columnDefinition = "int")
 public class Patient extends User {
     /******************** Attributes ********************/
-    /** Medical description or history of the patient */
     @Column(columnDefinition = "text")
-    private String description;
+    private String medicalHistory;
 
     /** Patient's blood group with validation pattern */
     @Column(name = "blood_group", length = 3)
@@ -67,24 +61,70 @@ public class Patient extends User {
     /** Patient's date of birth with validation to ensure it's in the past */
     @Column(name = "date_of_birth", nullable = true)
     @Past(message = "Date of birth must be in the past")
-    private LocalDateTime dateOfBirth;
+    private LocalDate dateOfBirth;
 
+    @Email
+    private String nextOfKinEmail;
+    /******************** Relationships ********************/
     /** List of appointments scheduled for this patient */
-    @OneToMany(mappedBy = "patient")
+    @OneToMany(
+            fetch = FetchType.EAGER,
+            mappedBy = "patient",
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            orphanRemoval = true
+    )
     private List<Appointment> appointments;
 
     /** List of vital reports containing the patient's medical measurements */
-    @OneToMany(mappedBy = "patient")
-    private List<VitalReport> vitalReport;
+    @OneToMany(
+            fetch = FetchType.EAGER,
+            mappedBy = "patient",
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            orphanRemoval = true
+    )
+    private List<VitalReport> vitalReports;
 
     /** List of medical checkups performed on this patient */
-    @OneToMany(mappedBy = "patient")
-    private List<CheckUp> checkups;
+    @OneToMany(
+            fetch = FetchType.EAGER,
+            mappedBy = "patient",
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            orphanRemoval = true
+    )
+    private List<CheckUp> checkUps;
 
-    /** The doctor assigned to this patient */
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "assigned_doctor_id")
-    private Doctor assignedDoctor;
+    /******************** Constructors ********************/
+    /**
+     * Constructor for creating a new patient with basic information
+     * @param firstName First name of the patient
+     * @param lastName Last name of the patient
+     * @param gender Gender of the patient
+     * @param phoneNumber Contact phone number
+     * @param email Email address
+     * @param password Account password
+     * @param medicalHistory Medical History (optional)
+     * @param bloodGroup Blood group (must match pattern A/B/AB/O with +/-)
+     * @param dateOfBirth Date of birth (must be in the past)
+     */
+    public Patient(
+            String firstName,
+            String lastName,
+            Gender gender,
+            String phoneNumber,
+            String email,
+            String password,
+            String medicalHistory,
+            String bloodGroup,
+            LocalDate dateOfBirth
+    ) {
+        super(firstName, lastName, gender, phoneNumber, email, password);
+        this.medicalHistory = medicalHistory;
+        this.bloodGroup = bloodGroup;
+        this.dateOfBirth = dateOfBirth;
+        this.appointments = new ArrayList<>();
+        this.checkUps = new ArrayList<>();
+        this.vitalReports = new ArrayList<>();
+    }
 
     /**
      * Constructor for creating a new patient with basic information
@@ -94,17 +134,41 @@ public class Patient extends User {
      * @param phoneNumber Contact phone number
      * @param email Email address
      * @param password Account password
-     * @param description Medical description
+     * @param medicalHistory Medical History (optional)
      * @param bloodGroup Blood group (must match pattern A/B/AB/O with +/-)
      * @param dateOfBirth Date of birth (must be in the past)
+     * @param nextOfKinEmail email of the next of kin to the patient
      */
-    public Patient(String firstName, String lastName, Gender gender, String phoneNumber, String email, String password, String description, String bloodGroup, LocalDateTime dateOfBirth) {
+    public Patient(
+            String firstName,
+            String lastName,
+            Gender gender,
+            String phoneNumber,
+            String email,
+            String password,
+            String medicalHistory,
+            String bloodGroup,
+            LocalDate dateOfBirth,
+            String nextOfKinEmail
+    ) {
         super(firstName, lastName, gender, phoneNumber, email, password);
-        this.description = description;
+        this.medicalHistory = medicalHistory;
         this.bloodGroup = bloodGroup;
         this.dateOfBirth = dateOfBirth;
+        this.nextOfKinEmail = nextOfKinEmail;
         this.appointments = new ArrayList<>();
-        this.vitalReport = new ArrayList<>();
-        this.checkups = new ArrayList<>();
+        this.checkUps = new ArrayList<>();
+        this.vitalReports = new ArrayList<>();
     }
+
+//     public Patient(String firstName, String lastName, Gender gender, String phoneNumber, String email, String password, String medicalHistory, String bloodGroup, LocalDate dateOfBirth) {
+//         super(firstName, lastName, gender, phoneNumber, email, password);
+//         this.medicalHistory = medicalHistory;
+//         this.bloodGroup = bloodGroup;
+//         this.dateOfBirth = dateOfBirth;
+//         this.nextOfKinEmail = nextOfKinEmail;
+//         this.appointments = new ArrayList<>();
+//         this.vitalReports = new ArrayList<>();
+//         this.checkUps = new ArrayList<>();
+//     }
 }

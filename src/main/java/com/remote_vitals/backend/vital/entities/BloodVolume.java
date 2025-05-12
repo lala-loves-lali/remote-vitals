@@ -6,33 +6,37 @@
 package com.remote_vitals.backend.vital.entities;
 
 // imports
+import com.remote_vitals.backend.vital.enums.VitalStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-// lombok annotations
 @Data
+@ToString(callSuper = true)
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder
 
-// JPA annotations
 @Entity
 @DiscriminatorValue("BloodVolume")
 public class BloodVolume extends VitalRecord {
+
     /******************** Attributes *******************/
-    // static constants
-    public static final float MIN_BLOOD_VOLUME = 200.0f; // in mL
-    public static final float MAX_BLOOD_VOLUME = 7000.0f; // in mL
+    public static final float MIN_BLOOD_VOLUME = 200.0f;   // in mL
+    public static final float MAX_BLOOD_VOLUME = 7000.0f;  // in mL
+
+    public static final boolean IS_VALID_BELOW_MIN_BLOOD_VOLUME = false;
+    public static final boolean IS_VALID_ABOVE_MAX_BLOOD_VOLUME = true;
 
     /********************* Setters ********************/
     @Override
     public void setValue(float volume) throws IllegalArgumentException {
-        if (!isValidBloodVolume(volume)) {
+        if (!isValid(volume)) {
             throw new IllegalArgumentException(
-                "Blood Volume (" + volume + ") is outside the valid range of " + MIN_BLOOD_VOLUME + " to " + MAX_BLOOD_VOLUME + "."
+                    this.getClass().getSimpleName() + " has an invalid value(" + volume + ")"
             );
         }
         super.setValue(volume);
@@ -40,17 +44,33 @@ public class BloodVolume extends VitalRecord {
 
     /******************* Constructors *******************/
     public BloodVolume(Integer id, float value) {
-        super(id);
+        super(id, determineStatus(value));
         setValue(value);
     }
 
     public BloodVolume(float value) {
+        super(null, determineStatus(value));
         setValue(value);
     }
 
     /********************* Methods *********************/
-    public static boolean isValidBloodVolume(float volume) {
-        return volume >= MIN_BLOOD_VOLUME && volume <= MAX_BLOOD_VOLUME;
+    public static boolean isValid(float volume) {
+        return (volume >= MIN_BLOOD_VOLUME && volume <= MAX_BLOOD_VOLUME) ||
+                (volume < MIN_BLOOD_VOLUME && IS_VALID_BELOW_MIN_BLOOD_VOLUME) ||
+                (volume > MAX_BLOOD_VOLUME && IS_VALID_ABOVE_MAX_BLOOD_VOLUME);
+    }
+
+    private static VitalStatus determineStatus(float volume) {
+        if (volume >= MIN_BLOOD_VOLUME && volume <= MAX_BLOOD_VOLUME) {
+            return VitalStatus.NORMAL;
+        } else if ((volume < MIN_BLOOD_VOLUME && IS_VALID_BELOW_MIN_BLOOD_VOLUME) ||
+                (volume > MAX_BLOOD_VOLUME && IS_VALID_ABOVE_MAX_BLOOD_VOLUME)) {
+            return VitalStatus.ABNORMAL;
+        } else {
+            throw new IllegalArgumentException(
+                    BloodVolume.class.getSimpleName() + " has an invalid value(" + volume + ")"
+            );
+        }
     }
 }
 // ----------------------- // END // ---------------------- //

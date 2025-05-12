@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 // lombok annotations
@@ -30,17 +31,36 @@ public class VitalReport {
             allocationSize = 10
     )
     private Integer id;
+
     @Column(name = "report_when_made",nullable = false)
     private LocalDateTime reportWhenMade;
     /******************* Relationships *******************/
-    @OneToMany(mappedBy = "vitalReport")
-    List<VitalRecord> vitalRecords;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "patient_id")
+    @OneToMany(
+            fetch = FetchType.EAGER,
+            mappedBy = "vitalReport",
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.REMOVE
+            },
+            orphanRemoval = true
+    )
+    List<VitalRecord> vitalRecords = new ArrayList<>();
+
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(
+            name = "patient_id",
+            nullable = false
+    )
     private Patient patient;
 
+    /******************* Constructors *******************/
 
-    public VitalReport(LocalDateTime reportWhenMade, List<VitalRecord> vitalRecords, Patient patient) {
+    public VitalReport(
+            LocalDateTime reportWhenMade,
+            List<VitalRecord> vitalRecords,
+            Patient patient
+    )
+    {
         this.reportWhenMade = reportWhenMade;
         this.vitalRecords = vitalRecords;
         this.patient = patient;
