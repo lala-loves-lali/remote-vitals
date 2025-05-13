@@ -87,5 +87,13 @@ public class Appointment {
         this.schedule = schedule;
 //        this.chatRoom = chatRoom;
     }
+
+    public Appointment(AppointmentStatus status, String linkForRoom, Patient patient, Doctor doctor, Schedule schedule) {
+        this.status = status;
+        this.linkForRoom = linkForRoom;
+        this.patient = patient;
+        this.doctor = doctor;
+        this.schedule = schedule;
+    }
 }
 

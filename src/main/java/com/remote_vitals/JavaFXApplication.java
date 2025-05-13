@@ -4,11 +4,14 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import com.remote_vitals.backend.services.LoginService;
 import com.remote_vitals.backend.services.SignUpService;
 import com.remote_vitals.backend.services.UserService;
+import com.remote_vitals.backend.services.AppointmentService;
+import com.remote_vitals.backend.appointment.enums.AppointmentStatus;
 import com.remote_vitals.backend.user.dtos.PatientUpdateDto;
 import com.remote_vitals.backend.user.entities.Admin;
 import com.remote_vitals.backend.user.entities.User;
@@ -56,10 +59,13 @@ public class JavaFXApplication extends Application {
         // Initialize Spring Boot context
       context = org.springframework.boot.SpringApplication.run(RemoteVitalsApplication.class);
 //
-//        // Set the database handler in BaseController first
+        // Set the database handler in BaseController first
         BaseController.setContext(context); 
-//
-//        // Initialize database with sample data
+
+        // Initialize appointment service
+      
+
+        // Initialize database with sample data
         initializeDummyData();
 
 
@@ -73,7 +79,7 @@ public class JavaFXApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         // Start with login screen for real-world application flow
-        loadScreen(stage, ScreenPaths.LOGIN_PAGE, ScreenPaths.TITLE_LOGIN);
+        loadScreen(stage, ScreenPaths.DOCTOR_PATIENTS, ScreenPaths.TITLE_LOGIN);
         
         // Other options for development/testing:
         // - Start with dashboard selector for testing
@@ -149,6 +155,7 @@ public class JavaFXApplication extends Application {
                 System.out.println("Doctor created successfully");
             } catch (Exception e) {
                 System.err.println("Error creating doctor: " + e.getMessage());
+                return; // Exit if doctor creation fails
             }
 
             try {
@@ -165,6 +172,62 @@ public class JavaFXApplication extends Application {
             } catch (Exception e) {
                 System.err.println("Error logging in as patient: " + e.getMessage());
                 return;
+            }
+
+            // Initialize and test appointment service
+            try {
+                AppointmentService appointmentService = context.getBean(AppointmentService.class);
+                System.out.println("Testing appointment service...");
+
+                // Get all doctors (should include our dummy doctor)
+                List<Doctor> doctors = appointmentService.getAllDoctors();
+                if (doctors != null && !doctors.isEmpty()) {
+                    Doctor testDoctor = doctors.get(0);
+                    System.out.println("Found doctor: " + testDoctor.getFirstName() + " " + testDoctor.getLastName());
+
+                    // Login as patient to set current user ID before requesting appointment
+                    try {
+                        loginService.login(patient.getEmail(), patient.getPassword(), Patient.class);
+                        System.out.println("Logged in as patient successfully");
+
+                        // Request an appointment
+                        String requestResult = appointmentService.RequestAppointment(testDoctor.getId());
+                        System.out.println("Appointment request result: " + requestResult);
+
+                        // Get all appointments for the doctor
+                        List<Appointment> doctorAppointments = appointmentService.getAllAppointments();
+                        if (doctorAppointments != null && !doctorAppointments.isEmpty()) {
+                            Appointment testAppointment = doctorAppointments.get(0);
+                            System.out.println("Found appointment with ID: " + testAppointment.getId());
+
+                            // Add schedule to the appointment
+                            LocalDateTime startTime = LocalDateTime.now().plusDays(1);
+                            LocalDateTime endTime = startTime.plusHours(1);
+                            String scheduleResult = appointmentService.addScheduleToAppointment(
+                                testAppointment.getId(), startTime, endTime);
+                            System.out.println("Schedule addition result: " + scheduleResult);
+
+                            // Change appointment status
+                            String statusResult = appointmentService.changeAppointmentStatus(
+                                testAppointment.getId(), AppointmentStatus.SCHEDULED);
+                            System.out.println("Status change result: " + statusResult);
+
+                            // Test appointment deletion
+                            String deleteResult = appointmentService.deleteAppointment(testAppointment.getId());
+                            System.out.println("Appointment deletion result: " + deleteResult);
+                        } else {
+                            System.out.println("No appointments found for the doctor");
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Error during appointment testing: " + e.getMessage());
+                        e.printStackTrace();
+                    }
+                } else {
+                    System.out.println("No doctors found in the system");
+                }
+            } catch (Exception e) {
+                System.err.println("Error testing appointment service: " + e.getMessage());
+                e.printStackTrace();
             }
 
             // Create test vital records with error handling

@@ -30,7 +30,6 @@ public class CsvService {
             if (headerLine == null) {
                 return resultList; // Empty file
             }
-
             // Trim and lowercase headers
             String[] rawHeaders = headerLine.split(",", -1);
             String[] headers = Arrays.stream(rawHeaders)
@@ -103,7 +102,6 @@ public class CsvService {
                 return false;
             }
         }
-
         return true;
     }
 }

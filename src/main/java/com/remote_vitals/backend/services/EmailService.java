@@ -8,6 +8,7 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -46,13 +47,12 @@ public class EmailService {
                     }
                 }
             };
-
             // Send email
             mailSender.send(messagePreparator);
-            return "Otp Sent Successfully";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Otp Not Sent";
+            return "Email Sent Successfully";
+        }
+        catch(Exception e){
+            return "Email not sent due to some error";
         }
     }
 

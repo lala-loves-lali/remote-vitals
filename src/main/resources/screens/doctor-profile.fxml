@@ -74,6 +74,7 @@
             </Label>
             <Label fx:id="userTypeLabel" text="Doctor" />
             <Label fx:id="userIdLabel" text="ID: 67890" />
+            <Button fx:id="loadDataButton" mnemonicParsing="false" onAction="#handleLoadData" styleClass="secondary-button" text="Load Data" />
          </children>
          <padding>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

@@ -30,7 +30,7 @@ public class ScreenPaths {
     public static final String PATIENT_PROFILE = SCREENS_BASE_PATH + "patient-profile.fxml";
     public static final String DOCTOR_PROFILE = SCREENS_BASE_PATH + "doctor-profile.fxml";
     public static final String ADMIN_PROFILE = SCREENS_BASE_PATH + "admin-profile.fxml";
-    
+    public static final String PATIENT_CHECKUP = SCREENS_BASE_PATH + "c.fxml";
     // Vitals visualization screens
     public static final String VITALS_GRAPH = SCREENS_BASE_PATH + "vitals-graph.fxml";
     
@@ -59,4 +59,5 @@ public class ScreenPaths {
     
     public static final String DOCTOR_CHECKUP = "/screens/doctor-checkup.fxml";
     public static final String TITLE_DOCTOR_CHECKUP = "Patient Checkup";
+
 } 

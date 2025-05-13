@@ -1,5 +1,6 @@
 package com.remote_vitals.frontend.controllers;
 
+import com.remote_vitals.backend.appointment.entities.Appointment;
 import com.remote_vitals.frontend.utils.ScreenPaths;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -100,37 +101,4 @@ public class DoctorAppointmentsController extends BaseController {
     private void handleBack(ActionEvent event) {
         navigateTo(event, ScreenPaths.DOCTOR_DASHBOARD, ScreenPaths.TITLE_DOCTOR_DASHBOARD);
     }
-    
-    // Inner class to represent an appointment
-    public static class Appointment {
-        private String patientName;
-        private LocalDate date;
-        private String time;
-        private String reason;
-        private String status;
-        
-        public Appointment(String patientName, LocalDate date, String time, String reason, String status) {
-            this.patientName = patientName;
-            this.date = date;
-            this.time = time;
-            this.reason = reason;
-            this.status = status;
-        }
-        
-        // Getters and setters
-        public String getPatientName() { return patientName; }
-        public void setPatientName(String patientName) { this.patientName = patientName; }
-        
-        public LocalDate getDate() { return date; }
-        public void setDate(LocalDate date) { this.date = date; }
-        
-        public String getTime() { return time; }
-        public void setTime(String time) { this.time = time; }
-        
-        public String getReason() { return reason; }
-        public void setReason(String reason) { this.reason = reason; }
-        
-        public String getStatus() { return status; }
-        public void setStatus(String status) { this.status = status; }
-    }
-} 
+}
