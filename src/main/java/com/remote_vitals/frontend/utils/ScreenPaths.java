@@ -12,6 +12,7 @@ public class ScreenPaths {
     public static final String MAIN_VIEW = "/main-view.fxml";
     
     // Authentication screens
+    public static final String LOGIN = SCREENS_BASE_PATH + "login-page.fxml";
     public static final String LOGIN_PAGE = SCREENS_BASE_PATH + "login-page.fxml";
     public static final String SIGNUP_PAGE = SCREENS_BASE_PATH + "signup-page.fxml";
     
@@ -22,9 +23,12 @@ public class ScreenPaths {
     
     // Feature screens
     public static final String SCHEDULE_APPOINTMENT = SCREENS_BASE_PATH + "schedule-appointment.fxml";
+    public static final String PATIENT_APPOINTMENTS = SCREENS_BASE_PATH + "patient-appointments.fxml";
     public static final String DOCTOR_APPOINTMENTS = SCREENS_BASE_PATH + "doctor-appointments.fxml";
+    public static final String UPLOAD_VITALS = SCREENS_BASE_PATH + "upload-vitals-data.fxml";
     public static final String UPLOAD_VITALS_DATA = SCREENS_BASE_PATH + "upload-vitals-data.fxml";
     public static final String VIEW_VITALS = SCREENS_BASE_PATH + "view-vitals.fxml";
+    public static final String PATIENT_MEDICAL_HISTORY = SCREENS_BASE_PATH + "patient-medical-history.fxml";
     
     // Profile screens
     public static final String PATIENT_PROFILE = SCREENS_BASE_PATH + "patient-profile.fxml";
@@ -53,6 +57,8 @@ public class ScreenPaths {
     public static final String TITLE_ADMIN_PROFILE = "Admin Profile - Remote Vitals";
     public static final String TITLE_VITALS_GRAPH = "Vitals Visualization - Remote Vitals";
     public static final String TITLE_DASHBOARD_SELECTOR = "Dashboard Selection - Remote Vitals";
+    public static final String TITLE_PATIENT_MEDICAL_HISTORY = "Medical History - Remote Vitals";
+    public static final String TITLE_PATIENT_APPOINTMENTS = "Patient Appointments - Remote Vitals";
     
     public static final String DOCTOR_PATIENTS = "/screens/doctor-patients.fxml";
     public static final String TITLE_DOCTOR_PATIENTS = "My Patients";

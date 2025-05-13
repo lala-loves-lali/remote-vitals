@@ -268,7 +268,7 @@
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button" text="My Doctors">
+                      <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button-active" text="Vitals">
                      <padding>
                         <Insets left="20.0" />
                      </padding>
@@ -276,14 +276,7 @@
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button-active" text="Vitals">
-                     <padding>
-                        <Insets left="20.0" />
-                     </padding>
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Button>
+              
                   <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button" text="Appointments" onAction="#handleAppointments">
                      <padding>
                         <Insets left="20.0" />
@@ -292,6 +285,15 @@
                         <Font size="14.0" />
                      </font>
                   </Button>
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button" text="Medical History" onAction="#handleMedicalHistory">
+                     <padding>
+                        <Insets left="20.0" />
+                     </padding>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+
                </children>
                <padding>
                   <Insets top="20.0" />

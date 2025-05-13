@@ -11,6 +11,7 @@ import com.remote_vitals.backend.services.LoginService;
 import com.remote_vitals.backend.services.SignUpService;
 import com.remote_vitals.backend.services.UserService;
 import com.remote_vitals.backend.services.AppointmentService;
+import com.remote_vitals.backend.services.CheckUpService;
 import com.remote_vitals.backend.appointment.enums.AppointmentStatus;
 import com.remote_vitals.backend.user.dtos.PatientUpdateDto;
 import com.remote_vitals.backend.user.entities.Admin;
@@ -79,14 +80,8 @@ public class JavaFXApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         // Start with login screen for real-world application flow
-        loadScreen(stage, ScreenPaths.DOCTOR_PATIENTS, ScreenPaths.TITLE_LOGIN);
+        loadScreen(stage, ScreenPaths.LOGIN_PAGE, ScreenPaths.TITLE_LOGIN);
         
-        // Other options for development/testing:
-        // - Start with dashboard selector for testing
-        // loadScreen(stage, ScreenPaths.DASHBOARD_SELECTOR, ScreenPaths.TITLE_DASHBOARD_SELECTOR);
-        
-        // - Start directly with a specific dashboard
-        // loadScreen(stage, ScreenPaths.PATIENT_DASHBOARD, ScreenPaths.TITLE_PATIENT_DASHBOARD);
     }
     
     /**
@@ -128,6 +123,14 @@ public class JavaFXApplication extends Application {
                     LocalDate.of(1990, 1, 1)
             );
 
+            Patient patient2 = new Patient(
+                    "Jane", "thomas",
+                    Gender.FEMALE, "954154843210",
+                    "jane.thomas@example.com", "password456",
+                    "No major medical history", "A-",
+                    LocalDate.of(1985, 5, 15)
+            );
+
             Doctor doctor = new Doctor(
                     "Jane", "Smith",
                     Gender.FEMALE, "9876543210",
@@ -144,6 +147,7 @@ public class JavaFXApplication extends Application {
             // Save users to database with error handling
             try {
                 signUpService.signUp(patient);
+                signUpService.signUp(patient2);
                 System.out.println("Patient created successfully");
             } catch (Exception e) {
                 System.err.println("Error creating patient: " + e.getMessage());
@@ -174,9 +178,15 @@ public class JavaFXApplication extends Application {
                 return;
             }
 
+            try {
+                context.getBean(CheckUpService.class).submitCheckUp(patient.getId(), doctor.getId(), "Prescription", "Feedback");
+            } catch (Exception e) {
+            }
+
             // Initialize and test appointment service
             try {
                 AppointmentService appointmentService = context.getBean(AppointmentService.class);
+                appointmentService.addScheduleToAppointment(1, LocalDateTime.now(), LocalDateTime.now().plusHours(1));
                 System.out.println("Testing appointment service...");
 
                 // Get all doctors (should include our dummy doctor)
@@ -218,6 +228,9 @@ public class JavaFXApplication extends Application {
                         } else {
                             System.out.println("No appointments found for the doctor");
                         }
+
+
+
                     } catch (Exception e) {
                         System.err.println("Error during appointment testing: " + e.getMessage());
                         e.printStackTrace();

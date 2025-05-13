@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="700.0" prefWidth="1200.0" stylesheets="@application.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.remote_vitals.frontend.controllers.PatientAppointmentsController">
+<BorderPane prefHeight="700.0" prefWidth="1200.0" stylesheets="@application.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.remote_vitals.frontend.controllers.PatientMedicalHistoryController">
    <left>
       <VBox prefHeight="700.0" prefWidth="300.0" style="-fx-background-color: #f0f0f0;" BorderPane.alignment="CENTER">
          <children>
@@ -45,6 +45,7 @@
                         <Font size="14.0" />
                      </font>
                   </Button>
+                  
                   <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#handleVitals" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button" text="Vitals">
                      <padding>
                         <Insets left="20.0" />
@@ -53,7 +54,7 @@
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button-active" text="Appointments">
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#handleAppointments" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button" text="Appointments">
                      <padding>
                         <Insets left="20.0" />
                      </padding>
@@ -61,7 +62,7 @@
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#handleMedicalHistory" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button" text="Medical History">
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button-active" text="Medical History">
                      <padding>
                         <Insets left="20.0" />
                      </padding>
@@ -120,7 +121,7 @@
          <children>
             <HBox alignment="CENTER_LEFT" prefHeight="80.0" prefWidth="900.0" style="-fx-background-color: white;">
                <children>
-                  <Label styleClass="page-title" text="Available Doctors" textFill="#333333">
+                  <Label styleClass="page-title" text="My Medical History" textFill="#333333">
                      <font>
                         <Font name="System Bold" size="24.0" />
                      </font>
@@ -136,7 +137,7 @@
                      <children>
                         <VBox prefWidth="880.0" styleClass="card">
                            <children>
-                              <Label styleClass="section-title" text="Select a Doctor to Schedule an Appointment" textFill="#333333">
+                              <Label styleClass="section-title" text="Checkup History" textFill="#333333">
                                  <font>
                                     <Font name="System Bold" size="18.0" />
                                  </font>
@@ -144,13 +145,13 @@
                                     <Insets bottom="15.0" />
                                  </VBox.margin>
                               </Label>
-                              <TableView fx:id="doctorsTable" prefHeight="500.0" prefWidth="840.0" VBox.vgrow="ALWAYS">
+                              <TableView fx:id="checkupsTable" prefHeight="500.0" prefWidth="840.0" VBox.vgrow="ALWAYS">
                                  <columns>
-                                    <TableColumn fx:id="nameColumn" prefWidth="200.0" text="Name" />
-                                    <TableColumn fx:id="qualificationColumn" prefWidth="250.0" text="Qualification" />
-                                    <TableColumn fx:id="emailColumn" prefWidth="180.0" text="Email" />
-                                    <TableColumn fx:id="phoneColumn" prefWidth="120.0" text="Phone" />
-                                    <TableColumn fx:id="actionColumn" prefWidth="150.0" text="Action" />
+                                    <TableColumn fx:id="dateColumn" prefWidth="150.0" text="Date" />
+                                    <TableColumn fx:id="doctorColumn" prefWidth="170.0" text="Doctor" />
+                                    <TableColumn fx:id="prescriptionColumn" prefWidth="250.0" text="Prescription" />
+                                    <TableColumn fx:id="feedbackColumn" prefWidth="250.0" text="Feedback" />
+                                    <TableColumn fx:id="actionColumn" prefWidth="100.0" text="Action" />
                                  </columns>
                                  <VBox.margin>
                                     <Insets />
@@ -174,4 +175,4 @@
          </children>
       </VBox>
    </center>
-</BorderPane>
+</BorderPane> 

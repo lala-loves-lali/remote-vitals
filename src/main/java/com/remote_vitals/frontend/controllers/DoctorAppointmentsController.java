@@ -70,31 +70,31 @@ public class DoctorAppointmentsController extends BaseController {
     }
     
     private void loadAppointments() {
-        // TODO: Replace with actual database calls
-        appointments.add(new Appointment("John Doe", LocalDate.now().plusDays(1), "10:00 AM", "Regular checkup", "PENDING"));
-        appointments.add(new Appointment("Jane Smith", LocalDate.now().plusDays(2), "2:30 PM", "Follow-up consultation", "PENDING"));
+//        // TODO: Replace with actual database calls
+//        appointments.add(new Appointment("John Doe", LocalDate.now().plusDays(1), "10:00 AM", "Regular checkup", "PENDING"));
+//        appointments.add(new Appointment("Jane Smith", LocalDate.now().plusDays(2), "2:30 PM", "Follow-up consultation", "PENDING"));
     }
     
     @FXML
     private void handleAccept(ActionEvent event) {
-        Appointment selectedAppointment = appointmentsTable.getSelectionModel().getSelectedItem();
-        if (selectedAppointment != null) {
-            selectedAppointment.setStatus("ACCEPTED");
-            appointmentsTable.refresh();
-            showInfoAlert("Appointment Accepted", "Success", 
-                    "Appointment with " + selectedAppointment.getPatientName() + " has been accepted.");
-        }
+//        Appointment selectedAppointment = appointmentsTable.getSelectionModel().getSelectedItem();
+//        if (selectedAppointment != null) {
+//            selectedAppointment.setStatus("ACCEPTED");
+//            appointmentsTable.refresh();
+//            showInfoAlert("Appointment Accepted", "Success",
+//                    "Appointment with " + selectedAppointment.getPatientName() + " has been accepted.");
+//        }
     }
     
     @FXML
     private void handleReject(ActionEvent event) {
-        Appointment selectedAppointment = appointmentsTable.getSelectionModel().getSelectedItem();
-        if (selectedAppointment != null) {
-            selectedAppointment.setStatus("REJECTED");
-            appointmentsTable.refresh();
-            showInfoAlert("Appointment Rejected", "Success", 
-                    "Appointment with " + selectedAppointment.getPatientName() + " has been rejected.");
-        }
+//        Appointment selectedAppointment = appointmentsTable.getSelectionModel().getSelectedItem();
+//        if (selectedAppointment != null) {
+//            selectedAppointment.setStatus("REJECTED");
+//            appointmentsTable.refresh();
+//            showInfoAlert("Appointment Rejected", "Success",
+//                    "Appointment with " + selectedAppointment.getPatientName() + " has been rejected.");
+//        }
     }
     
     @FXML

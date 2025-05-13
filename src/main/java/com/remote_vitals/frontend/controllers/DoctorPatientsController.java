@@ -1,9 +1,11 @@
 package com.remote_vitals.frontend.controllers;
 
+import com.remote_vitals.backend.services.CheckUpService;
 import com.remote_vitals.backend.user.entities.Patient;
 import com.remote_vitals.backend.user.entities.Doctor;
 import com.remote_vitals.backend.user.entities.User;
 import com.remote_vitals.backend.checkup.entities.CheckUp;
+import com.remote_vitals.backend.services.PatientService;
 import com.remote_vitals.frontend.utils.ScreenPaths;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -23,6 +25,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -60,9 +63,17 @@ public class DoctorPatientsController extends BaseController implements Initiali
     
     // Simple cache for data that needs to be passed between screens
     private static final Map<String, Object> tempDataMap = new HashMap<>();
+    
+    // Patient service for retrieving patient data
+    private PatientService patientService;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Initialize the patient service from the application context
+        if (getContext() != null) {
+            patientService = getContext().getBean(PatientService.class);
+        }
+        
         // Set up table columns
         nameColumn.setCellValueFactory(cellData -> {
             Patient patient = cellData.getValue();
@@ -169,21 +180,23 @@ public class DoctorPatientsController extends BaseController implements Initiali
     
     private void loadPatients() {
         try {
-            // Get current doctor
-            Optional<User> currentUserOptional = getCurrentUser();
-            if (!currentUserOptional.isPresent() || !(currentUserOptional.get() instanceof Doctor)) {
-                showErrorAlert("Error", "Session Error", "No doctor session found. Please log in again.");
-                return;
-            }
-            
-            Doctor currentDoctor = (Doctor) currentUserOptional.get();
+            List<Patient> patientList;
 
-            // For now, add some dummy patients for testing
-            if (patients.isEmpty()) {
-                // In production, this would come from the database
-                // patients.setAll(currentDoctor.getAssignedPatients());
-                
-                // Add dummy patients for demonstration
+            // Check if patient service is available
+            if (patientService != null) {
+                // Get patients assigned to the current doctor
+                patientList = patientService.getAllPatients();
+            } else {
+                // Fallback to manual data if service is not available
+                Optional<User> currentUserOptional = getCurrentUser();
+                if (!currentUserOptional.isPresent() || !(currentUserOptional.get() instanceof Doctor)) {
+                    showErrorAlert("Error", "Session Error", "No doctor session found. Please log in again.");
+                    return;
+                }
+
+                Doctor currentDoctor = (Doctor) currentUserOptional.get();
+
+                // Create some dummy patients for demonstration (fallback)
                 Patient patient1 = Patient.builder()
                     .firstName("John")
                     .lastName("Doe")
@@ -193,7 +206,7 @@ public class DoctorPatientsController extends BaseController implements Initiali
                     .dateOfBirth(LocalDate.of(1985, 5, 15))
                     .medicalHistory("Patient has a history of hypertension and type 2 diabetes. Regular medication includes Metformin and Lisinopril.")
                     .build();
-                
+
                 Patient patient2 = Patient.builder()
                     .firstName("Jane")
                     .lastName("Smith")
@@ -203,7 +216,7 @@ public class DoctorPatientsController extends BaseController implements Initiali
                     .dateOfBirth(LocalDate.of(1990, 8, 21))
                     .medicalHistory("Allergic to penicillin. Has asthma and uses an inhaler as needed.")
                     .build();
-                
+
                 Patient patient3 = Patient.builder()
                     .firstName("Robert")
                     .lastName("Johnson")
@@ -213,10 +226,16 @@ public class DoctorPatientsController extends BaseController implements Initiali
                     .dateOfBirth(LocalDate.of(1978, 3, 10))
                     .medicalHistory("Had appendectomy in 2015. No chronic conditions.")
                     .build();
-                
-                patients.addAll(patient1, patient2, patient3);
+
+                patientList = List.of(patient1, patient2, patient3);
+                System.out.println("WARNING: Using fallback patient data because PatientService is not available");
             }
-            
+
+            // Clear and add all patients to the observable list
+            patients.clear();
+            patients.addAll(patientList);
+
+            // Set the items to the table
             patientsTable.setItems(patients);
 
         } catch (Exception e) {
@@ -355,15 +374,17 @@ public class DoctorPatientsController extends BaseController implements Initiali
                 }
                 return null;
             });
+
+
             
             // Show the dialog and process the result
             Optional<CheckUp> result = dialog.showAndWait();
             result.ifPresent(checkup -> {
-                // In a real app, this would save to the database
-                System.out.println("Saved Checkup: " + checkup);
-                
-                // Show confirmation
-                showInfoAlert("Success", "Checkup Created", 
+
+                System.out.println("Saving checkup");
+                getContext().getBean(CheckUpService.class).submitCheckUp(patient.getId(), getDoctorUser().getId(), prescription.getText(), feedback.getText());
+
+                showInfoAlert("Success", "Checkup Created",
                     "Checkup was successfully created for " + patient.getFirstName() + " " + patient.getLastName());
             });
             

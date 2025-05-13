@@ -413,7 +413,7 @@ public class PatientDashboardController extends BaseController implements Initia
      */
     @FXML
     private void handleScheduleAppointment(ActionEvent event) {
-        navigateTo(event, ScreenPaths.SCHEDULE_APPOINTMENT, ScreenPaths.TITLE_SCHEDULE_APPOINTMENT);
+        navigateTo(event, ScreenPaths.PATIENT_APPOINTMENTS, ScreenPaths.TITLE_PATIENT_APPOINTMENTS);
     }
     
     /**
@@ -458,5 +458,14 @@ public class PatientDashboardController extends BaseController implements Initia
     @FXML
     private void handleDashboardSelector(ActionEvent event) {
         navigateTo(event, ScreenPaths.DASHBOARD_SELECTOR, ScreenPaths.TITLE_DASHBOARD_SELECTOR);
+    }
+
+    /**
+     * Handler for the Medical History button.
+     * Navigates to the patient medical history screen.
+     */
+    @FXML
+    private void handleMedicalHistory(ActionEvent event) {
+        navigateTo(event, ScreenPaths.PATIENT_MEDICAL_HISTORY, ScreenPaths.TITLE_PATIENT_MEDICAL_HISTORY);
     }
 } 

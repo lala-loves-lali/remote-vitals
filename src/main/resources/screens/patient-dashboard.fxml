@@ -30,7 +30,7 @@
             </HBox>
             <VBox prefHeight="500.0" prefWidth="300.0" spacing="10.0">
                <children>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button" text="Dashboard" onAction="#handleDashboardSelector">
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button-active" text="Dashboard" onAction="#handleDashboardSelector">
                      <padding>
                         <Insets left="20.0" />
                      </padding>
@@ -46,14 +46,7 @@
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button" text="My Doctors">
-                     <padding>
-                        <Insets left="20.0" />
-                     </padding>
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Button>
+                  
                   <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button" text="Vitals" onAction="#handleUploadVitals">
                      <padding>
                         <Insets left="20.0" />
@@ -63,6 +56,14 @@
                      </font>
                   </Button>
                   <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button" text="Appointments" onAction="#handleScheduleAppointment">
+                     <padding>
+                        <Insets left="20.0" />
+                     </padding>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button" text="Medical History" onAction="#handleMedicalHistory">
                      <padding>
                         <Insets left="20.0" />
                      </padding>

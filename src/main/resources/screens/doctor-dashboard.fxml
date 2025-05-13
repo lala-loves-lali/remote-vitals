@@ -93,11 +93,6 @@
                         </Label>
                         <VBox prefHeight="60.0" prefWidth="180.0">
                            <children>
-                              <Label text="Dr. Sarah Wilson" textFill="#333333">
-                                 <font>
-                                    <Font name="System Bold" size="14.0" />
-                                 </font>
-                              </Label>
                               <Label text="Doctor" textFill="#666666">
                                  <font>
                                     <Font size="12.0" />

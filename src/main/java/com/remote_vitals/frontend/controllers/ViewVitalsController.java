@@ -119,7 +119,7 @@ public class ViewVitalsController extends BaseController {
      */
     @FXML
     private void handleAppointments(ActionEvent event) {
-        navigateTo(event, ScreenPaths.SCHEDULE_APPOINTMENT, ScreenPaths.TITLE_SCHEDULE_APPOINTMENT);
+        navigateTo(event, ScreenPaths.PATIENT_APPOINTMENTS, ScreenPaths.TITLE_PATIENT_APPOINTMENTS);
     }
     
     /**
@@ -131,5 +131,10 @@ public class ViewVitalsController extends BaseController {
     @FXML
     private void handleLogout(ActionEvent event) {
         navigateTo(event, ScreenPaths.LOGIN_PAGE, ScreenPaths.TITLE_LOGIN);
+    }
+
+    @FXML
+    private void handleMedicalHistory(ActionEvent event) {
+        navigateTo(event, ScreenPaths.PATIENT_MEDICAL_HISTORY, ScreenPaths.TITLE_PATIENT_MEDICAL_HISTORY);
     }
 } 
