@@ -222,9 +222,73 @@ public class JavaFXApplication extends Application {
                                 testAppointment.getId(), AppointmentStatus.SCHEDULED);
                             System.out.println("Status change result: " + statusResult);
 
-                            // Test appointment deletion
-                            String deleteResult = appointmentService.deleteAppointment(testAppointment.getId());
-                            System.out.println("Appointment deletion result: " + deleteResult);
+                            // Add meeting link to the appointment
+                            testAppointment.setLinkForRoom("zoom.us/j/123456789");
+                            appointmentService.changeAppointmentStatus(testAppointment.getId(), AppointmentStatus.SCHEDULED);
+                            System.out.println("Added meeting link to the appointment");
+                            
+                            // Create additional test appointments with different meeting links
+                            
+                            // Create a second appointment for the same patient
+                            String request2 = appointmentService.RequestAppointment(testDoctor.getId());
+                            System.out.println("Second appointment request: " + request2);
+                            
+                            // Add schedule to the appointment
+                            Optional<Appointment> latestAppointment = appointmentService.getLatestAppointment();
+                            if (latestAppointment.isPresent()) {
+                                Appointment appointment2 = latestAppointment.get();
+                                
+                                // Schedule second appointment for next week
+                                LocalDateTime nextWeek = LocalDateTime.now().plusDays(7).withHour(14).withMinute(30);
+                                appointmentService.addScheduleToAppointment(
+                                    appointment2.getId(), nextWeek, nextWeek.plusMinutes(45));
+                                
+                                // Add Google Meet link
+                                appointment2.setLinkForRoom("meet.google.com/abc-def-ghi");
+                                appointmentService.changeAppointmentStatus(appointment2.getId(), AppointmentStatus.SCHEDULED);
+                                System.out.println("Created second appointment with Google Meet link");
+                            }
+                            
+                            // Login as second patient
+                            loginService.login(patient2.getEmail(), patient2.getPassword(), Patient.class);
+                            System.out.println("Logged in as second patient");
+                            
+                            // Request appointment for second patient
+                            String request3 = appointmentService.RequestAppointment(testDoctor.getId());
+                            System.out.println("Third appointment request: " + request3);
+                            
+                            Optional<Appointment> thirdAppointment = appointmentService.getLatestAppointment();
+                            if (thirdAppointment.isPresent()) {
+                                Appointment appointment3 = thirdAppointment.get();
+                                
+                                // Schedule third appointment for tomorrow
+                                LocalDateTime tomorrow = LocalDateTime.now().plusDays(1).withHour(15).withMinute(0);
+                                appointmentService.addScheduleToAppointment(
+                                    appointment3.getId(), tomorrow, tomorrow.plusHours(1));
+                                
+                                // Add Microsoft Teams link
+                                appointment3.setLinkForRoom("teams.microsoft.com/l/meetup-join/19%3ameeting");
+                                appointmentService.changeAppointmentStatus(appointment3.getId(), AppointmentStatus.SCHEDULED);
+                                System.out.println("Created third appointment with Microsoft Teams link");
+                            }
+                            
+                            // Create an appointment with REQUESTED status
+                            String request4 = appointmentService.RequestAppointment(testDoctor.getId());
+                            System.out.println("Fourth appointment request: " + request4);
+                            
+                            // Create an appointment with POSTPONED status
+                            String request5 = appointmentService.RequestAppointment(testDoctor.getId());
+                            Optional<Appointment> fifthAppointment = appointmentService.getLatestAppointment();
+                            if (fifthAppointment.isPresent()) {
+                                Appointment appointment5 = fifthAppointment.get();
+                                LocalDateTime inTwoDays = LocalDateTime.now().plusDays(2).withHour(11).withMinute(0);
+                                appointmentService.addScheduleToAppointment(
+                                    appointment5.getId(), inTwoDays, inTwoDays.plusMinutes(30));
+                                appointment5.setLinkForRoom("webex.com/meet/doctor");
+                                appointmentService.changeAppointmentStatus(appointment5.getId(), AppointmentStatus.POSTPONED);
+                                System.out.println("Created postponed appointment with Webex link");
+                            }
+                            
                         } else {
                             System.out.println("No appointments found for the doctor");
                         }

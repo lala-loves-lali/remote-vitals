@@ -1,9 +1,14 @@
 package com.remote_vitals.frontend.controllers;
 
+import com.remote_vitals.backend.appointment.entities.Appointment;
+import com.remote_vitals.backend.appointment.entities.Schedule;
+import com.remote_vitals.backend.appointment.enums.AppointmentStatus;
+import com.remote_vitals.backend.services.AppointmentService;
 import com.remote_vitals.backend.user.entities.Doctor;
 import com.remote_vitals.backend.user.entities.Patient;
 import com.remote_vitals.backend.user.repositories.DoctorRepository;
 import com.remote_vitals.frontend.utils.ScreenPaths;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,9 +18,13 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 
+import java.awt.Desktop;
+import java.net.URI;
 import java.net.URL;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -31,6 +40,7 @@ public class PatientAppointmentsController extends BaseController implements Ini
     @FXML
     private Label name_label;
 
+    // Available Doctors Table
     @FXML
     private TableView<Doctor> doctorsTable;
 
@@ -49,9 +59,36 @@ public class PatientAppointmentsController extends BaseController implements Ini
     @FXML
     private TableColumn<Doctor, Void> actionColumn;
 
+    // My Appointments Table
+    @FXML
+    private TableView<Appointment> myAppointmentsTable;
+    
+    @FXML
+    private TableColumn<Appointment, String> doctorNameColumn;
+    
+    @FXML
+    private TableColumn<Appointment, String> dateColumn;
+    
+    @FXML
+    private TableColumn<Appointment, String> timeColumn;
+    
+    @FXML
+    private TableColumn<Appointment, AppointmentStatus> statusColumn;
+    
+    @FXML
+    private TableColumn<Appointment, String> meetingLinkColumn;
+    
+    @FXML
+    private TableColumn<Appointment, Void> cancelColumn;
+
     private Patient currentPatient;
     private ObservableList<Doctor> doctors = FXCollections.observableArrayList();
+    private ObservableList<Appointment> appointments = FXCollections.observableArrayList();
     private static Doctor selectedDoctor;
+    
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd MMM yyyy");
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+    private AppointmentService appointmentService;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -63,15 +100,20 @@ public class PatientAppointmentsController extends BaseController implements Ini
                 return;
             }
 
+            // Get appointment service
+            appointmentService = getContext().getBean(AppointmentService.class);
+
             // Set patient info
             id_label.setText("P" + currentPatient.getId());
             name_label.setText(currentPatient.getFirstName() + " " + currentPatient.getLastName());
 
             // Configure table columns
-            setupTableColumns();
+            setupDoctorsTableColumns();
+            setupAppointmentsTableColumns();
 
-            // Load doctors
+            // Load data
             loadDoctors();
+            loadAppointments();
         } catch (Exception e) {
             showErrorAlert("Error", "Initialization Error", "Failed to initialize: " + e.getMessage());
             e.printStackTrace();
@@ -79,9 +121,9 @@ public class PatientAppointmentsController extends BaseController implements Ini
     }
 
     /**
-     * Set up the table columns with appropriate cell factories
+     * Set up the doctors table columns with appropriate cell factories
      */
-    private void setupTableColumns() {
+    private void setupDoctorsTableColumns() {
         // Name column
         nameColumn.setCellValueFactory(cellData -> {
             Doctor doctor = cellData.getValue();
@@ -141,6 +183,210 @@ public class PatientAppointmentsController extends BaseController implements Ini
             return row;
         });
     }
+    
+    /**
+     * Set up the appointments table columns
+     */
+    private void setupAppointmentsTableColumns() {
+        // Doctor Name column
+        doctorNameColumn.setCellValueFactory(cellData -> {
+            Doctor doctor = cellData.getValue().getDoctor();
+            return new SimpleStringProperty(doctor.getFirstName() + " " + doctor.getLastName());
+        });
+        
+        // Date column
+        dateColumn.setCellValueFactory(cellData -> {
+            Appointment appointment = cellData.getValue();
+            Schedule schedule = appointment.getSchedule();
+            if (schedule != null && schedule.getStartingTime() != null) {
+                return new SimpleStringProperty(schedule.getStartingTime().format(DATE_FORMATTER));
+            }
+            return new SimpleStringProperty("Not scheduled");
+        });
+        
+        // Time column
+        timeColumn.setCellValueFactory(cellData -> {
+            Appointment appointment = cellData.getValue();
+            Schedule schedule = appointment.getSchedule();
+            if (schedule != null && schedule.getStartingTime() != null) {
+                return new SimpleStringProperty(
+                    schedule.getStartingTime().format(TIME_FORMATTER) + " - " +
+                    schedule.getEndingTime().format(TIME_FORMATTER)
+                );
+            }
+            return new SimpleStringProperty("Not scheduled");
+        });
+        
+        // Status column with color coding
+        statusColumn.setCellValueFactory(cellData -> 
+            new SimpleObjectProperty<>(cellData.getValue().getStatus())
+        );
+        
+        statusColumn.setCellFactory(column -> {
+            return new TableCell<Appointment, AppointmentStatus>() {
+                @Override
+                protected void updateItem(AppointmentStatus status, boolean empty) {
+                    super.updateItem(status, empty);
+                    
+                    if (status == null || empty) {
+                        setText(null);
+                        setStyle("");
+                    } else {
+                        setText(status.toString());
+                        
+                        switch (status) {
+                            case REQUESTED:
+                                setStyle("-fx-background-color: #FFF9C4; -fx-text-fill: #F57F17;");
+                                break;
+                            case SCHEDULED:
+                                setStyle("-fx-background-color: #E3F2FD; -fx-text-fill: #1565C0;");
+                                break;
+                            case REJECTED:
+                                setStyle("-fx-background-color: #FFEBEE; -fx-text-fill: #C62828;");
+                                break;
+                            case CANCELED:
+                                setStyle("-fx-background-color: #EFEBE9; -fx-text-fill: #5D4037;");
+                                break;
+                            case POSTPONED:
+                                setStyle("-fx-background-color: #EDE7F6; -fx-text-fill: #4527A0;");
+                                break;
+                            default:
+                                setStyle("");
+                                break;
+                        }
+                    }
+                }
+            };
+        });
+        
+        // Meeting Link column - clickable hyperlink
+        meetingLinkColumn.setCellValueFactory(cellData -> {
+            String link = cellData.getValue().getLinkForRoom();
+            return new SimpleStringProperty(link != null ? link : "No link");
+        });
+        
+        meetingLinkColumn.setCellFactory(column -> {
+            return new TableCell<Appointment, String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    
+                    if (item == null || empty || "No link".equals(item)) {
+                        setText("No link");
+                        setGraphic(null);
+                    } else {
+                        Hyperlink hyperlink = new Hyperlink("Join Meeting");
+                        hyperlink.setOnAction(event -> {
+                            openMeetingLink(item);
+                        });
+                        setGraphic(hyperlink);
+                        setText(null);
+                    }
+                }
+            };
+        });
+        
+        // Cancel column - cancel button
+        cancelColumn.setCellFactory(column -> {
+            return new TableCell<Appointment, Void>() {
+                private final Button cancelBtn = new Button("Cancel");
+                
+                {
+                    // Style the button
+                    cancelBtn.getStyleClass().add("danger-button");
+                    cancelBtn.setPrefHeight(30);
+                    
+                    // Set action handlers
+                    cancelBtn.setOnAction(event -> {
+                        Appointment appointment = getTableView().getItems().get(getIndex());
+                        handleCancelAppointment(appointment);
+                    });
+                }
+                
+                @Override
+                protected void updateItem(Void item, boolean empty) {
+                    super.updateItem(item, empty);
+                    
+                    if (empty) {
+                        setGraphic(null);
+                    } else {
+                        Appointment appointment = getTableView().getItems().get(getIndex());
+                        
+                        // Only show cancel button for SCHEDULED or REQUESTED appointments
+                        if (appointment.getStatus() == AppointmentStatus.SCHEDULED || 
+                            appointment.getStatus() == AppointmentStatus.REQUESTED) {
+                            setGraphic(cancelBtn);
+                        } else {
+                            setGraphic(null);
+                        }
+                    }
+                }
+            };
+        });
+        
+        // Set row height for better readability
+        myAppointmentsTable.setRowFactory(tv -> {
+            TableRow<Appointment> row = new TableRow<>();
+            row.setPrefHeight(50);
+            return row;
+        });
+    }
+
+    /**
+     * Open a meeting link in the default browser
+     */
+    private void openMeetingLink(String link) {
+        try {
+            if (link != null && !link.isEmpty()) {
+                // Ensure link has a protocol
+                if (!link.startsWith("http://") && !link.startsWith("https://")) {
+                    link = "https://" + link;
+                }
+                
+                // Open in browser
+                Desktop.getDesktop().browse(new URI(link));
+            }
+        } catch (Exception e) {
+            showErrorAlert("Error", "Browser Error", "Could not open the meeting link: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Handle canceling an appointment
+     */
+    private void handleCancelAppointment(Appointment appointment) {
+        try {
+            // Confirm cancellation
+            Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmAlert.setTitle("Cancel Appointment");
+            confirmAlert.setHeaderText("Cancel Appointment Confirmation");
+            confirmAlert.setContentText("Are you sure you want to cancel this appointment?");
+            
+            // Show confirmation dialog and wait for response
+            confirmAlert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    // Cancel the appointment through the service
+                    String result = appointmentService.changeAppointmentStatus(
+                            appointment.getId(), AppointmentStatus.CANCELED);
+                    
+                    if (result.contains("Successfully")) {
+                        // Refresh the appointments list
+                        loadAppointments();
+                        
+                        // Show success message
+                        showInfoAlert("Success", "Appointment Canceled", 
+                                "Your appointment has been successfully canceled.");
+                    } else {
+                        showErrorAlert("Error", "Cancellation Failed", result);
+                    }
+                }
+            });
+        } catch (Exception e) {
+            showErrorAlert("Error", "Cancellation Error", "Failed to cancel appointment: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Load doctors from the database
@@ -164,6 +410,31 @@ public class PatientAppointmentsController extends BaseController implements Ini
             }
         } catch (Exception e) {
             showErrorAlert("Error", "Data Loading Error", "Failed to load doctors: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Load patient's appointments
+     */
+    private void loadAppointments() {
+        try {
+            if (appointmentService != null) {
+                List<Appointment> appointmentList = appointmentService.getAllPatientAppointments();
+                
+                if (appointmentList != null && !appointmentList.isEmpty()) {
+                    appointments.clear();
+                    appointments.addAll(appointmentList);
+                    myAppointmentsTable.setItems(appointments);
+                } else {
+                    // Show a placeholder message if no appointments
+                    Label placeholder = new Label("You have no appointments scheduled");
+                    placeholder.setStyle("-fx-font-size: 14px; -fx-text-fill: #666;");
+                    myAppointmentsTable.setPlaceholder(placeholder);
+                }
+            }
+        } catch (Exception e) {
+            showErrorAlert("Error", "Data Loading Error", "Failed to load appointments: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -207,24 +478,6 @@ public class PatientAppointmentsController extends BaseController implements Ini
         };
         
         actionColumn.setCellFactory(cellFactory);
-    }
-
-    /**
-     * Handle making an appointment with the selected doctor
-     * 
-     * @param doctor The doctor to make an appointment with
-     */
-    private void handleMakeAppointment(Doctor doctor) {
-        try {
-            // Store the selected doctor for the appointment screen
-            selectedDoctor = doctor;
-            
-            // Navigate to the appointment scheduling screen
-            navigateTo(new ActionEvent(), ScreenPaths.SCHEDULE_APPOINTMENT, ScreenPaths.TITLE_SCHEDULE_APPOINTMENT);
-        } catch (Exception e) {
-            showErrorAlert("Error", "Appointment Error", "Failed to process appointment: " + e.getMessage());
-            e.printStackTrace();
-        }
     }
 
     /**

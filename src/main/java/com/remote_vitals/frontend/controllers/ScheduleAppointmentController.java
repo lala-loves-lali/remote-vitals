@@ -48,6 +48,18 @@ public class ScheduleAppointmentController extends BaseController implements Ini
 
     @FXML
     private ChoiceBox<String> stop_minute;
+    
+    @FXML
+    private Label doctorNameLabel;
+    
+    @FXML
+    private Label doctorQualificationLabel;
+    
+    @FXML
+    private Label doctorEmailLabel;
+    
+    @FXML
+    private TextField meetingLinkField;
 
     // The selected doctor from the previous screen
     private static Doctor selectedDoctor;
@@ -76,6 +88,9 @@ public class ScheduleAppointmentController extends BaseController implements Ini
                 showErrorAlert("Error", "Doctor Selection", "No doctor was selected. Please go back and select a doctor.");
                 return;
             }
+            
+            // Display the doctor information in the UI
+            displayDoctorInfo();
 
             // Set up hour and minute dropdowns
             setupTimeDropdowns();
@@ -97,6 +112,22 @@ public class ScheduleAppointmentController extends BaseController implements Ini
         } catch (Exception e) {
             showErrorAlert("Error", "Initialization Error", "Failed to initialize: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Display the doctor information in the UI
+     */
+    private void displayDoctorInfo() {
+        if (selectedDoctor != null) {
+            doctorNameLabel.setText("Dr. " + selectedDoctor.getFirstName() + " " + selectedDoctor.getLastName());
+            
+            String qualification = selectedDoctor.getQualificationString();
+            doctorQualificationLabel.setText(qualification != null && !qualification.isEmpty() ? 
+                                            qualification : "Information not available");
+            
+            doctorEmailLabel.setText(selectedDoctor.getEmail() != null ? 
+                                    selectedDoctor.getEmail() : "Information not available");
         }
     }
 
@@ -195,6 +226,9 @@ public class ScheduleAppointmentController extends BaseController implements Ini
                 return;
             }
             
+            // Get meeting link if provided
+            String meetingLink = meetingLinkField.getText().trim();
+            
             // Request the appointment using the AppointmentService
             AppointmentService appointmentService = getContext().getBean(AppointmentService.class);
             
@@ -216,22 +250,29 @@ public class ScheduleAppointmentController extends BaseController implements Ini
                             newAppointment.getId(), startDateTime, endDateTime);
                     System.out.println("Schedule result: " + scheduleResult);
                     
+                    // Set meeting link if provided
+                    if (meetingLink != null && !meetingLink.isEmpty()) {
+                        newAppointment.setLinkForRoom(meetingLink);
+                        appointmentService.changeAppointmentStatus(newAppointment.getId(), newAppointment.getStatus());
+                        System.out.println("Meeting link set: " + meetingLink);
+                    }
+                    
                     if (scheduleResult.contains("Successfully")) {
                         showInfoAlert("Success", "Appointment Scheduled", 
                                 "Your appointment with Dr. " + selectedDoctor.getFirstName() + " " + 
                                 selectedDoctor.getLastName() + " has been scheduled for " + 
-                                startDateTime.toLocalDate() + " at " + startDateTime.toLocalTime() + ".");
+                                selectedDate.toString() + " at " + startHour + ":" + startMinute);
                         
                         // Navigate back to the patient dashboard
                         navigateTo(event, ScreenPaths.PATIENT_DASHBOARD, ScreenPaths.TITLE_PATIENT_DASHBOARD);
                     } else {
-                        showErrorAlert("Error", "Schedule Error", "Could not schedule appointment: " + scheduleResult);
+                        showErrorAlert("Error", "Scheduling Failed", scheduleResult);
                     }
                 } else {
-                    showErrorAlert("Error", "Appointment Creation", "Appointment was requested but could not be retrieved.");
+                    showErrorAlert("Error", "Appointment Error", "Could not retrieve the newly created appointment.");
                 }
             } else {
-                showErrorAlert("Error", "Appointment Request", "Could not request appointment: " + requestResult);
+                showErrorAlert("Error", "Request Failed", requestResult);
             }
             
         } catch (Exception e) {

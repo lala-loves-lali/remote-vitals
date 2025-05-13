@@ -131,4 +131,27 @@ public class AppointmentService {
         }
         return Optional.empty();
     }
+    
+    /**
+     * Add or update the meeting link for an appointment
+     * 
+     * @param appointmentId The ID of the appointment to update
+     * @param meetingLink The meeting link to add to the appointment
+     * @return A string indicating the result of the operation
+     */
+    @Transactional
+    public String addMeetingLink(Integer appointmentId, String meetingLink) {
+        if (appointmentId == null) return "Appointment ID is empty";
+        if (meetingLink == null || meetingLink.trim().isEmpty()) return "Meeting link is empty";
+        
+        Optional<Appointment> wrappedAppointment = appointmentRepository.findById(appointmentId);
+        if (wrappedAppointment.isEmpty()) return "Appointment ID doesn't correspond to any appointment";
+        
+        wrappedAppointment.ifPresent(appointment -> {
+            appointment.setLinkForRoom(meetingLink);
+            appointmentRepository.save(appointment);
+        });
+        
+        return "Meeting link updated successfully";
+    }
 }

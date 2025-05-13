@@ -3,35 +3,110 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Font?>
 
-<VBox xmlns="http://javafx.com/javafx"
+<BorderPane xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.remote_vitals.frontend.controllers.DoctorAppointmentsController"
-      spacing="10">
-    <padding>
-        <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
-    </padding>
+      prefHeight="700.0" prefWidth="1000.0"
+      stylesheets="@application.css">
     
-    <HBox alignment="CENTER_LEFT" spacing="10">
-        <Label text="Appointment Management" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
-    </HBox>
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20.0" style="-fx-background-color: #f0f0f0;">
+            <padding>
+                <Insets top="15.0" right="20.0" bottom="15.0" left="20.0"/>
+            </padding>
+            <Button fx:id="backButton" text="← Back" styleClass="back-button" onAction="#handleBack"/>
+            <Label text="Appointment Management" styleClass="page-title">
+                <font>
+                    <Font name="System Bold" size="24.0"/>
+                </font>
+            </Label>
+        </HBox>
+    </top>
     
-    <TableView fx:id="appointmentsTable" VBox.vgrow="ALWAYS">
-        <columns>
-            <TableColumn fx:id="patientNameColumn" text="Patient Name" prefWidth="150"/>
-            <TableColumn fx:id="dateColumn" text="Date" prefWidth="100"/>
-            <TableColumn fx:id="timeColumn" text="Time" prefWidth="100"/>
-            <TableColumn fx:id="reasonColumn" text="Reason" prefWidth="200"/>
-            <TableColumn fx:id="statusColumn" text="Status" prefWidth="100"/>
-        </columns>
-    </TableView>
-    
-    <HBox spacing="10" alignment="CENTER_RIGHT">
-        <Button fx:id="acceptButton" text="Accept" onAction="#handleAccept" 
-                style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
-        <Button fx:id="rejectButton" text="Reject" onAction="#handleReject"
-                style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
-        <Button fx:id="backButton" text="Back" onAction="#handleBack"/>
-    </HBox>
-    
-</VBox> 
+    <center>
+        <VBox spacing="20.0">
+            <padding>
+                <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
+            </padding>
+            
+            <!-- Filtering and Searching Options -->
+            <HBox spacing="15.0" alignment="CENTER_LEFT">
+                <Label text="Filter:" styleClass="section-title"/>
+                <ComboBox fx:id="statusFilterComboBox" promptText="Filter by Status" prefWidth="160.0"/>
+                <CheckBox fx:id="futureDateCheckBox" text="Show only future" selected="true"/>
+                <Region HBox.hgrow="ALWAYS" />
+                <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                    <TextField fx:id="searchField" promptText="Search patient name" prefWidth="200.0"/>
+                    <Button fx:id="searchButton" text="Search" onAction="#handleSearch" styleClass="primary-button"/>
+                    <Button fx:id="resetButton" text="Reset" onAction="#handleReset" styleClass="secondary-button"/>
+                </HBox>
+            </HBox>
+            
+            <!-- Appointments Table -->
+            <TableView fx:id="appointmentsTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="patientNameColumn" text="Patient Name" prefWidth="150"/>
+                    <TableColumn fx:id="dateColumn" text="Date" prefWidth="100"/>
+                    <TableColumn fx:id="timeColumn" text="Time" prefWidth="100"/>
+                    <TableColumn fx:id="linkColumn" text="Meeting Link" prefWidth="150"/>
+                    <TableColumn fx:id="statusColumn" text="Status" prefWidth="120"/>
+                    <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="150"/>
+                </columns>
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                </columnResizePolicy>
+            </TableView>
+            
+            <!-- Details and Actions Section -->
+            <VBox fx:id="appointmentDetailsPane" spacing="10.0" styleClass="card">
+                <padding>
+                    <Insets top="15.0" right="15.0" bottom="15.0" left="15.0"/>
+                </padding>
+                
+                <Label text="Selected Appointment Details" styleClass="section-title">
+                    <font>
+                        <Font name="System Bold" size="16.0"/>
+                    </font>
+                </Label>
+                
+                <Separator />
+                
+                <GridPane hgap="20.0" vgap="10.0">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="120.0" />
+                        <ColumnConstraints hgrow="ALWAYS" />
+                    </columnConstraints>
+                    
+                    <Label text="Patient:" styleClass="stat-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <Label fx:id="detailsPatientLabel" styleClass="stat-value" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                    
+                    <Label text="Date &amp; Time:" styleClass="stat-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <Label fx:id="detailsDateTimeLabel" styleClass="stat-value" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    
+                    <Label text="Status:" styleClass="stat-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <Label fx:id="detailsStatusLabel" styleClass="stat-value" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    
+                    <Label text="Meeting Link:" styleClass="stat-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                    <VBox spacing="5.0" GridPane.rowIndex="3" GridPane.columnIndex="1">
+                        <HBox spacing="10.0">
+                            <TextField fx:id="linkTextField" promptText="Enter meeting URL (e.g., zoom.us/j/123456789)" HBox.hgrow="ALWAYS" 
+                                       prefHeight="35.0" style="-fx-border-color: #3498db; -fx-border-width: 2px;"/>
+                            <Button fx:id="updateLinkButton" text="Update Link" onAction="#handleUpdateLink" styleClass="primary-button"/>
+                        </HBox>
+                        <Label text="Enter a meeting link from Zoom, Google Meet, Microsoft Teams, etc. (without http://)" 
+                               styleClass="subtitle-text" style="-fx-font-size: 11px;"/>
+                    </VBox>
+                </GridPane>
+                
+                <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                    <Button fx:id="acceptButton" text="Accept Appointment" onAction="#handleAccept" styleClass="primary-button"/>
+                    <Button fx:id="completeButton" text="Mark as Completed" onAction="#handleComplete" styleClass="primary-button"/>
+                    <Button fx:id="rescheduleButton" text="Reschedule" onAction="#handleReschedule" styleClass="secondary-button"/>
+                    <Button fx:id="rejectButton" text="Reject" onAction="#handleReject" styleClass="danger-button"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane> 

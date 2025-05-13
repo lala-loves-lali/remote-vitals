@@ -37,7 +37,7 @@
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button" text="Profile" onAction="#handleProfile">
+                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button-active" text="Profile" onAction="#handleProfile">
                      <padding>
                         <Insets left="20.0" />
                      </padding>
@@ -61,22 +61,8 @@
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button" text="Monitor Vitals" onAction="#handleMonitorVitals">
-                     <padding>
-                        <Insets left="20.0" />
-                     </padding>
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Button>
-                  <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" styleClass="menu-button" text="Messages">
-                     <padding>
-                        <Insets left="20.0" />
-                     </padding>
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Button>
+
+
                </children>
                <padding>
                   <Insets top="20.0" />
@@ -86,20 +72,12 @@
                <children>
                   <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="300.0" spacing="15.0">
                      <children>
-                        <Label text="DSW" textFill="#333333">
+                        <Label text="Doctor" textFill="#333333">
                            <font>
                               <Font name="System Bold" size="18.0" />
                            </font>
                         </Label>
-                        <VBox prefHeight="60.0" prefWidth="180.0">
-                           <children>
-                              <Label text="Doctor" textFill="#666666">
-                                 <font>
-                                    <Font size="12.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </VBox>
+
                      </children>
                      <padding>
                         <Insets left="20.0" />

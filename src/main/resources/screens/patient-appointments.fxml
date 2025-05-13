@@ -6,6 +6,7 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -120,7 +121,7 @@
          <children>
             <HBox alignment="CENTER_LEFT" prefHeight="80.0" prefWidth="900.0" style="-fx-background-color: white;">
                <children>
-                  <Label styleClass="page-title" text="Available Doctors" textFill="#333333">
+                  <Label styleClass="page-title" text="Appointments Management" textFill="#333333">
                      <font>
                         <Font name="System Bold" size="24.0" />
                      </font>
@@ -134,9 +135,10 @@
                <content>
                   <VBox prefWidth="900.0" spacing="20.0" style="-fx-background-color: #f8f8f8;">
                      <children>
+                        <!-- My Appointments Section -->
                         <VBox prefWidth="880.0" styleClass="card">
                            <children>
-                              <Label styleClass="section-title" text="Select a Doctor to Schedule an Appointment" textFill="#333333">
+                              <Label styleClass="section-title" text="My Scheduled Appointments" textFill="#333333">
                                  <font>
                                     <Font name="System Bold" size="18.0" />
                                  </font>
@@ -144,7 +146,42 @@
                                     <Insets bottom="15.0" />
                                  </VBox.margin>
                               </Label>
-                              <TableView fx:id="doctorsTable" prefHeight="500.0" prefWidth="840.0" VBox.vgrow="ALWAYS">
+                              <TableView fx:id="myAppointmentsTable" prefHeight="200.0" prefWidth="840.0" VBox.vgrow="ALWAYS">
+                                 <columns>
+                                    <TableColumn fx:id="doctorNameColumn" prefWidth="150.0" text="Doctor" />
+                                    <TableColumn fx:id="dateColumn" prefWidth="110.0" text="Date" />
+                                    <TableColumn fx:id="timeColumn" prefWidth="110.0" text="Time" />
+                                    <TableColumn fx:id="statusColumn" prefWidth="100.0" text="Status" />
+                                    <TableColumn fx:id="meetingLinkColumn" prefWidth="200.0" text="Meeting Link" />
+                                    <TableColumn fx:id="cancelColumn" prefWidth="100.0" text="Action" />
+                                 </columns>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                                 <columnResizePolicy>
+                                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                 </columnResizePolicy>
+                              </TableView>
+                           </children>
+                           <padding>
+                              <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                           </padding>
+                        </VBox>
+                        
+                        <Separator />
+                        
+                        <!-- Available Doctors Section -->
+                        <VBox prefWidth="880.0" styleClass="card">
+                           <children>
+                              <Label styleClass="section-title" text="Schedule a New Appointment" textFill="#333333">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets bottom="15.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <TableView fx:id="doctorsTable" prefHeight="300.0" prefWidth="840.0" VBox.vgrow="ALWAYS">
                                  <columns>
                                     <TableColumn fx:id="nameColumn" prefWidth="200.0" text="Name" />
                                     <TableColumn fx:id="qualificationColumn" prefWidth="250.0" text="Qualification" />
