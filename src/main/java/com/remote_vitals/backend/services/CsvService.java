@@ -27,68 +27,52 @@ public class CsvService {
         List<Map<String, String>> resultList = new ArrayList<>();
         System.out.println("Parsing CSV file at: " + absolutePath);
 
-        try (BufferedReader br = new BufferedReader(new FileReader(absolutePath))) {
-            // Read the header line
-            String headerLine = br.readLine();
-            if (headerLine == null) {
-                return resultList; // Empty file
+        try (BufferedReader reader = new BufferedReader(new FileReader(absolutePath))) { // Use absolutePath for file reading
+            // Read headers
+            String headerLine = reader.readLine();
+            if (headerLine == null || headerLine.trim().isEmpty()) {
+                throw new RuntimeException("CSV file is empty or missing headers.");
             }
 
-            // Remove BOM if present
-            if (headerLine.startsWith("\uFEFF")) {
-                headerLine = headerLine.substring(1);
+            String[] headers = headerLine.split(",", -1);
+            if (!validateHeaders(headers)) {
+                throw new RuntimeException("File Format Invalid: Missing required headers.");
             }
 
-            // Normalize and trim headers
-            String[] rawHeaders = headerLine.split(",", -1);
-            String[] headers = Arrays.stream(rawHeaders)
+            // Normalize headers for mapping
+            List<String> normalizedHeaders = Arrays.stream(headers)
                     .map(String::trim)
                     .map(String::toLowerCase)
-                    .toArray(String[]::new);
+                    .toList();
 
-            System.out.println("Uploaded Headers (normalized): " + Arrays.toString(headers));
+            // Parse rows
+            String line;
+            int lineNumber = 1; // Include header as line 1
+            while ((line = reader.readLine()) != null) {
+                lineNumber++;
+                String[] values = line.split(",", -1); // Split row into values
 
-            // Validate headers
-            if (!validateHeaders(headers)) {
-                throw new IllegalArgumentException("CSV header validation failed: unexpected or missing columns.");
+                // Validate row length against header length
+                if (values.length != headers.length) {
+                    System.out.println("Malformed row at line " + lineNumber + ": " + line);
+                    continue; // Skip malformed rows
+                }
+
+                // Map values to headers
+                Map<String, String> record = new HashMap<>();
+                for (int i = 0; i < normalizedHeaders.size(); i++) {
+                    record.put(normalizedHeaders.get(i), values[i].trim());
+                }
+                resultList.add(record); // Add record to results
             }
 
-            int expectedColumns = headers.length;
-            String line;
-            int lineNumber = 1; // Header is line 1
-
-            // Process all rows
-            while ((line = br.readLine()) != null) {
-                lineNumber++;
-                String[] rawValues = line.split(",", -1);
-
-                // Check for row length consistency
-                if (rawValues.length != expectedColumns) {
-                    throw new IllegalArgumentException(
-                            "CSV format error at line " + lineNumber +
-                                    ": expected " + expectedColumns + " values, but found " + rawValues.length + "."
-                    );
-                }
-
-                // Map each row with headers as keys
-                Map<String, String> rowMap = new HashMap<>();
-                for (int i = 0; i < expectedColumns; i++) {
-                    String key = headers[i];
-                    String value = rawValues[i].trim();
-
-                    if (!value.isEmpty()) {
-                        rowMap.put(key, value);
-                    }
-                }
-
-                if (!rowMap.isEmpty()) {
-                    resultList.add(rowMap);
-                }
+            // Check if any records were parsed
+            if (resultList.isEmpty()) {
+                System.out.println("No valid rows found in the parsed CSV file.");
             }
         }
 
-        System.out.println("Parsed CSV data: " + resultList.size() + " records found.");
-        return resultList;
+        return resultList; // Return the parsed records
     }
 
     /**
