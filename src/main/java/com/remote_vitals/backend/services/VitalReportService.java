@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.nio.file.Paths;
+import java.nio.file.Path;
 
 @Service
 public class VitalReportService {
@@ -37,40 +39,57 @@ public class VitalReportService {
     }
     // Methods
     @Transactional
-    public String readCsvForCurrentUser(){
-        if(StaticDataClass.currentUserId == null)
-            throw new RuntimeException("Current User Id Is Not Present");
+    public String readCsvForCurrentUser() {
+        if (StaticDataClass.currentUserId == null) {
+            throw new RuntimeException("Current User ID is not present");
+        }
+
         try {
-            List<Map<String,String>> reports =
-                csvService.parseCsv(
-                    csvFilesDirectory + "/" + StaticDataClass.currentUserId.toString() + ".csv"
-                );
-            System.out.println("- - - - - -- - - - - - - - - - - -  -");
+            // Normalize the file path
+            String filePath = Paths.get(csvFilesDirectory, StaticDataClass.currentUserId + ".csv").toString();
+            System.out.println("CSV files directory from configuration: " + csvFilesDirectory);
+            System.out.println("Resolved file path: " + filePath);
+
+            // Parse the CSV file
+            List<Map<String, String>> reports = csvService.parseCsv(filePath);
+            System.out.println("Parsed data: " + reports);
+
+            if (reports.isEmpty()) {
+                System.out.println("No valid data found in the file.");
+                return "File Format Invalid";
+            }
+
             List<VitalReport> vitalReports = new ArrayList<>();
-            System.out.println("- - - - - -- - - - - - - - - - - -  -");
             reports.forEach(report -> {
+                System.out.println("Processing report: " + report);
                 VitalReport vitalReportCreated = createVitalReport(report);
-                if(vitalReportCreated == null)
-                    throw new RuntimeException("Invalid File Format");
+
+                if (vitalReportCreated == null) {
+                    throw new RuntimeException("Invalid File Format for report: " + report);
+                }
+
                 vitalReports.add(vitalReportCreated);
             });
-            System.out.println("- - - - - -- - - - - - - - - - - -  -");
-            userRepository.findById(StaticDataClass.currentUserId).ifPresent(
-                    user -> {
-                        if(user instanceof Patient){
-                            ((Patient) user).getVitalReports().clear();
-                            vitalReports.forEach(vitalReport ->{
-                                vitalReport.setPatient((Patient) user);
-                                ((Patient) user).getVitalReports().add(vitalReport);
-                            });
-                        }
-                    }
-            );
-            System.out.println("- - - - - -- - - - - - - - - - - -  -");
+
+            // Connecting saved reports to the user
+            userRepository.findById(StaticDataClass.currentUserId).ifPresent(user -> {
+                if (user instanceof Patient) {
+                    Patient patient = (Patient) user;
+                    patient.getVitalReports().clear();
+                    vitalReports.forEach(vitalReport -> {
+                        vitalReport.setPatient(patient);
+                        patient.getVitalReports().add(vitalReport);
+                    });
+                    System.out.println("Vital reports updated for patient: " + patient.getId());
+                }
+            });
+
             return "Csv Parsed Successfully";
-        }catch(IOException ex){
+        } catch (IOException ex) {
+            System.out.println("IOException during file processing: " + ex.getMessage());
             return "File Not Found Or Invalid Format";
         } catch (RuntimeException ex) {
+            System.out.println("RuntimeException during file processing: " + ex.getMessage());
             return "File Format Invalid";
         }
     }

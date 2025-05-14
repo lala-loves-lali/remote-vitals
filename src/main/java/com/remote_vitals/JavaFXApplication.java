@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.remote_vitals.backend.db_handler.StaticDataClass;
 import com.remote_vitals.backend.services.LoginService;
 import com.remote_vitals.backend.services.SignUpService;
 import com.remote_vitals.backend.services.UserService;
@@ -59,6 +60,7 @@ public class JavaFXApplication extends Application {
     public void init() throws Exception {
         // Initialize Spring Boot context
       context = org.springframework.boot.SpringApplication.run(RemoteVitalsApplication.class);
+      StaticDataClass.context1=context;
 //
         // Set the database handler in BaseController first
         BaseController.setContext(context); 
