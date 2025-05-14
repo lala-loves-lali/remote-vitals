@@ -6,32 +6,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 /**
  * Controller for the view vitals screen.
- * Displays patient vitals data and provides navigation to upload and graph screens.
+ * Provides navigation to upload and graph screens.
  */
 public class ViewVitalsController extends BaseController {
-
-    @FXML
-    private Label heartRateLabel;
-    
-    @FXML
-    private Label oxygenLabel;
-    
-    @FXML
-    private Label temperatureLabel;
-    
-    @FXML
-    private Label bloodPressureLabel;
-    
-    @FXML
-    private Label lastUpdatedLabel;
-    
-    @FXML
-    private Label noDataLabel;
     
     @FXML
     private Button uploadVitalsButton;
@@ -54,17 +33,6 @@ public class ViewVitalsController extends BaseController {
         // Set mock patient info for demonstration
         id_label.setText("P12345");
         name_label.setText("John Doe");
-        
-        // Set mock vitals data for demonstration
-        heartRateLabel.setText("72");
-        oxygenLabel.setText("98");
-        temperatureLabel.setText("37.1");
-        bloodPressureLabel.setText("120/80");
-        
-        // Mock last updated timestamp
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        lastUpdatedLabel.setText("Last updated: " + now.format(formatter));
     }
     
     /**
@@ -133,6 +101,12 @@ public class ViewVitalsController extends BaseController {
         navigateTo(event, ScreenPaths.LOGIN_PAGE, ScreenPaths.TITLE_LOGIN);
     }
 
+    /**
+     * Handles the medical history button click event.
+     * Navigates to the patient medical history screen.
+     * 
+     * @param event The action event
+     */
     @FXML
     private void handleMedicalHistory(ActionEvent event) {
         navigateTo(event, ScreenPaths.PATIENT_MEDICAL_HISTORY, ScreenPaths.TITLE_PATIENT_MEDICAL_HISTORY);

@@ -108,17 +108,8 @@ public class PatientDashboardController extends BaseController implements Initia
         }
     }
 
-    /**
-     * Handles the upload vitals button click event.
-     * Navigates to the upload vitals screen.
-     * 
-     * @param event The action event
-     */
-    @FXML
-    private void handleUploadVitals(ActionEvent event) {
-        navigateTo(event, ScreenPaths.UPLOAD_VITALS, ScreenPaths.TITLE_UPLOAD_VITALS);
-    }
-    
+   
+   
     /**
      * Handles the schedule appointment button click event.
      * Navigates to the schedule appointment screen.

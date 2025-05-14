@@ -1,28 +1,34 @@
 package com.remote_vitals.frontend.controllers;
 
+import com.remote_vitals.backend.user.entities.Patient;
+import com.remote_vitals.backend.vital.entities.*;
+import com.remote_vitals.backend.vitalReport.entities.VitalReport;
 import com.remote_vitals.frontend.utils.ScreenPaths;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.application.Platform;
-
-import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Random;
+import java.net.URL;
+import java.util.ResourceBundle;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 /**
  * Controller for the vitals visualization screen.
  * Displays graphs of patient vital data over time.
  */
-public class VitalsGraphController extends BaseController {
+public class VitalsGraphController extends BaseController implements Initializable {
 
     @FXML
     private LineChart<Number, Number> vitalsChart;
@@ -34,19 +40,16 @@ public class VitalsGraphController extends BaseController {
     private NumberAxis yAxis;
     
     @FXML
-    private ComboBox<String> vitalTypeComboBox;
-    
-    @FXML
-    private DatePicker startDatePicker;
-    
-    @FXML
-    private DatePicker endDatePicker;
+    private ChoiceBox<String> vitalTypeComboBox;
     
     @FXML
     private Button updateButton;
     
     @FXML
     private Button backButton;
+    
+    @FXML
+    private Button showAllButton;
     
     @FXML
     private Label patientNameLabel;
@@ -74,90 +77,212 @@ public class VitalsGraphController extends BaseController {
         {95, 100}               // Oxygen Saturation
     };
     
-    private String currentPatientId = "P12345"; // For demo purposes
-    private String currentPatientName = "John Doe"; // For demo purposes
+    private Patient currentPatient;
+    private List<VitalReport> patientVitalReports = new ArrayList<>();
+    private Map<String, List<VitalRecord>> vitalRecordsByType = new HashMap<>();
     
     /**
      * Initialize the controller. This method is automatically called
      * after the FXML file has been loaded.
      */
-    @FXML
-    private void initialize() {
-        // Set patient info
-        patientNameLabel.setText(currentPatientName);
-        patientIdLabel.setText("ID: " + currentPatientId);
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        super.initialize(location, resources);
         
-        // Print vital types for debugging
-        System.out.println("Vital types in array format:");
-        for (int i = 0; i < vitalTypes.length; i++) {
-            System.out.println(i + ": " + vitalTypes[i] + ", Range: " + Arrays.toString(vitalRanges[i]));
+        System.out.println("********************************************");
+        System.out.println("VitalsGraphController: initialize() started");
+        System.out.println("********************************************");
+
+        try {
+            // Get current patient
+            currentPatient = getPatientUser();
+            System.out.println("Current patient: " + (currentPatient != null ? 
+                currentPatient.getFirstName() + " " + currentPatient.getLastName() : "null"));
+            
+            if (currentPatient == null) {
+                System.out.println("ERROR: No patient session found");
+                showErrorAlert("Error", "Session Error", "No patient session found. Please log in again.");
+                return;
+            }
+            
+            // Set patient info
+            patientNameLabel.setText(currentPatient.getFirstName() + " " + currentPatient.getLastName());
+            patientIdLabel.setText("ID: P" + currentPatient.getId());
+            System.out.println("Patient info set in UI");
+            
+            // Initialize collections to avoid NPE
+            patientVitalReports = new ArrayList<>();
+            vitalRecordsByType = new HashMap<>();
+            System.out.println("Collections initialized");
+            
+            // Load vital reports from the patient
+            System.out.println("Loading vital reports...");
+            loadVitalReports();
+            
+            // Initialize the vital type dropdown
+            System.out.println("Setting up vital type dropdown...");
+            initializeVitalTypeDropdown();
+            
+            // Configure chart
+            System.out.println("Configuring chart...");
+            configureChart();
+            
+            // Initial data load
+            System.out.println("Initial chart update...");
+            updateChart();
+            
+            System.out.println("********************************************");
+            System.out.println("VitalsGraphController initialization complete");
+            System.out.println("********************************************");
+        } catch (Exception e) {
+            System.out.println("********************************************");
+            System.out.println("ERROR during initialization: " + e.getMessage());
+            e.printStackTrace();
+            System.out.println("********************************************");
+            showErrorAlert("Error", "Initialization Error", "Failed to initialize: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Initialize the vital type dropdown with options and listener
+     * Follows exact same pattern as LoginController
+     */
+    private void initializeVitalTypeDropdown() {
+        System.out.println("============================================");
+        System.out.println("initializeVitalTypeDropdown() started");
+        
+        // Check if the dropdown is available
+        if (vitalTypeComboBox == null) {
+            System.err.println("ERROR: vital type dropdown is null");
+            return;
         }
         
-        // Create observable list directly from array
-        final ObservableList<String> vitalTypesList = FXCollections.observableArrayList(vitalTypes);
-        System.out.println("Observable list created with " + vitalTypesList.size() + " items");
+        System.out.println("vitalTypeComboBox exists: " + vitalTypeComboBox);
         
         try {
-            // Set items directly on the ComboBox
+            // Clear any existing items 
             vitalTypeComboBox.getItems().clear();
-            vitalTypeComboBox.getItems().addAll(vitalTypesList);
-            System.out.println("Direct items add completed. ComboBox has " + vitalTypeComboBox.getItems().size() + " items");
+            System.out.println("Cleared existing items from dropdown");
             
-            // Force a default selection
-            if (!vitalTypesList.isEmpty()) {
-                vitalTypeComboBox.setValue(vitalTypesList.get(0));
-                System.out.println("Default value set to: " + vitalTypeComboBox.getValue());
+            // Add all vital types to the dropdown
+            for (String vitalType : vitalTypes) {
+                vitalTypeComboBox.getItems().add(vitalType);
+                System.out.println("Added item to dropdown: " + vitalType);
             }
+            
+            // Set default value to first item
+            vitalTypeComboBox.setValue("Heart Rate (BPM)");
+            System.out.println("Default value set to: Heart Rate (BPM)");
+            
+            // Add listener to update the chart when selection changes
+            vitalTypeComboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+                System.out.println("DROPDOWN SELECTION CHANGED: from " + oldVal + " to " + newVal);
+                if (newVal != null) {
+                    System.out.println("Updating y-axis and chart for: " + newVal);
+                    updateYAxisForVitalType(newVal);
+                    updateChart();
+                }
+            });
+            
+            // Add debug logging events
+            vitalTypeComboBox.setOnShowing(event -> {
+                System.out.println("EVENT: ChoiceBox dropdown is showing");
+            });
+            
+            vitalTypeComboBox.setOnShown(event -> {
+                System.out.println("EVENT: ChoiceBox dropdown is shown");
+            });
+            
+            vitalTypeComboBox.setOnHidden(event -> {
+                System.out.println("EVENT: ChoiceBox dropdown is hidden");
+            });
+            
+            System.out.println("Dropdown setup complete with " + vitalTypeComboBox.getItems().size() + " items");
+            System.out.println("Current selected value: " + vitalTypeComboBox.getValue());
+            System.out.println("============================================");
         } catch (Exception e) {
-            System.err.println("Error setting ComboBox items: " + e.getMessage());
+            System.err.println("********************************************");
+            System.err.println("ERROR setting up vital type dropdown: " + e.getMessage());
             e.printStackTrace();
+            System.err.println("********************************************");
+        }
+    }
+    
+    /**
+     * Loads vital reports from the patient and organizes them by type
+     */
+    private void loadVitalReports() {
+        // Initialize collections to avoid NPE
+        if (vitalRecordsByType == null) {
+            vitalRecordsByType = new HashMap<>();
+        } else {
+            vitalRecordsByType.clear();
         }
         
-        // Also use Platform.runLater as a backup approach
-        Platform.runLater(() -> {
-            try {
-                // Double-check if items were already set
-                if (vitalTypeComboBox.getItems().isEmpty()) {
-                    vitalTypeComboBox.setItems(vitalTypesList);
+        if (patientVitalReports == null) {
+            patientVitalReports = new ArrayList<>();
+        } else {
+            patientVitalReports.clear();
+        }
+        
+        if (currentPatient == null) {
+            System.out.println("Current patient is null");
+            return;
+        }
+        
+        if (currentPatient.getVitalReports() == null || currentPatient.getVitalReports().isEmpty()) {
+            System.out.println("No vital reports found for patient");
+            return;
+        }
+        
+        // Load reports from patient
+        patientVitalReports = new ArrayList<>(currentPatient.getVitalReports());
+        System.out.println("Loaded " + patientVitalReports.size() + " vital reports for patient " + currentPatient.getFirstName());
+        
+        // Sort reports by date (newest first)
+        patientVitalReports.sort((r1, r2) -> r2.getReportWhenMade().compareTo(r1.getReportWhenMade()));
+        
+        // Organize vital records by type
+        for (VitalReport report : patientVitalReports) {
+            if (report.getVitalRecords() != null) {
+                for (VitalRecord record : report.getVitalRecords()) {
+                    String recordType = getVitalRecordType(record);
+                    if (!vitalRecordsByType.containsKey(recordType)) {
+                        vitalRecordsByType.put(recordType, new ArrayList<>());
+                    }
+                    vitalRecordsByType.get(recordType).add(record);
                 }
-                
-                // Force selection again if needed
-                if (vitalTypeComboBox.getValue() == null) {
-                    vitalTypeComboBox.getSelectionModel().selectFirst();
-                }
-                
-                System.out.println("Platform.runLater completed. ComboBox has " + 
-                    vitalTypeComboBox.getItems().size() + " items, selected: " + 
-                    vitalTypeComboBox.getValue());
-            } catch (Exception e) {
-                System.err.println("Error in Platform.runLater: " + e.getMessage());
-                e.printStackTrace();
             }
-        });
+        }
         
-        // Add listener for debugging dropdown issues
-        vitalTypeComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("Vital type changed from: " + oldValue + " to: " + newValue);
-            if (newValue != null) {
-                updateYAxisForVitalType(newValue);
-                updateChart();
-            }
-        });
+        // Sort each type's records by date (oldest first for chart display)
+        for (List<VitalRecord> records : vitalRecordsByType.values()) {
+            records.sort(Comparator.comparing(record -> record.getVitalReport().getReportWhenMade()));
+        }
         
-        // Ensure ComboBox is properly configured
-        vitalTypeComboBox.setVisible(true);
-        vitalTypeComboBox.setDisable(false);
-        
-        // Initialize date pickers
-        LocalDate now = LocalDate.now();
-        endDatePicker.setValue(now);
-        startDatePicker.setValue(now.minusDays(30));
-        
-        // Configure chart
-        configureChart();
-        
-        // Initial data load
-        updateChart();
+        System.out.println("Organized vital records by type: " + vitalRecordsByType.keySet());
+    }
+    
+    /**
+     * Gets the type name of a vital record
+     * 
+     * @param record The VitalRecord object
+     * @return The type name as a string
+     */
+    private String getVitalRecordType(VitalRecord record) {
+        if (record instanceof HeartRate) return "Heart Rate (BPM)";
+        if (record instanceof BloodPressureSystolic) return "Blood Pressure - Systolic (mmHg)";
+        if (record instanceof BloodPressureDiastolic) return "Blood Pressure - Diastolic (mmHg)";
+        if (record instanceof BodyTemperature) return "Temperature (°C)";
+        if (record instanceof RespiratoryRate) return "Respiratory Rate (breaths/min)";
+        if (record instanceof Weight) return "Weight (kg)";
+        if (record instanceof Height) return "Height (cm)";
+        if (record instanceof Haemoglobin) return "Haemoglobin (g/dL)";
+        if (record instanceof RBC) return "Red Blood Cells (million/mm³)";
+        if (record instanceof WBC) return "White Blood Cells (thousand/mm³)";
+        if (record instanceof PlateletCount) return "Platelet Count (thousand/mm³)";
+        if (record instanceof BloodVolume) return "Blood Volume (L)";
+        return "Unknown Vital Type";
     }
     
     /**
@@ -210,7 +335,7 @@ public class VitalsGraphController extends BaseController {
             System.out.println("Warning: No vital type selected during chart configuration");
             
             // Try to set a default value if we have items
-            if (!vitalTypeComboBox.getItems().isEmpty()) {
+            if (vitalTypeComboBox != null && !vitalTypeComboBox.getItems().isEmpty()) {
                 currentVitalType = vitalTypeComboBox.getItems().get(0);
                 vitalTypeComboBox.setValue(currentVitalType);
                 System.out.println("Set default vital type to: " + currentVitalType);
@@ -255,45 +380,111 @@ public class VitalsGraphController extends BaseController {
     }
     
     /**
-     * Updates the chart with new data based on selected parameters.
+     * Updates the chart with data based on the selected vital type.
      */
     private void updateChart() {
-        String vitalType = vitalTypeComboBox.getValue();
-        LocalDate startDate = startDatePicker.getValue();
-        LocalDate endDate = endDatePicker.getValue();
+        System.out.println("============================================");
+        System.out.println("updateChart() started");
         
-        System.out.println("updateChart called with vitalType: " + vitalType);
-        
-        if (vitalType == null || startDate == null || endDate == null) {
-            System.out.println("Cannot update chart - null values: vitalType=" + vitalType + 
-                               ", startDate=" + startDate + ", endDate=" + endDate);
-            
-            // Try to recover if possible
-            if (vitalType == null && !vitalTypeComboBox.getItems().isEmpty()) {
-                vitalType = vitalTypeComboBox.getItems().get(0);
-                vitalTypeComboBox.setValue(vitalType);
-                System.out.println("Recovered vitalType to: " + vitalType);
-            } else {
-                return; // Cannot proceed with null values
-            }
-        }
-        
-        if (endDate.isBefore(startDate)) {
-            showErrorAlert("Date Range Error", "Invalid Date Range", 
-                    "End date must be after start date.");
+        if (vitalsChart == null) {
+            System.err.println("ERROR: Chart is null");
             return;
         }
         
+        // Get the selected vital type
+        String vitalType = vitalTypeComboBox != null ? vitalTypeComboBox.getValue() : null;
+        
+        System.out.println("Current vitalType from dropdown: " + vitalType);
+        System.out.println("vitalTypeComboBox exists: " + (vitalTypeComboBox != null));
+        if (vitalTypeComboBox != null) {
+            System.out.println("vitalTypeComboBox items: " + vitalTypeComboBox.getItems().size());
+        }
+        
+        // If no vital type is selected, try to set a default
+        if (vitalType == null) {
+            System.out.println("WARNING: No vital type selected");
+            
+            if (vitalTypeComboBox != null && !vitalTypeComboBox.getItems().isEmpty()) {
+                vitalType = vitalTypeComboBox.getItems().get(0);
+                System.out.println("Setting default vital type to: " + vitalType);
+                vitalTypeComboBox.setValue(vitalType);
+                System.out.println("Dropdown value is now: " + vitalTypeComboBox.getValue());
+            } else if (vitalTypes.length > 0) {
+                vitalType = vitalTypes[0];
+                System.out.println("Using fallback vital type from array: " + vitalType);
+            } else {
+                System.out.println("ERROR: No vital types available");
+                showErrorAlert("Error", "Chart Error", "No vital types available to display");
+                return;
+            }
+        }
+        
+        // Final vitalType for use in lambdas
+        final String finalVitalType = vitalType;
+        System.out.println("Final vital type for chart: " + finalVitalType);
+        
         // Clear previous data
+        System.out.println("Clearing previous chart data");
         vitalsChart.getData().clear();
         
         // Update y-axis for the selected vital type
-        updateYAxisForVitalType(vitalType);
+        System.out.println("Updating y-axis for: " + finalVitalType);
+        updateYAxisForVitalType(finalVitalType);
         
         // Create data series
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
-        series.setName(vitalType);
+        series.setName(finalVitalType);
         
+        // Ensure vitalRecordsByType is initialized
+        if (vitalRecordsByType == null) {
+            System.out.println("WARNING: vitalRecordsByType is null, initializing empty map");
+            vitalRecordsByType = new HashMap<>();
+        }
+        
+        // Get records for this vital type
+        List<VitalRecord> records = vitalRecordsByType.get(finalVitalType);
+        System.out.println("Records for " + finalVitalType + ": " + (records != null ? records.size() : "null"));
+        
+        if (records == null || records.isEmpty()) {
+            System.out.println("No records found for vital type: " + finalVitalType + ", using sample data");
+            // Use sample data instead
+            generateSampleData(series, finalVitalType);
+        } else {
+            // Use real data
+            System.out.println("Found " + records.size() + " records for vital type: " + finalVitalType);
+            
+            // Get the earliest date for reference point (day 0)
+            LocalDateTime referenceDate = records.get(0).getVitalReport().getReportWhenMade();
+            System.out.println("Reference date: " + referenceDate);
+            
+            // Add data points
+            for (int i = 0; i < records.size(); i++) {
+                VitalRecord record = records.get(i);
+                LocalDateTime recordDate = record.getVitalReport().getReportWhenMade();
+                
+                // Calculate days since reference date
+                long daysSinceReference = ChronoUnit.DAYS.between(referenceDate, recordDate);
+                
+                // Add data point
+                series.getData().add(new XYChart.Data<>(daysSinceReference, record.getValue()));
+                System.out.println("Added data point: day " + daysSinceReference + ", value " + record.getValue());
+            }
+        }
+        
+        // Add the series to the chart
+        System.out.println("Adding series to chart with " + series.getData().size() + " data points");
+        vitalsChart.getData().add(series);
+        System.out.println("Chart update completed");
+        System.out.println("============================================");
+    }
+    
+    /**
+     * Generates sample data for a vital type when real data is not available
+     * 
+     * @param series The chart series to populate
+     * @param vitalType The vital type
+     */
+    private void generateSampleData(XYChart.Series<Number, Number> series, String vitalType) {
         // For demo purposes, generate random data within the normal range for the selected vital type
         double[] range = getRangeForVitalType(vitalType);
         
@@ -306,11 +497,11 @@ public class VitalsGraphController extends BaseController {
         
         Random random = new Random();
         
-        // Calculate days between dates
-        long daysBetween = java.time.temporal.ChronoUnit.DAYS.between(startDate, endDate) + 1;
+        // Create 30 days of data points
+        int numberOfDays = 30;
         
         // Create data points
-        for (int i = 0; i < daysBetween; i++) {
+        for (int i = 0; i < numberOfDays; i++) {
             // Generate a value that's mostly within range but occasionally outside
             double baseValue = range[0] + (range[1] - range[0]) * random.nextDouble();
             
@@ -327,9 +518,6 @@ public class VitalsGraphController extends BaseController {
             // Add some variability within a day
             series.getData().add(new XYChart.Data<>(i, Math.round(baseValue * 10) / 10.0));
         }
-        
-        // Add the series to the chart
-        vitalsChart.getData().add(series);
     }
     
     /**
@@ -340,111 +528,145 @@ public class VitalsGraphController extends BaseController {
      */
     @FXML
     private void handleUpdate(ActionEvent event) {
+        System.out.println("============================================");
+        System.out.println("Update button clicked");
+        
+        // Ensure a vital type is selected
+        if (vitalTypeComboBox.getValue() == null) {
+            System.out.println("WARNING: No vital type selected, attempting to set default");
+            if (!vitalTypeComboBox.getItems().isEmpty()) {
+                String defaultType = vitalTypeComboBox.getItems().get(0);
+                System.out.println("Setting default vital type to: " + defaultType);
+                vitalTypeComboBox.setValue(defaultType);
+                System.out.println("Current value is now: " + vitalTypeComboBox.getValue());
+            } else {
+                System.out.println("ERROR: No items in dropdown to set as default");
+            }
+        } else {
+            System.out.println("Current vital type: " + vitalTypeComboBox.getValue());
+        }
+        
         updateChart();
+        System.out.println("============================================");
     }
     
     /**
-     * Sets the vital data to be displayed as a line chart.
-     * This method can be called from other controllers to set the data.
+     * Handles the "Show All Vitals" button click.
+     * Displays all vital types on the chart at once.
      * 
-     * @param vitalData Array of vital measurement values
-     * @param vitalType Type of vital measurement
+     * @param event The action event
      */
-    public void setVitalData(double[] vitalData, String vitalType) {
-        if (vitalData == null || vitalData.length == 0 || vitalType == null) {
-            return;
-        }
+    @FXML
+    private void handleShowAll(ActionEvent event) {
+        System.out.println("============================================");
+        System.out.println("Show All Vitals button clicked");
         
-        // Clear previous data
-        vitalsChart.getData().clear();
-        
-        // Select the vital type in the combo box if it exists
-        if (getVitalTypeIndex(vitalType) >= 0) {
-            vitalTypeComboBox.setValue(vitalType);
-            updateYAxisForVitalType(vitalType);
-        }
-        
-        // Create data series
-        XYChart.Series<Number, Number> series = new XYChart.Series<>();
-        series.setName(vitalType);
-        
-        // Add data points
-        for (int i = 0; i < vitalData.length; i++) {
-            series.getData().add(new XYChart.Data<>(i, vitalData[i]));
-        }
-        
-        // Add the series to the chart
-        vitalsChart.getData().add(series);
-    }
-    
-    /**
-     * Sets multiple vital data arrays to be displayed as multiple series on a line chart.
-     * This method can be called from other controllers to set multiple data series.
-     * 
-     * @param vitalDataArrays 2D array where each row is a separate vital data array
-     * @param vitalTypes Array of vital types corresponding to each data array
-     * @param patientName Name of the patient whose data is being displayed
-     * @param patientId ID of the patient whose data is being displayed
-     */
-    public void setMultipleVitalData(double[][] vitalDataArrays, String[] vitalTypes, String patientName, String patientId) {
-        if (vitalDataArrays == null || vitalTypes == null || 
-            vitalDataArrays.length == 0 || vitalTypes.length == 0 ||
-            vitalDataArrays.length != vitalTypes.length) {
-            showErrorAlert("Data Error", "Invalid Vital Data", 
-                    "The vital data arrays and types must have the same length.");
-            return;
-        }
-        
-        // Update patient info
-        if (patientName != null && !patientName.isEmpty()) {
-            patientNameLabel.setText(patientName);
-            currentPatientName = patientName;
-        }
-        
-        if (patientId != null && !patientId.isEmpty()) {
-            patientIdLabel.setText("ID: " + patientId);
-            currentPatientId = patientId;
-        }
-        
-        // Clear previous data
-        vitalsChart.getData().clear();
-        
-        // Configure chart for multiple series
-        vitalsChart.setTitle("Multiple Vital Signs Comparison");
-        
-        // Set y-axis to auto-ranging for multiple series
-        yAxis.setAutoRanging(true);
-        yAxis.setLabel("Value");
-        
-        // Add each data series to the chart
-        for (int i = 0; i < vitalDataArrays.length; i++) {
-            XYChart.Series<Number, Number> series = new XYChart.Series<>();
-            series.setName(vitalTypes[i]);
-            
-            for (int j = 0; j < vitalDataArrays[i].length; j++) {
-                series.getData().add(new XYChart.Data<>(j, vitalDataArrays[i][j]));
+        try {
+            // Check if the chart is valid
+            if (vitalsChart == null) {
+                System.err.println("ERROR: Chart is null in handleShowAll");
+                return;
             }
             
-            vitalsChart.getData().add(series);
+            // Clear previous data
+            System.out.println("Clearing previous chart data");
+            vitalsChart.getData().clear();
+            
+            // Configure chart for multiple series
+            System.out.println("Configuring chart for multiple series");
+            vitalsChart.setTitle("All Vital Signs Comparison");
+            
+            // Set y-axis to auto-ranging for multiple series
+            yAxis.setAutoRanging(true);
+            yAxis.setLabel("Value (Normalized)");
+            System.out.println("Y-axis configured for normalized values");
+            
+            // Check if vital records map is valid
+            if (vitalRecordsByType == null) {
+                System.out.println("WARNING: vitalRecordsByType is null in handleShowAll, initializing empty map");
+                vitalRecordsByType = new HashMap<>();
+            }
+            
+            // Get a reference date (earliest date from all reports, if available)
+            LocalDateTime referenceDate = null;
+            if (patientVitalReports != null && !patientVitalReports.isEmpty()) {
+                // Get the oldest report's date
+                List<VitalReport> sortedReports = new ArrayList<>(patientVitalReports);
+                sortedReports.sort(Comparator.comparing(VitalReport::getReportWhenMade));
+                if (!sortedReports.isEmpty() && sortedReports.get(0) != null) {
+                    referenceDate = sortedReports.get(0).getReportWhenMade();
+                }
+            }
+            
+            // If no reference date, use current date minus 30 days
+            if (referenceDate == null) {
+                referenceDate = LocalDateTime.now().minusDays(30);
+            }
+            
+            // Final reference date for use in lambda
+            final LocalDateTime finalReferenceDate = referenceDate;
+            
+            // Create a series for each vital type
+            for (int i = 0; i < vitalTypes.length; i++) {
+                String vitalType = vitalTypes[i];
+                XYChart.Series<Number, Number> series = new XYChart.Series<>();
+                series.setName(vitalType);
+                
+                // Get the range for this vital type
+                double[] range = vitalRanges[i];
+                
+                // Get records for this vital type
+                List<VitalRecord> records = vitalRecordsByType.get(vitalType);
+                
+                if (records == null || records.isEmpty()) {
+                    // Generate sample data for this vital type
+                    Random random = new Random();
+                    int numberOfDays = 30;
+                    
+                    for (int day = 0; day < numberOfDays; day++) {
+                        // Generate a value that's mostly within range
+                        double baseValue = range[0] + (range[1] - range[0]) * random.nextDouble();
+                        
+                        // Occasionally add abnormal values (10% chance)
+                        if (random.nextDouble() < 0.1) {
+                            if (random.nextBoolean()) {
+                                baseValue = range[1] + (range[1] - range[0]) * random.nextDouble() * 0.2; // Above normal
+                            } else {
+                                baseValue = Math.max(0, range[0] - (range[1] - range[0]) * random.nextDouble() * 0.2); // Below normal
+                            }
+                        }
+                        
+                        // Normalize value for better visualization
+                        double normalizedValue = (baseValue - range[0]) / (range[1] - range[0]) * 100;
+                        
+                        series.getData().add(new XYChart.Data<>(day, Math.round(normalizedValue * 10) / 10.0));
+                    }
+                } else {
+                    // Use actual data from the patient's vital records
+                    for (VitalRecord record : records) {
+                        // Calculate days since reference date
+                        long daysSinceReference = ChronoUnit.DAYS.between(
+                            finalReferenceDate, record.getVitalReport().getReportWhenMade());
+                        
+                        // Normalize value to percentage of normal range
+                        double normalizedValue = (record.getValue() - range[0]) / (range[1] - range[0]) * 100;
+                        
+                        // Add data point
+                        series.getData().add(new XYChart.Data<>(daysSinceReference, Math.round(normalizedValue * 10) / 10.0));
+                    }
+                }
+                
+                // Add the series to the chart
+                vitalsChart.getData().add(series);
+            }
+        } catch (Exception e) {
+            System.err.println("********************************************");
+            System.err.println("ERROR in handleShowAll: " + e.getMessage());
+            e.printStackTrace();
+            System.err.println("********************************************");
+            showErrorAlert("Error", "Chart Error", "Error displaying all vitals: " + e.getMessage());
         }
-    }
-    
-    /**
-     * Updates the patient information on the chart.
-     * 
-     * @param patientName Name of the patient
-     * @param patientId ID of the patient
-     */
-    public void setPatientInfo(String patientName, String patientId) {
-        if (patientName != null && !patientName.isEmpty()) {
-            patientNameLabel.setText(patientName);
-            currentPatientName = patientName;
-        }
-        
-        if (patientId != null && !patientId.isEmpty()) {
-            patientIdLabel.setText("ID: " + patientId);
-            currentPatientId = patientId;
-        }
+        System.out.println("============================================");
     }
     
     /**
