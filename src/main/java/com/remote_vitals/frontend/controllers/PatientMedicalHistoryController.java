@@ -1,9 +1,11 @@
 package com.remote_vitals.frontend.controllers;
 
 import com.remote_vitals.backend.checkup.entities.CheckUp;
+import com.remote_vitals.backend.reportGenerator.ReportGenerator;
 import com.remote_vitals.backend.services.CheckUpService;
 import com.remote_vitals.backend.user.entities.Doctor;
 import com.remote_vitals.backend.user.entities.Patient;
+import com.remote_vitals.backend.vitalReport.entities.VitalReport;
 import com.remote_vitals.frontend.utils.ScreenPaths;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -19,9 +21,12 @@ import javafx.stage.Modality;
 import javafx.util.Callback;
 
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.io.File;
 
 /**
  * Controller for the patient medical history screen.
@@ -256,62 +261,34 @@ public class PatientMedicalHistoryController extends BaseController implements I
      * @param checkup The checkup to display
      */
     private void showCheckupDetailsDialog(CheckUp checkup) {
-        // Create dialog
-        Dialog<Void> dialog = new Dialog<>();
-        dialog.initModality(Modality.APPLICATION_MODAL);
-        dialog.setTitle("Checkup Details");
-        dialog.setHeaderText("Checkup from " + checkup.getTimeWhenMade().format(DATE_FORMAT));
-        
-        // Set button types
-        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-        
-        // Create layout
-        VBox content = new VBox(10);
-        content.setPadding(new Insets(20));
-        
-        // Doctor info
-        Label doctorLabel = new Label("Doctor: " + checkup.getDoctor().getFirstName() + " " + checkup.getDoctor().getLastName());
-        doctorLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
-        
-        // Prescription section
-        Label prescriptionTitle = new Label("Prescription:");
-        prescriptionTitle.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
-        
-        TextArea prescriptionArea = new TextArea(checkup.getPrescription());
-        prescriptionArea.setWrapText(true);
-        prescriptionArea.setEditable(false);
-        prescriptionArea.setPrefWidth(550);
-        prescriptionArea.setPrefHeight(150);
-        prescriptionArea.setStyle("-fx-font-size: 14px;");
-        
-        // Feedback section
-        Label feedbackTitle = new Label("Doctor's Feedback:");
-        feedbackTitle.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
-        
-        TextArea feedbackArea = new TextArea(checkup.getFeedback());
-        feedbackArea.setWrapText(true);
-        feedbackArea.setEditable(false);
-        feedbackArea.setPrefWidth(550);
-        feedbackArea.setPrefHeight(150);
-        feedbackArea.setStyle("-fx-font-size: 14px;");
-        
-        // Add elements to content
-        content.getChildren().addAll(
-            doctorLabel,
-            new Separator(),
-            prescriptionTitle,
-            prescriptionArea,
-            new Separator(),
-            feedbackTitle,
-            feedbackArea
-        );
-        
-        // Set content
-        dialog.getDialogPane().setContent(content);
-        dialog.getDialogPane().setPrefWidth(600);
-        
-        // Show dialog
-        dialog.showAndWait();
+        try {
+            System.out.println("Creating report generator...");
+            ReportGenerator reportGenerator = new ReportGenerator(checkup.getDoctor(), getPatientUser(), checkup, getVitals());
+            
+            // Generate the actual report
+            reportGenerator.createReport();
+            
+            // Get the generated file path (based on the same logic in ReportGenerator)
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+            String fileName = getPatientUser().getFirstName() + "_" + getPatientUser().getLastName() + "_report_" + timestamp + ".pdf";
+            String reportPath = System.getProperty("user.dir") + File.separator + fileName;
+            
+            // Show success alert with the file path
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Report Generated");
+            alert.setHeaderText("Medical Report Generated Successfully");
+            alert.setContentText("The report has been saved to:\n" + reportPath);
+            alert.showAndWait();
+            
+            System.out.println("Report generated successfully at: " + reportPath);
+        }
+        catch (Exception e) {
+            System.out.println("Report generator error: " + e.getMessage());
+            e.printStackTrace();
+            
+            // Show error alert
+            showErrorAlert("Error", "Report Generation Failed", "Failed to generate report: " + e.getMessage());
+        }
     }
 
     /**
@@ -352,5 +329,22 @@ public class PatientMedicalHistoryController extends BaseController implements I
     @FXML
     private void handleLogout(ActionEvent event) {
         navigateTo(event, ScreenPaths.LOGIN, ScreenPaths.TITLE_LOGIN);
+    }
+
+    /**
+     * Gets vital reports for the current patient
+     * @return List of vital reports
+     */
+    private List<VitalReport> getVitals() {
+        Patient patient = getPatientUser();
+        if (patient != null && patient.getVitalReports() != null) {
+            List<VitalReport> reports = patient.getVitalReports();
+            
+            // Sort reports by date (newest first)
+            reports.sort((r1, r2) -> r2.getReportWhenMade().compareTo(r1.getReportWhenMade()));
+            
+            return reports;
+        }
+        return new ArrayList<>();
     }
 } 
