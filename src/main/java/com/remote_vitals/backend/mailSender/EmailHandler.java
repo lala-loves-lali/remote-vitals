@@ -9,5 +9,10 @@ public class EmailHandler {
 
         EmailTemplate.sendEmail(email,"Reset Password Of your RHMS",message);
     }
+    
+    public static void main(String[] args) {
+        sendPasswordSetMail("muneeb.ahmed0001@gmail.com", "123456");
+    }
+
 
 }

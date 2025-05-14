@@ -1,24 +1,18 @@
 package com.remote_vitals.frontend.controllers;
 
-import com.remote_vitals.backend.user.entities.Doctor;
+import java.net.URL;
+import java.util.ResourceBundle;
+
+import com.remote_vitals.backend.mailSender.EmailTemplate;
 import com.remote_vitals.backend.user.entities.Patient;
 import com.remote_vitals.frontend.utils.ScreenPaths;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import javafx.util.Callback;
-import javafx.scene.control.TableCell;
-import javafx.geometry.Insets;
-
-import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 
 /**
  * Controller for the patient dashboard screen.
@@ -30,61 +24,15 @@ public class PatientDashboardController extends BaseController implements Initia
     private Label welcomeLabel;
     
     @FXML
-    private Button logoutButton;
+    private Button panic_button;
     
     @FXML
-    private Button uploadVitalsButton;
+    private Label id_label;
     
     @FXML
-    private Button scheduleAppointmentButton;
-    
-    @FXML
-    private Button viewVitalsButton;
-    
-    @FXML
-    private Button profileButton;
-    
-    @FXML
-    private VBox doctorInfoBox;
-
-    @FXML
-    private Label doctorNameLabel;
-
-    @FXML
-    private Label doctorEmailLabel;
-
-    @FXML
-    private Label doctorPhoneLabel;
-    
-    @FXML
-    private Label doctorQualificationLabel;
-
-    @FXML
-    private Button removeDoctorButton;
-
-    @FXML
-    private VBox availableDoctorsBox;
-
-    @FXML
-    private TableView<Doctor> doctorsTable;
-
-    @FXML
-    private TableColumn<Doctor, String> doctorNameColumn;
-
-    @FXML
-    private TableColumn<Doctor, String> doctorEmailColumn;
-
-    @FXML
-    private TableColumn<Doctor, String> doctorPhoneColumn;
-
-    @FXML
-    private TableColumn<Doctor, String> doctorQualificationColumn;
-    
-    @FXML
-    private TableColumn<Doctor, Void> doctorActionColumn;
+    private Label name_label;
 
     private Patient currentPatient;
-    private ObservableList<Doctor> availableDoctors;
     
     /**
      * Initialize the controller. This method is automatically called
@@ -92,308 +40,74 @@ public class PatientDashboardController extends BaseController implements Initia
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-//        try {
-//            System.out.println("Initializing PatientDashboardController...");
-//
-//            // Check if UI components were properly injected
-//            if (doctorNameLabel == null) {
-//                System.out.println("Error: doctorNameLabel not initialized. FXML loading issue.");
-//                return;
-//            }
-//
-//            // Get current patient
-//            currentPatient = getPatientUser();
-//            System.out.println("Current patient: " + (currentPatient != null ? currentPatient.getFirstName() : "null"));
-//
-//            if (currentPatient == null) {
-//                System.out.println("No patient found. UserType: " + getUserType());
-//                System.out.println("Current user: " + (getCurrentUser() != null ? getCurrentUser().getClass().getSimpleName() : "null"));
-//                showErrorAlert("Error", "Session Error", "No patient session found. Please log in again.");
-//
-//            }
-//
-//            // Set welcome message
-//            if (welcomeLabel != null) {
-//                welcomeLabel.setText("Welcome, " + currentPatient.getFirstName());
-//                System.out.println("Set welcome message for: " + currentPatient.getFirstName());
-//            } else {
-//                System.out.println("Warning: welcomeLabel is null. Check your FXML file for the element with fx:id='welcomeLabel'");
-//            }
-//
-//            // Initialize doctor table
-//            if (doctorsTable != null && doctorNameColumn != null && doctorEmailColumn != null &&
-//                doctorPhoneColumn != null && doctorActionColumn != null) {
-//                initializeDoctorTable();
-//            } else {
-//                System.out.println("Error: Table or its columns not initialized. Check FXML.");
-//            }
-//
-//            // Load doctor information
-//            if (doctorNameLabel != null && doctorEmailLabel != null && doctorPhoneLabel != null &&
-//                removeDoctorButton != null && availableDoctorsBox != null) {
-//                loadDoctorInformation();
-//            } else {
-//                System.out.println("Error: Doctor info UI elements not initialized. Check FXML.");
-//            }
-//
-//            System.out.println("PatientDashboardController initialization complete");
-//        } catch (Exception e) {
-//            System.out.println("Error in initialize: " + e.getMessage());
-//            e.printStackTrace();
-//        }
-    }
+        try {
+            System.out.println("Initializing PatientDashboardController...");
 
-    /**
-     * Initializes the doctors table with columns and data
-     */
-    private void initializeDoctorTable() {
-//        System.out.println("Initializing doctor table...");
-//
-//        try {
-//            System.out.println("Initializing doctor table...");
-//
-//            // Set up table columns
-//            doctorNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
-//            doctorEmailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
-//            doctorPhoneColumn.setCellValueFactory(new PropertyValueFactory<>("phoneNumber"));
-//            doctorQualificationColumn.setCellValueFactory(new PropertyValueFactory<>("qualificationString"));
-//
-//            System.out.println("Doctor table columns configured");
-//
-//            // Add assign button to each row
-//            addButtonToTable();
-//            System.out.println("Added assign buttons to table");
-//
-//            // Load available doctors
-//            loadAvailableDoctors();
-//
-//            // Add click listener to table rows for debugging
-//            doctorsTable.setRowFactory(tv -> {
-//                TableRow<Doctor> row = new TableRow<>();
-//                row.setOnMouseClicked(event -> {
-//                    if (!row.isEmpty()) {
-//                        Doctor doctor = row.getItem();
-//                        System.out.println("Row clicked: " + doctor.getFirstName() + " " + doctor.getLastName());
-//                    }
-//                });
-//                return row;
-//            });
-//
-//            System.out.println("Doctor table initialization complete");
-//        } catch (Exception e) {
-//            System.out.println("Error initializing doctor table: " + e.getMessage());
-//            e.printStackTrace();
-//        }
+            // Get current patient
+            currentPatient = getPatientUser();
+            System.out.println("Current patient: " + (currentPatient != null ? currentPatient.getFirstName() : "null"));
+
+            if (currentPatient == null) {
+                System.out.println("No patient found.");
+                showErrorAlert("Error", "Session Error", "No patient session found. Please log in again.");
+                return;
+            }
+
+            // Set welcome message
+            if (welcomeLabel != null) {
+                welcomeLabel.setText("Welcome, " + currentPatient.getFirstName() + "!");
+                System.out.println("Set welcome message for: " + currentPatient.getFirstName());
+            }
+            
+            // Set patient info
+            if (id_label != null) {
+                id_label.setText("P" + currentPatient.getId());
+            }
+            
+            if (name_label != null) {
+                name_label.setText(currentPatient.getFirstName() + " " + currentPatient.getLastName());
+            }
+            
+            // The panic button action is already set in FXML with onAction="#handlePanicButton"
+
+            System.out.println("PatientDashboardController initialization complete");
+        } catch (Exception e) {
+            System.out.println("Error in initialize: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
     
     /**
-     * Adds an Assign button to each row in the doctors table
+     * Handle panic button click
      */
-    private void addButtonToTable() {
-//        System.out.println("Adding assign button to table...");
-//        Callback<TableColumn<Doctor, Void>, TableCell<Doctor, Void>> cellFactory = new Callback<>() {
-//            @Override
-//            public TableCell<Doctor, Void> call(final TableColumn<Doctor, Void> param) {
-//                return new TableCell<>() {
-//                    private final Button assignButton = new Button("Assign");
-//
-//                    {
-//                        assignButton.setOnAction((ActionEvent event) -> {
-//                            try {
-//                                Doctor doctor = getTableView().getItems().get(getIndex());
-//                                System.out.println("Assign button clicked for doctor: " + doctor.getFirstName());
-//
-//
-//
-//
-//                                // Show confirmation dialog
-//                                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-//                                alert.setTitle("Assign Doctor");
-//                                alert.setHeaderText("Confirm Doctor Assignment");
-//                                alert.setContentText("Are you sure you want to assign Dr. " +
-//                                                   doctor.getFirstName() + " " + doctor.getLastName() +
-//                                                   " as your doctor?");
-//                                getPatientUser().setAssignedDoctor(getDb().getDoctor(doctor.getId()));
-//                                getDb().updatePatient(getPatientUser());
-//                                setCurrentUser(getPatientUser());
-//                                System.out.println("Patient assigned to doctor: " + getPatientUser().getAssignedDoctor().getFirstName());
-//                                System.out.println("Doctor assigned to patient: " + doctor.getFirstName());
-//                                navigateTo(event, ScreenPaths.PATIENT_DASHBOARD, ScreenPaths.TITLE_PATIENT_DASHBOARD);
-//
-//                            } catch (Exception e) {
-//                                System.out.println("Error in assign button action: " + e.getMessage());
-//                                e.printStackTrace();
-//                                showErrorAlert("Error", "Button Error",
-//                                        "An error occurred when clicking the assign button: " + e.getMessage());
-//                            }
-//                        });
-//
-//                        // Make the button visually distinct
-//                        assignButton.getStyleClass().add("action-button");
-//                        assignButton.setStyle("-fx-background-color: #0066cc; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
-//                        assignButton.setPrefWidth(80);
-//                        assignButton.setMaxWidth(Double.MAX_VALUE);
-//                        assignButton.setPadding(new Insets(5, 10, 5, 10));
-//                    }
-//
-//                    @Override
-//                    public void updateItem(Void item, boolean empty) {
-//                        super.updateItem(item, empty);
-//                        if (empty) {
-//                            setGraphic(null);
-//                        } else {
-//                            setGraphic(assignButton);
-//                        }
-//                    }
-//                };
-//            }
-//        };
-//
-//        doctorActionColumn.setCellFactory(cellFactory);
-    }
-
-    /**
-     * Loads the list of available doctors
-     */
-    private void loadAvailableDoctors() {
-//        try {
-//            System.out.println("Loading available doctors...");
-//
-//            if (getDb() == null) {
-//                System.out.println("Error: Database handler is null");
-//                showErrorAlert("Error", "Database Error", "Database connection not established.");
-//                return;
-//            }
-//
-//            List<Doctor> doctors = getDb().getAllDoctors();
-//            System.out.println("Fetched doctors: " + (doctors != null ? doctors.size() : "null"));
-//
-//            if (doctors == null || doctors.isEmpty()) {
-//                System.out.println("No doctors found in database");
-//                availableDoctors = FXCollections.observableArrayList();
-//            } else {
-//                for (Doctor doctor : doctors) {
-//                    System.out.println("Doctor: " + doctor.getFirstName() + " " + doctor.getLastName());
-//                }
-//                availableDoctors = FXCollections.observableArrayList(doctors);
-//            }
-//
-//            doctorsTable.setItems(availableDoctors);
-//            System.out.println("Doctors table updated");
-//        } catch (Exception e) {
-//            System.out.println("Error loading doctors: " + e.getMessage());
-//            e.printStackTrace();
-//        }
-    }
-
-    /**
-     * Loads and displays the current doctor's information
-     */
-    private void loadDoctorInformation() {
-//        try {
-//            System.out.println("Loading doctor information...");
-//
-//            if (currentPatient == null) {
-//                System.out.println("Error: Current patient is null");
-//                return;
-//            }
-//
-//            Doctor assignedDoctor = currentPatient.getAssignedDoctor();
-//            System.out.println("Assigned doctor: " + (assignedDoctor != null ?
-//                    assignedDoctor.getFirstName() + " " + assignedDoctor.getLastName() : "null"));
-//
-//            if (assignedDoctor != null) {
-//                doctorNameLabel.setText(assignedDoctor.getFirstName() + " " + assignedDoctor.getLastName());
-//                doctorEmailLabel.setText("Email: " + assignedDoctor.getEmail());
-//                doctorPhoneLabel.setText("Phone: " + assignedDoctor.getPhoneNumber());
-//
-//                // Display qualification
-//                String qualification = assignedDoctor.getQualificationString();
-//                if (qualification != null && !qualification.isEmpty()) {
-//                    doctorQualificationLabel.setText("Qualification: " + qualification);
-//                    doctorQualificationLabel.setVisible(true);
-//                } else {
-//                    doctorQualificationLabel.setText("No qualification specified");
-//                    doctorQualificationLabel.setVisible(true);
-//                }
-//
-//                removeDoctorButton.setVisible(true);
-//
-//                // Hide available doctors section when a doctor is already assigned
-//                availableDoctorsBox.setVisible(false);
-//                System.out.println("Doctor information loaded, hiding available doctors");
-//            } else {
-//                doctorNameLabel.setText("No doctor assigned");
-//                doctorEmailLabel.setText("");
-//                doctorPhoneLabel.setText("");
-//                doctorQualificationLabel.setText("");
-//                doctorQualificationLabel.setVisible(false);
-//                removeDoctorButton.setVisible(false);
-//
-//                // Show available doctors section when no doctor is assigned
-//                availableDoctorsBox.setVisible(true);
-//                System.out.println("No doctor assigned, showing available doctors");
-//            }
-//        } catch (Exception e) {
-//            System.out.println("Error loading doctor information: " + e.getMessage());
-//            e.printStackTrace();
-//        }
-    }
-
-
     @FXML
-    private void handleRemoveDoctor(ActionEvent event) { 
-//        System.out.println("Removing doctor...");
-//
-//        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-//        alert.setTitle("Remove Doctor");
-//        alert.setHeaderText("Remove Doctor");
-//        alert.setContentText("Are you sure you want to remove your assigned doctor?");
-//
-//        alert.showAndWait().ifPresent(response -> {
-//            if (response == ButtonType.OK) {
-//                try {
-//                    System.out.println("Removing doctor from database...");
-//
-//                    // Get a fresh instance of the patient and doctor to avoid lazy loading issues
-//                    Patient currentPatient = getDb().getPatient(getPatientUser().getId());
-//                    if (currentPatient == null) {
-//                        System.out.println("Error: Failed to retrieve current patient data");
-//                        showErrorAlert("Error", "Removal Failed", "Patient data not available. Please log in again.");
-//                        return;
-//                    }
-//
-//                    // Get a reference to the doctor before removal for logging
-//                    Doctor doctor = currentPatient.getAssignedDoctor();
-//                    if (doctor != null) {
-//                        System.out.println("Removing doctor: " + doctor.getFirstName() + " " + doctor.getLastName());
-//                    }
-//
-//                    // Perform the removal with a session-managed transaction
-//                    int result = getDb().removePatientFromDoctor(currentPatient);
-//                    if (result == 0) {
-//                        System.out.println("Doctor removed successfully");
-//
-//                        // Update the current user with fresh data from database
-//                        setCurrentUser(getDb().getPatient(currentPatient.getId()));
-//                        System.out.println("Patient data refreshed");
-//
-//                        showInfoAlert("Success", "Doctor Removed", "Your doctor has been successfully removed.");
-//                        navigateTo(event, ScreenPaths.PATIENT_DASHBOARD, ScreenPaths.TITLE_PATIENT_DASHBOARD);
-//                    } else {
-//                        System.out.println("Error: Database operation returned " + result);
-//                        showErrorAlert("Error", "Removal Failed", "Failed to remove the doctor. Please try again.");
-//                    }
-//                } catch (Exception e) {
-//                    System.out.println("Exception in handleRemoveDoctor: " + e.getMessage());
-//                    e.printStackTrace();
-//                    showErrorAlert("Error", "Removal Failed", e.getMessage());
-//                }
-//            }
-//        });
+    public void handlePanicButton() {
+        if(getPatientUser().getNextOfKinEmail() != null){
+            try {
+                System.out.println(getPatientUser().getNextOfKinEmail() + " is the next of kin email");
+
+                EmailTemplate.sendEmail(getPatientUser().getNextOfKinEmail(), "Panic Button Pressed", 
+                    "Panic button pressed by " + currentPatient.getFirstName() + " " + currentPatient.getLastName());
+                
+                // Show confirmation alert
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Emergency Alert");
+                alert.setHeaderText("Emergency Assistance");
+                alert.setContentText("Emergency notification has been sent to your emergency contact. Medical assistance will be contacted shortly.");
+                alert.showAndWait();
+            } catch (Exception e) {
+                showErrorAlert("Error", "Email Error", "Error sending email to next of kin. Please try again later.");
+            }
+        } else {
+            // No next of kin email found
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Emergency Alert");
+            alert.setHeaderText("Emergency Contact Not Found");
+            alert.setContentText("No emergency contact email found. Please update your profile with an emergency contact.");
+            alert.showAndWait();
+        }
     }
-  
-    
+
     /**
      * Handles the upload vitals button click event.
      * Navigates to the upload vitals screen.
@@ -402,7 +116,7 @@ public class PatientDashboardController extends BaseController implements Initia
      */
     @FXML
     private void handleUploadVitals(ActionEvent event) {
-        navigateTo(event, ScreenPaths.VIEW_VITALS, ScreenPaths.TITLE_VIEW_VITALS);
+        navigateTo(event, ScreenPaths.UPLOAD_VITALS, ScreenPaths.TITLE_UPLOAD_VITALS);
     }
     
     /**
@@ -418,13 +132,13 @@ public class PatientDashboardController extends BaseController implements Initia
     
     /**
      * Handles the view vitals button click event.
-     * Navigates to the vitals graph screen.
+     * Navigates to the view vitals screen.
      * 
      * @param event The action event
      */
     @FXML
     private void handleViewVitals(ActionEvent event) {
-        navigateTo(event, ScreenPaths.VITALS_GRAPH, ScreenPaths.TITLE_VITALS_GRAPH);
+        navigateTo(event, ScreenPaths.VIEW_VITALS, ScreenPaths.TITLE_VIEW_VITALS);
     }
     
     /**
@@ -440,7 +154,7 @@ public class PatientDashboardController extends BaseController implements Initia
     
     /**
      * Handles the logout button click event.
-     * Navigates back to the login screen.
+     * Logs out the current user and returns to the login screen.
      * 
      * @param event The action event
      */
@@ -450,22 +164,26 @@ public class PatientDashboardController extends BaseController implements Initia
     }
     
     /**
-     * Handles the dashboard selector button click event.
-     * Navigates to the dashboard selector for testing.
+     * Handles the dashboard button click event.
+     * Refreshes the current dashboard.
      * 
      * @param event The action event
      */
     @FXML
     private void handleDashboardSelector(ActionEvent event) {
-        navigateTo(event, ScreenPaths.DASHBOARD_SELECTOR, ScreenPaths.TITLE_DASHBOARD_SELECTOR);
+        navigateTo(event, ScreenPaths.PATIENT_DASHBOARD, ScreenPaths.TITLE_PATIENT_DASHBOARD);
     }
-
+    
     /**
-     * Handler for the Medical History button.
+     * Handles the medical history button click event.
      * Navigates to the patient medical history screen.
+     * 
+     * @param event The action event
      */
     @FXML
     private void handleMedicalHistory(ActionEvent event) {
         navigateTo(event, ScreenPaths.PATIENT_MEDICAL_HISTORY, ScreenPaths.TITLE_PATIENT_MEDICAL_HISTORY);
     }
+
+
 } 
