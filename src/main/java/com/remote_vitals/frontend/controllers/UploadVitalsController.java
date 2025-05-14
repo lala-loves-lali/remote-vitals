@@ -77,7 +77,7 @@ public class UploadVitalsController extends BaseController {
             appendStatus("File successfully copied to: " + destinationFilePath);
 
             // Delegate parsing and validation to the VitalReportService
-            String validationResponse = StaticDataClass.context1
+            String validationResponse = getContext()
                     .getBean(VitalReportService.class)
                     .readCsvForCurrentUser();
 

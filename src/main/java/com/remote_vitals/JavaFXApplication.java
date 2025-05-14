@@ -3,38 +3,30 @@ package com.remote_vitals;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.remote_vitals.backend.db_handler.StaticDataClass;
-import com.remote_vitals.backend.services.LoginService;
-import com.remote_vitals.backend.services.SignUpService;
-import com.remote_vitals.backend.services.UserService;
-import com.remote_vitals.backend.services.AppointmentService;
-import com.remote_vitals.backend.services.CheckUpService;
-import com.remote_vitals.backend.appointment.enums.AppointmentStatus;
-import com.remote_vitals.backend.user.dtos.PatientUpdateDto;
-import com.remote_vitals.backend.user.entities.Admin;
-import com.remote_vitals.backend.user.entities.User;
-import com.remote_vitals.backend.vital.enums.VitalStatus;
-import com.remote_vitals.backend.vitalReport.entities.VitalReport;
-import com.remote_vitals.frontend.controllers.BaseController;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import com.remote_vitals.backend.appointment.entities.Appointment;
-//import com.remote_vitals.backend.chat.entities.ChatRoom;
-import com.remote_vitals.backend.checkup.entities.CheckUp;
-
-
+import com.remote_vitals.backend.appointment.enums.AppointmentStatus;
+import com.remote_vitals.backend.services.AppointmentService;
+import com.remote_vitals.backend.services.CheckUpService;
+import com.remote_vitals.backend.services.LoginService;
+import com.remote_vitals.backend.services.SignUpService;
+import com.remote_vitals.backend.services.UserService;
+import com.remote_vitals.backend.user.dtos.PatientUpdateDto;
+import com.remote_vitals.backend.user.entities.Admin;
 import com.remote_vitals.backend.user.entities.Doctor;
 import com.remote_vitals.backend.user.entities.Patient;
-
+import com.remote_vitals.backend.user.entities.User;
 import com.remote_vitals.backend.user.enums.Gender;
 import com.remote_vitals.backend.vital.entities.BloodPressureSystolic;
 import com.remote_vitals.backend.vital.entities.BodyTemperature;
 import com.remote_vitals.backend.vital.entities.HeartRate;
-import com.remote_vitals.backend.vital.entities.VitalRecord;
+import com.remote_vitals.backend.vital.enums.VitalStatus;
+import com.remote_vitals.backend.vitalReport.entities.VitalReport;
+import com.remote_vitals.frontend.controllers.BaseController;
 import com.remote_vitals.frontend.utils.ScreenPaths;
 
 import javafx.application.Application;
@@ -60,7 +52,7 @@ public class JavaFXApplication extends Application {
     public void init() throws Exception {
         // Initialize Spring Boot context
       context = org.springframework.boot.SpringApplication.run(RemoteVitalsApplication.class);
-      StaticDataClass.context1=context;
+      //StaticDataClass.context1=context;
 //
         // Set the database handler in BaseController first
         BaseController.setContext(context); 
@@ -225,8 +217,9 @@ public class JavaFXApplication extends Application {
                             System.out.println("Status change result: " + statusResult);
 
                             // Add meeting link to the appointment
-                            testAppointment.setLinkForRoom("zoom.us/j/123456789");
+                            
                             appointmentService.changeAppointmentStatus(testAppointment.getId(), AppointmentStatus.SCHEDULED);
+                            appointmentService.setAppointmentLink(testAppointment.getId(), "zoom.us/j/123456789");
                             System.out.println("Added meeting link to the appointment");
                             
                             // Create additional test appointments with different meeting links
@@ -246,8 +239,9 @@ public class JavaFXApplication extends Application {
                                     appointment2.getId(), nextWeek, nextWeek.plusMinutes(45));
                                 
                                 // Add Google Meet link
-                                appointment2.setLinkForRoom("meet.google.com/abc-def-ghi");
+                                
                                 appointmentService.changeAppointmentStatus(appointment2.getId(), AppointmentStatus.SCHEDULED);
+                                appointmentService.setAppointmentLink(appointment2.getId(), "meet.google.com/abc-def-ghi");
                                 System.out.println("Created second appointment with Google Meet link");
                             }
                             
@@ -269,7 +263,7 @@ public class JavaFXApplication extends Application {
                                     appointment3.getId(), tomorrow, tomorrow.plusHours(1));
                                 
                                 // Add Microsoft Teams link
-                                appointment3.setLinkForRoom("teams.microsoft.com/l/meetup-join/19%3ameeting");
+                                appointmentService.setAppointmentLink(appointment3.getId(), "teams.microsoft.com/l/meetup-join/19%3ameeting");
                                 appointmentService.changeAppointmentStatus(appointment3.getId(), AppointmentStatus.SCHEDULED);
                                 System.out.println("Created third appointment with Microsoft Teams link");
                             }
@@ -286,8 +280,8 @@ public class JavaFXApplication extends Application {
                                 LocalDateTime inTwoDays = LocalDateTime.now().plusDays(2).withHour(11).withMinute(0);
                                 appointmentService.addScheduleToAppointment(
                                     appointment5.getId(), inTwoDays, inTwoDays.plusMinutes(30));
-                                appointment5.setLinkForRoom("webex.com/meet/doctor");
-                                appointmentService.changeAppointmentStatus(appointment5.getId(), AppointmentStatus.POSTPONED);
+                                    appointment5.setLinkForRoom("webex.com/meet/doctor");
+                                    appointmentService.changeAppointmentStatus(appointment5.getId(), AppointmentStatus.POSTPONED);
                                 System.out.println("Created postponed appointment with Webex link");
                             }
                             

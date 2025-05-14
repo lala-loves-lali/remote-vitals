@@ -154,4 +154,13 @@ public class AppointmentService {
         
         return "Meeting link updated successfully";
     }
+
+    public Optional<Appointment> setAppointmentLink(Integer AppointmentId,String link){
+        appointmentRepository.findById(AppointmentId).ifPresent(appointment -> {
+            appointment.setLinkForRoom(link);
+            appointmentRepository.save(appointment);
+        });
+        return appointmentRepository.findById(AppointmentId);
+    }
+
 }
