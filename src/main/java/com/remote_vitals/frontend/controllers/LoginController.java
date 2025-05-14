@@ -8,9 +8,7 @@ import com.remote_vitals.backend.user.entities.Admin;
 import com.remote_vitals.backend.user.entities.Doctor;
 import com.remote_vitals.backend.user.entities.Patient;
 import com.remote_vitals.backend.user.entities.User;
-
 import com.remote_vitals.frontend.utils.ScreenPaths;
-import com.remote_vitals.backend.user.enums.Gender;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -140,8 +138,7 @@ public class LoginController extends BaseController {
                 navigateTo(event, ScreenPaths.DOCTOR_DASHBOARD, ScreenPaths.TITLE_DOCTOR_DASHBOARD);
             }
             catch(RuntimeException e){
-                showErrorAlert("Login Error", "Authentication Failed",
-                        "Invalid email or password. Please try again.");
+                
                 return;
             }
         case "Admin":

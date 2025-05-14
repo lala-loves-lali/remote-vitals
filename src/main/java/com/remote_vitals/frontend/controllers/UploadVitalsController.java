@@ -22,7 +22,7 @@ public class UploadVitalsController extends BaseController {
     @FXML private Button uploadButton;
     @FXML private Button backButton;
     @FXML private TextArea statusTextArea;
-    private static final String SAVE_DIRECTORY = "C:\\Users\\Ibsham Tariq\\Desktop\\saved";
+    private static final String SAVE_DIRECTORY = "D:/oop/prog/remote-vitals/src/main/resources/data-files";
 
     @FXML
     private void initialize() {
