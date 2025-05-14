@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="600.0" prefWidth="800.0" stylesheets="@application.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.remote_vitals.frontend.controllers.DoctorViewVitalsController">
+   <top>
+      <HBox alignment="CENTER_LEFT" spacing="20.0" styleClass="header-container" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="backButton" mnemonicParsing="false" onAction="#handleBack" styleClass="back-button" text="Back" />
+            <Label styleClass="header-label" text="Patient Vitals Visualization">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Label>
+            <HBox alignment="CENTER_RIGHT" spacing="10.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label fx:id="patientNameLabel" text="John Doe">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="patientIdLabel" text="ID: P12345" />
+               </children>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+         </padding>
+      </HBox>
+   </top>
+   <center>
+      <LineChart fx:id="vitalsChart" createSymbols="true" title="Patient Vital Signs Over Time" BorderPane.alignment="CENTER">
+        <xAxis>
+          <NumberAxis fx:id="xAxis" label="Day" side="BOTTOM" />
+        </xAxis>
+        <yAxis>
+          <NumberAxis fx:id="yAxis" label="Value" side="LEFT" />
+        </yAxis>
+      </LineChart>
+   </center>
+   <bottom>
+      <VBox spacing="10.0" styleClass="control-container" BorderPane.alignment="CENTER">
+         <children>
+            <HBox alignment="CENTER" spacing="20.0">
+               <children>
+                  <Label text="Vital Type:" />
+                  <ChoiceBox fx:id="vitalTypeComboBox" prefWidth="200.0" />
+                  <Button fx:id="showAllButton" mnemonicParsing="false" onAction="#handleShowAll" styleClass="secondary-button" text="Show All Vitals" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_RIGHT">
+               <children>
+                  <Button fx:id="updateButton" mnemonicParsing="false" onAction="#handleUpdate" styleClass="primary-button" text="Update Chart" />
+               </children>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+      </VBox>
+   </bottom>
+</BorderPane> 

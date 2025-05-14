@@ -37,6 +37,7 @@ public class ScreenPaths {
     public static final String PATIENT_CHECKUP = SCREENS_BASE_PATH + "c.fxml";
     // Vitals visualization screens
     public static final String VITALS_GRAPH = SCREENS_BASE_PATH + "vitals-graph.fxml";
+    public static final String DOCTOR_VIEW_VITALS = SCREENS_BASE_PATH + "doctor-view-vitals.fxml";
     
     // Direct dashboard access (for testing)
     public static final String DASHBOARD_SELECTOR = SCREENS_BASE_PATH + "dashboard-selector.fxml";
@@ -59,6 +60,7 @@ public class ScreenPaths {
     public static final String TITLE_DASHBOARD_SELECTOR = "Dashboard Selection - Remote Vitals";
     public static final String TITLE_PATIENT_MEDICAL_HISTORY = "Medical History - Remote Vitals";
     public static final String TITLE_PATIENT_APPOINTMENTS = "Patient Appointments - Remote Vitals";
+    public static final String TITLE_DOCTOR_VIEW_VITALS = "Patient Vitals - Doctor View";
     
     public static final String DOCTOR_PATIENTS = "/screens/doctor-patients.fxml";
     public static final String TITLE_DOCTOR_PATIENTS = "My Patients";

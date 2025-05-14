@@ -56,6 +56,9 @@ public class DoctorPatientsController extends BaseController implements Initiali
     @FXML
     private TableColumn<Patient, Void> actionColumn;
     
+    @FXML
+    private TableColumn<Patient, Void> vitalsColumn;
+    
     private ObservableList<Patient> patients = FXCollections.observableArrayList();
     
     // Static patient reference that will be used by the checkup screen
@@ -137,6 +140,9 @@ public class DoctorPatientsController extends BaseController implements Initiali
         // Add checkup button to each row
         addCheckupButtonToTable();
         
+        // Add vitals button to each row
+        addVitalsButtonToTable();
+        
         // Load patients
         loadPatients();
     }
@@ -176,6 +182,43 @@ public class DoctorPatientsController extends BaseController implements Initiali
         };
         
         actionColumn.setCellFactory(cellFactory);
+    }
+    
+    private void addVitalsButtonToTable() {
+        Callback<TableColumn<Patient, Void>, TableCell<Patient, Void>> cellFactory = new Callback<>() {
+            @Override
+            public TableCell<Patient, Void> call(final TableColumn<Patient, Void> param) {
+                return new TableCell<>() {
+                    private final Button vitalsButton = new Button("View Vitals");
+                    
+                    {
+                        vitalsButton.setOnAction((ActionEvent event) -> {
+                            Patient patient = getTableView().getItems().get(getIndex());
+                            handleViewVitals(patient, event);
+                        });
+                        
+                        // Style the button
+                        vitalsButton.getStyleClass().add("action-button");
+                        vitalsButton.setStyle("-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
+                        vitalsButton.setPrefWidth(100);
+                        vitalsButton.setMaxWidth(Double.MAX_VALUE);
+                        vitalsButton.setPadding(new Insets(5, 10, 5, 10));
+                    }
+                    
+                    @Override
+                    public void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            setGraphic(vitalsButton);
+                        }
+                    }
+                };
+            }
+        };
+        
+        vitalsColumn.setCellFactory(cellFactory);
     }
     
     private void loadPatients() {
@@ -392,6 +435,30 @@ public class DoctorPatientsController extends BaseController implements Initiali
             // navigateTo(new ActionEvent(), ScreenPaths.DOCTOR_CHECKUP, ScreenPaths.TITLE_DOCTOR_CHECKUP);
         } catch (Exception e) {
             showErrorAlert("Error", "Checkup Error", "Failed to process checkup: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Handler for View Vitals button
+     * Sets the selected patient and navigates to doctor vitals view
+     */
+    private void handleViewVitals(Patient patient, ActionEvent event) {
+        if (patient == null) {
+            showErrorAlert("Error", "Patient Error", "No patient selected.");
+            return;
+        }
+        
+        try {
+            System.out.println("Opening vitals view for patient: " + patient.getFirstName() + " " + patient.getLastName());
+            
+            // Store the selected patient for use in the vitals controller
+            setSelectedPatient(patient);
+            
+            // Navigate to the doctor vitals view
+            navigateTo(event, ScreenPaths.DOCTOR_VIEW_VITALS, ScreenPaths.TITLE_DOCTOR_VIEW_VITALS);
+        } catch (Exception e) {
+            showErrorAlert("Error", "Navigation Error", "Failed to open vitals view: " + e.getMessage());
             e.printStackTrace();
         }
     }
