@@ -252,8 +252,9 @@ public class ScheduleAppointmentController extends BaseController implements Ini
                     
                     // Set meeting link if provided
                     if (meetingLink != null && !meetingLink.isEmpty()) {
-                        newAppointment.setLinkForRoom(meetingLink);
+                       
                         appointmentService.changeAppointmentStatus(newAppointment.getId(), newAppointment.getStatus());
+                        appointmentService.setAppointmentLink(newAppointment.getId(), meetingLink);
                         System.out.println("Meeting link set: " + meetingLink);
                     }
                     

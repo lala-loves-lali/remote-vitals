@@ -6,6 +6,7 @@ import com.remote_vitals.backend.appointment.enums.AppointmentStatus;
 import com.remote_vitals.backend.services.AppointmentService;
 import com.remote_vitals.backend.user.entities.Doctor;
 import com.remote_vitals.backend.user.entities.Patient;
+import com.remote_vitals.frontend.utils.NavigationUtil;
 import com.remote_vitals.frontend.utils.ScreenPaths;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -22,8 +23,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 
+import javax.print.URIException;
 import java.awt.Desktop;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,6 +37,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
+import javafx.application.Application;
+import javafx.application.HostServices;
+import javafx.application.Platform;
+import javafx.stage.Stage;
 
 public class DoctorAppointmentsController extends BaseController implements Initializable {
     
@@ -478,11 +486,16 @@ public class DoctorAppointmentsController extends BaseController implements Init
                     link = "https://" + link;
                 }
                 
-                // Open in browser
-                Desktop.getDesktop().browse(new URI(link));
+                // Store final link value for lambda
+                final String finalLink = link;
+                
+                // Open the URL using NavigationUtil
+                Platform.runLater(() -> {
+                    NavigationUtil.openUrlInBrowser(finalLink);
+                });
             }
         } catch (Exception e) {
-            showErrorAlert("Error", "Browser Error", "Could not open the meeting link: " + e.getMessage());
+            showErrorAlert("Error", "Browser Error", "Could not prepare the meeting link: " + e.getMessage());
             e.printStackTrace();
         }
     }
